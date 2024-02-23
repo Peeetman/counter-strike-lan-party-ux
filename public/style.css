@@ -1,0 +1,48 @@
+ body {
+    font-family: "Anta", sans-serif;
+}
+
+.full-height-wrapper{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the container takes up at least the full viewport height */
+}
+
+.header, footer{
+    height: 5vh;
+}
+
+.grow-height{
+  flex: 1;
+}
+
+.core{
+    flex: 1;
+}
+
+.vh-100 {
+    height: 100vh;
+}
+
+.bg-fade-ct-to-t {
+    background: #3A1C71;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #FFAF7B, #D76D77, #3A1C71);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #FFAF7B, #D76D77, #3A1C71); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.logo-container {
+    position: fixed; /* Change to fixed */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 50%;
+    padding: 2px;
+    z-index: 999; /* Ensure the logo appears above other content */
+}
+
+/* Optional: Adjust logo size */
+.logo {
+    width: 15vw; /* Set the width of the logo */
+    height: auto; /* Maintain aspect ratio */
+}

@@ -1,0 +1,5 @@
+*node_modules/*
+*public/media/**/*.jpeg
+*public/media/**/*.webp
+*public/media/**/*.png
+*public/media/**/*.jpg

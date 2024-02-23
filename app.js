@@ -101,9 +101,8 @@ io.on('connection', (socket) => {
     });
 });
 
-// Define a route to serve static files from the node_modules directory
-// app.use('/material-kit', express.static(path.join(__dirname, 'node_modules/material-kit/assets/')));
-
+//Define a route to serve static files from the node_modules directory
+// app.use('/dist', express.static(path.join(__dirname, './public')));
 
 server.listen(8080, () => {
     console.log('Dashboard Server Running on port 3001');

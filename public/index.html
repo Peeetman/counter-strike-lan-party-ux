@@ -21,47 +21,60 @@
         <div id="animation-right" class="bg-white flex-grow-1"></div>
     </div>
 
-    <div class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center bg-fade-ct-to-t">
-        <div id="header" class="w-100 d-flex justify-content-between align-items-center border-bottom">
-            <span>Header Elem #1</span>
-            <span>Header Elem #2</span>
-            <span>Header Elem #3</span>
+    <div class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center text-white bg-fade-ct-to-t">
+        <div id="header" class="d-flex border-bottom flex-row align-items-center">
+            <div class="d-flex w-100 justify-content-start">
+                <div>Oberzaubach LAN 2024 UX System</div>
+                <div><span>&nbsp</span></div>
+            </div>        
+            <div class="w-100 align-self-end">
+                <div class="btn-group d-flex w-100" role="group" aria-label="Basic example">
+                  <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 border-bottom-0 rounded-top">Gamestate</button>
+                  <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 border-bottom-0 rounded-top">Beer</button>
+                  <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 border-bottom-0 rounded-top">Ultimate Mode</button>
+                </div>
+            </div>
+            <div class="d-flex w-100 justify-content-end">
+                <div id="currentTime">13:37, 23.02.2024</div>
+            </div>
         </div>
 
         <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-evenly align-items-center">
 
-            <div id="match-status-wrapper" class="d-flex flex-column align-items-center w-50 text-white">
+            <div id="match-status-wrapper" class="d-flex flex-column align-items-center w-50">
                 <div class="p-3 border border-bottom-0 rounded-top"><span>roundnumber</span></div>
                 <div id="score-box" class="d-flex justify-content-around w-50 border rounded"><span id="score_t">5</span><span>:</span><span id="score_ct">3</span></div>
                 <div class="p-3 d-flex justify-content-around w-25 border border-top-0 rounded-bottom"><span>mapname</span><span>mode</span></div>
             </div>
 
-            <div id="player-cards-wrapper" class="w-100 h-50 d-flex flex-row justify-content-between">
-                <div id="t-wrapper" class="bg-warning flex-grow-1 d-flex">
-                    <span >T Elem 1</span>
+            <div id="player-cards-wrapper" class="w-100 h-50 d-flex flex-row justify-content-between align-items-center">
+                <div id="t-wrapper" class="d-flex w-50">
+                    <!-- single-player-card-content.html via script 5 times-->
                 </div>
-                <div id="ct-wrapper" class="bg-primary flex-grow-1 d-flex">
-                    <span>CT Elem 3</span>
-                </div>
-            </div>
 
-            <div id="match-text-wrapper" class="d-flex flex-column bg-white">
-                <span>Event blalbalb</span>
+                <div id="team-spacer" class="d-flex h-100">
+                    <span>&nbsp</span>
+                </div>
+
+                <div id="ct-wrapper" class="d-flex w-50">
+                   <!-- single-player-card-content.html via script 5 times -->
+                </div>
             </div>
 
         </div>
 
-        <div id="footer" class="w-100 d-flex justify-content-between align-items-center border-top">
+        <div id="footer" class="w-100 d-flex justify-content-between align-items-center border-top p-2 d-none">
             <span>Footer Elem #1</span>
-            <span>Footer Elem #2</span>
-            <span>Footer Elem #3</span>
         </div>
     </div>
 
 </body>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
+<!-- Socket.IO -->
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
 <!-- Custom script-->
 <script src="script.js"></script>
 

@@ -13,6 +13,8 @@
 
 #header, #footer{
     height: 3vh;
+    padding-left: 1%;
+    padding-right: 1%;
 }
 
 .bg-fade-ct-to-t {
@@ -29,16 +31,47 @@
     transform: translate(-50%, 0);
 }
 
-
-#match-status-wrapper{
-    display: flex;
-}
-
 #score-box{
     font-size: 8rem;
     font-weight: bold;
 }
 
+#t-wrapper{
+    margin-left: 5%;
+}
+
+#ct-wrapper{
+    margin-right: 5%;
+}
+
+.player-stats{
+    display: initial;
+}
+
+#team-spacer{
+    margin-right: 5%;
+    margin-left: 5%;
+    background-image: linear-gradient(#FFF, #FFF);
+    background-size: 1px 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.player-card{
+    width: 20%;
+    background: none;
+    border: none;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+div.player-card > div.card-body{
+/*    box-shadow: 6px 3px 20px 1px white;*/
+}
+
+.player-name, .beer-wrapper{
+    font-weight: bold;
+}
 
 
 

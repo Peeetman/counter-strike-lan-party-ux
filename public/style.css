@@ -31,7 +31,7 @@
     transform: translate(-50%, 0);
 }
 
-#score-box{
+#score-box, .team-box{
     font-size: 8rem;
     font-weight: bold;
 }
@@ -69,7 +69,7 @@ div.player-card > div.card-body{
 /*    box-shadow: 6px 3px 20px 1px white;*/
 }
 
-.player-name, .beer-wrapper{
+.player-name{
     font-weight: bold;
 }
 

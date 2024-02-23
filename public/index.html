@@ -16,69 +16,47 @@
 </head>
 <body>
 
+    <div id="animation-wrapper" class="d-none d-flex flex-row justify-content-between">
+        <div id="animation-left" class="bg-white flex-grow-1"></div>
+        <div id="animation-right" class="bg-white flex-grow-1"></div>
+    </div>
+
     <div class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center bg-fade-ct-to-t">
         <div id="header" class="w-100 d-flex justify-content-between align-items-center border-bottom">
             <span>Header Elem #1</span>
             <span>Header Elem #2</span>
             <span>Header Elem #3</span>
         </div>
-        <div id="core-wrapper" class="w-100 border border-success d-flex flex-row justify-content-between">
-            <div id="t-wrapper" class="bg-warning flex-grow-1 d-flex">
-                <span >T Elem 1</span>
+
+        <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-evenly align-items-center">
+
+            <div id="match-status-wrapper" class="d-flex flex-column align-items-center w-50 text-white">
+                <div class="p-3 border border-bottom-0 rounded-top"><span>roundnumber</span></div>
+                <div id="score-box" class="d-flex justify-content-around w-50 border rounded"><span id="score_t">5</span><span>:</span><span id="score_ct">3</span></div>
+                <div class="p-3 d-flex justify-content-around w-25 border border-top-0 rounded-bottom"><span>mapname</span><span>mode</span></div>
             </div>
-            <div id="logo-wrapper" class="bg-light d-flex">
-                <span >Logo Elem 2</span>
+
+            <div id="player-cards-wrapper" class="w-100 h-50 d-flex flex-row justify-content-between">
+                <div id="t-wrapper" class="bg-warning flex-grow-1 d-flex">
+                    <span >T Elem 1</span>
+                </div>
+                <div id="ct-wrapper" class="bg-primary flex-grow-1 d-flex">
+                    <span>CT Elem 3</span>
+                </div>
             </div>
-            <div id="ct-wrapper" class="bg-primary flex-grow-1 d-flex">
-                <span>CT Elem 3</span>
+
+            <div id="match-text-wrapper" class="d-flex flex-column bg-white">
+                <span>Event blalbalb</span>
             </div>
+
         </div>
+
         <div id="footer" class="w-100 d-flex justify-content-between align-items-center border-top">
             <span>Footer Elem #1</span>
             <span>Footer Elem #2</span>
             <span>Footer Elem #3</span>
         </div>
     </div>
-
-    <!-- 
-    <div class="full-height-wrapper">
-
-        <nav class="header navbar-light bg-white justify-content-center">
-            <a class="navbar-brand"><h1>Oberzaubach LAN 2024</h1></a>
-        </nav>
-        
-        <div class="container-fluid core">
-            <div class="row justify-content-center align-items-center text-center bg-dark">
-
-
-                <div class="col-12 bg-white">5:3</div>
-                <div class="col-md-6 border-end border-white">
-
-                    <div>
-                        test
-                    </div>
-                </div>
-                <div class="col-md-6 border-start border-white">
-
-                    <div>
-                        test
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-
-
-        <div class="logo-container ">
-            <img src="./media/logo.jpg" alt="Logo Oberauzbach LAN 2024" class="logo rounded-circle">
-        </div>
-
-        <div class="footer navbar-light bg-white justify-content-center">
-            <a class="navbar-brand"><h1>Blablablalb</h1></a>
-        </div>
-    </div>
-     -->
-
 
 </body>
 <!-- Bootstrap Bundle with Popper -->

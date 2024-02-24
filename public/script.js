@@ -62,12 +62,17 @@ socket.on('matchInfoUpdate', ({ newMatchState }) => {
 // Function to handle the playerStateUpdate event
 socket.on('playerStateUpdate', currentPlayerState => {
     console.log(currentPlayerState);
-    
+
+    // Create or Update Player Cards
     Object.keys(currentPlayerState).forEach(steamid => {
         const playerData = currentPlayerState[steamid];
         const teamTargetId = playerData.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
         createOrUpdatePlayerCard(playerData, steamid, teamTargetId);
     });
+
+    // Remove ones not matching
+    const steamids = Object.keys(currentPlayerState);
+    removeUnmatchedPlayerCards(steamids);
     
 });
 
@@ -99,6 +104,8 @@ function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
     // If the card already exists, update it
     if (existingCard) {
         populatePlayerCard(existingCard, playerData);
+        // Update the alive status on the existing card
+        updateAliveStatus(existingCard, playerData.alive);
     } else {
         // Access the template directly from the document
         const template = document.getElementById('player-card-template');
@@ -121,8 +128,20 @@ function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
         // Populate the card with the playerData's data
         populatePlayerCard(playerCard, playerData);
 
+        // Apply the alive status on the new card
+        updateAliveStatus(playerCard, playerData.alive);
+
         // Append the new card to the target element
         document.getElementById(teamTargetId).appendChild(clone);
+    }
+}
+
+// Helper function to update the alive status of a player card
+function updateAliveStatus(playerCard, isAlive) {
+    if (!isAlive) {
+        playerCard.classList.add('not-alive');
+    } else {
+        playerCard.classList.remove('not-alive');
     }
 }
 
@@ -138,10 +157,15 @@ function populatePlayerCard(playerCard, player) {
     // playerCard.querySelector('.player-image').src = './path/to/avatars/' + player.avatarFileName;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    injectDummyPlayerCards();
-});
-
+function removeUnmatchedPlayerCards(steamids) {
+    const allPlayerCards = document.querySelectorAll('[id^=player-card-]:not(.player-card-template)');
+    allPlayerCards.forEach(card => {
+        const cardSteamId = card.id.replace('player-card-', '');
+        if (!steamids.includes(cardSteamId)) {
+            card.remove();
+        }
+    });
+}
 
 function injectDummyPlayerCards() {
     const template = document.getElementById('player-card-template');
@@ -152,3 +176,7 @@ function injectDummyPlayerCards() {
         document.getElementById('t-wrapper').appendChild(clone_t);
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // injectDummyPlayerCards();
+});

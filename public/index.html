@@ -47,7 +47,7 @@
                 <div class="p-3 border border-bottom-0"><span>roundnumber</span></div>
                 <div id="score-box" class="d-flex justify-content-center w-100">
 
-                    <div class="team-box w-25 d-flex justify-content-around border-bottom border-top"><span>T</span></div>
+                    <div class="team-box team-t w-25 d-flex justify-content-around border-bottom border-top"><span>T</span></div>
 
                     <div class="w-50 d-flex flex-row justify-content-center align-items-center border">
                         <div id="score_t" class="w-100 justify-content-start ">12</div>
@@ -55,7 +55,7 @@
                         <div id="score_ct" class="w-100 justify-content-end">13</div>
                     </div>
 
-                    <div class="team-box w-25 d-flex justify-content-around border-bottom border-top">CT</div>
+                    <div class="team-box team-ct w-25 d-flex justify-content-around border-bottom border-top">CT</div>
 
                 </div>
                 <div id="mapmode-wrapper" class="p-3 d-flex justify-content-around border border-top-0">
@@ -69,21 +69,18 @@
                 <div id="t-wrapper" class="d-flex w-50">
                     <!-- single-player-card-template -->
                     <template id="player-card-template">
-                        <div class="card player-card">
+                        <div class="card player-card player-card-template">
                           <img src="./media/player-content/player_avatars/placeholder.png" class="card-img-top player-image object-fit-fill" alt="">
                           <div class="card-body border">
-                            <h5 class="card-title player-name">Player Name</h5>
+                            <div class="card-title player-name">Player Name</div>
                             <div class="player-stats d-flex justify-content-between align-items-center flex-row border-white border-bottom">
-                              <span>K </span>
-                              <span class="kills">0</span>
+                                <div><span>K </span><span class="kills">0</span></div>
+                                <div>D <span class="deaths">0</span></div>
+                                <div>A <span class="assists">0</span></div>
                             </div>
-                            <div class="player-stats d-flex justify-content-between flex-row border-white border-bottom">
-                              <div>D <span class="deaths">0</span></div>
-                              <div>A <span class="assists">0</span></div>
-                              <div>KD <span class="kd">0</span></div>
-                            </div>
-                            <div class="player-stats d-flex justify-content-between align-items-center flex-row">
-                              <span>MVP </span><span class="mvps">0</span>
+                            <div class="player-stats d-flex justify-content-between flex-row">
+                                <div>KD <span class="kd">0</span></div>
+                                <div><span>MVP </span><span class="mvps">0</span></div>
                             </div>
                           </div>
                           <div class="beer-wrapper d-flex justify-content-between flex-column align-self-center border border-top-0 p-1 w-100">
@@ -108,7 +105,7 @@
             </div>
 
             <div id="event-info-wrapper" class="d-flex w-100 flex-row justify-content-center align-items-center">
-                <span id="event-text">This is da Bomba</span>
+                <span id="event-text"></span>
             </div>
 
         </div>

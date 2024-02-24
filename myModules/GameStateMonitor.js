@@ -77,7 +77,7 @@ class GameStateMonitor extends EventEmitter {
             */
             
             // Indicates if any player's state has changed, initializing to false
-            let stateChanged = false;
+            let PlayerStateChanged = false;
 
             Object.keys(data.allplayers).forEach(steamid => {
                 const newPlayerDataPayload = data.allplayers[steamid];
@@ -91,7 +91,7 @@ class GameStateMonitor extends EventEmitter {
                         health: state.health,
                         match_stats
                     };
-                    stateChanged = true; // Flag state as changed
+                    PlayerStateChanged = true; // Flag state as changed
                 } else {
                     // Match Stats Change check
                     if (JSON.stringify(this.currentPlayerState[steamid].match_stats) !== JSON.stringify(match_stats)) {
@@ -100,35 +100,43 @@ class GameStateMonitor extends EventEmitter {
                             this.customEmit('playerMVP', { steamid, name });
                         }
                         this.currentPlayerState[steamid].match_stats = match_stats;
-                        stateChanged = true; // Flag state as changed
+                        PlayerStateChanged = true; // Flag state as changed
                     }
 
                     // Death of Player
                     if (this.currentPlayerState[steamid].health > 0 && state.health === 0) {
                         this.customEmit('playerDeath', { steamid, name });
                         this.currentPlayerState[steamid].health = state.health;
-                        stateChanged = true; // Flag state as changed
+                        PlayerStateChanged = true; // Flag state as changed
                     } else if (this.currentPlayerState[steamid].health !== state.health) {
                         this.currentPlayerState[steamid].health = state.health;
-                        stateChanged = true; // Consider health change as state change
+                        PlayerStateChanged = true; // Consider health change as state change
                     }
 
                     // Team Change
                     if (this.currentPlayerState[steamid].team !== team) {
                         this.currentPlayerState[steamid].team = team;
-                        stateChanged = true; // Flag state as changed
+                        PlayerStateChanged = true; // Flag state as changed
                     }
 
                     // Name Change
                     if (this.currentPlayerState[steamid].name !== name) {
                         this.currentPlayerState[steamid].name = name;
-                        stateChanged = true; // Flag state as changed
+                        PlayerStateChanged = true; // Flag state as changed
                     }
                 }
             });
 
+            const payloadSteamids = Object.keys(data.allplayers);
+            // Iterate over currentPlayerState and delete entries that are not present in payloadSteamids
+            Object.keys(this.currentPlayerState).forEach((steamid) => {
+                if (!payloadSteamids.includes(steamid)) {
+                    delete this.currentPlayerState[steamid];
+                }
+            });
+
             // After processing all players, emit the state update if any changes were detected
-            if (stateChanged) {
+            if (PlayerStateChanged) {
                 this.emitModifiedPlayerStateOnChange();
             }
         }

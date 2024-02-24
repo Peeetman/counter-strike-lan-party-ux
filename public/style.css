@@ -35,6 +35,13 @@
     font-size: 8rem;
     font-weight: bold;
 }
+.team-ct{
+    color: #2196f3;
+}
+.team-t{
+    color: #ff9800;
+}
+
 #event-text{
     font-size: 4rem;
 }
@@ -44,11 +51,11 @@
 }
 
 #t-wrapper{
-    margin-left: 5%;
+    margin-left: 1%;
 }
 
 #ct-wrapper{
-    margin-right: 5%;
+    margin-right: 1%;
 }
 
 .player-stats{
@@ -56,8 +63,8 @@
 }
 
 #team-spacer{
-    margin-right: 5%;
-    margin-left: 5%;
+    margin-right: 1%;
+    margin-left: 1%;
     background-image: linear-gradient(#FFF, #FFF);
     background-size: 1px 100%;
     background-repeat: no-repeat;
@@ -83,6 +90,46 @@ div.player-card > div.card-body{
     font-size: 2rem;
 }
 
+/* Style for the not-alive state */
+.player-card.not-alive .card-body,
+.player-card.not-alive .beer-wrapper {
+    filter: blur(2px); /* Blurs the content */
+}
+.player-card.not-alive .card-img-top {
+    filter: grayscale(100%) sepia(1) hue-rotate(-50deg) brightness(0.9);
+}
+
+.player-card.not-alive::after {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M10,10 L90,90 M90,10 L10,90" stroke="red" stroke-width="5" stroke-linecap="round"/></svg>');
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(3); /* Adjust scale as needed */
+    z-index: 2;
+    pointer-events: none; /* Allows interaction with the content underneath */
+}
+.player-card.not-alive::before {
+    content: 'DEAD';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+    font-size: 2em;
+    color: red;
+    font-weight: bold;
+    z-index: 3;
+    pointer-events: none; /* Ensures text doesn't interfere with card interaction */
+}
+
+.player-card.not-alive .card-img-top {
+    filter: grayscale(100%) sepia(1) hue-rotate(-50deg) brightness(0.9);
+}
+
+.player-card {
+    position: relative; /* Required for the pseudo-elements to position correctly */
+    overflow: hidden; /* Ensures the pseudo-elements don't extend outside the card */
+}
+
 
 .logo-container {
     position: fixed; /* Change to fixed */
@@ -100,3 +147,6 @@ div.player-card > div.card-body{
     width: 15vw; /* Set the width of the logo */
     height: auto; /* Maintain aspect ratio */
 }
+
+
+

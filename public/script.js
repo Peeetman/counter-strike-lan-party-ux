@@ -178,10 +178,14 @@ function populatePlayerCard(playerCard, steamid, player) {
     const placeholderUrl = './media/player-content/player_avatars/placeholder.png';
     const imgElement = playerCard.querySelector('.player-image');
     imgElement.src = imageUrl;
-    imgElement.onerror = function() {
-        this.onerror = null;
-        this.src = placeholderUrl;
-    };
+    try{        
+        imgElement.onerror = function() {
+            this.onerror = null;
+            this.src = placeholderUrl;
+        };
+    } catch (e) {
+        
+    }
  
 }
 

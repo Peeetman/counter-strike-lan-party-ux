@@ -51,13 +51,12 @@ socket.on('playerStateUpdate', currentPlayerState => {
     console.log(currentPlayerState);
     
     Object.keys(currentPlayerState).forEach(steamid => {
-        const player = currentPlayerState[steamid]; // Destructure to exclude health
-        const targetId = player.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
-        createPlayerCard(player, targetId);
+        const playerData = currentPlayerState[steamid];
+        const teamTargetId = playerData.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
+        createOrUpdatePlayerCard(playerData, steamid, teamTargetId);
     });
     
 });
-
 
 //date and time
 // Function to format and update the current time
@@ -80,23 +79,38 @@ function updateCurrentTime() {
 updateCurrentTime();
 setInterval(updateCurrentTime, 60000);
 
-// Function to fetch the player card template and populate it with data
-function createPlayerCard(player, targetId) {
-    fetch('./templates/single-player-card-content.html')
-        .then(response => response.text())
-        .then(templateHtml => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(templateHtml, 'text/html');
-            const playerCard = doc.querySelector('.card');
-            playerCard.id = `player-card-${player.steamid}`;
+function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
+    const existingCardId = `player-card-${steamid}`;
+    let existingCard = document.getElementById(existingCardId);
 
-            // Populate the card with the player's data
-            populatePlayerCard(playerCard, player);
+    // If the card already exists, update it
+    if (existingCard) {
+        populatePlayerCard(existingCard, playerData);
+    } else {
+        // Access the template directly from the document
+        const template = document.getElementById('player-card-template');
+        if (!template) {
+            console.error('Player card template not found');
+            return;
+        }
 
-            // Append the card to the target element
-            document.getElementById(targetId).appendChild(playerCard);
-        })
-        .catch(error => console.error('Error fetching template:', error));
+        // Clone the template content
+        const clone = document.importNode(template.content, true);
+
+        // Assign an ID to the new card for future reference
+        const playerCard = clone.querySelector('.card');
+        if (!playerCard) {
+            console.error('No .card found within the template');
+            return;
+        }
+        playerCard.id = existingCardId;
+
+        // Populate the card with the playerData's data
+        populatePlayerCard(playerCard, playerData);
+
+        // Append the new card to the target element
+        document.getElementById(teamTargetId).appendChild(clone);
+    }
 }
 
 // Function to populate the player card with data
@@ -110,3 +124,9 @@ function populatePlayerCard(playerCard, player) {
     // For example:
     // playerCard.querySelector('.player-image').src = './path/to/avatars/' + player.avatarFileName;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // // Your code that interacts with the DOM here
+    // const template = document.getElementById('player-card-template');
+    // console.log(template); // This should show the template element in console
+});

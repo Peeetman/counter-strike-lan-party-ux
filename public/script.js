@@ -59,9 +59,12 @@ socket.on('matchInfoUpdate', ({ newMatchState }) => {
 });
 
 
+let clientPlayerState = {}
 // Function to handle the playerStateUpdate event
 socket.on('playerStateUpdate', currentPlayerState => {
     console.log(currentPlayerState);
+    clientPlayerState = currentPlayerState;
+    console.log(clientPlayerState)
 
     // Create or Update Player Cards
     Object.keys(currentPlayerState).forEach(steamid => {
@@ -101,10 +104,15 @@ function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
     const existingCardId = `player-card-${steamid}`;
     let existingCard = document.getElementById(existingCardId);
 
-    // If the card already exists, update it
+    // Check for team change
+    let teamChanged = false;
     if (existingCard) {
+        const currentTeam = existingCard.getAttribute('data-team');
+        if (currentTeam !== playerData.team) {
+            teamChanged = true;
+            existingCard.setAttribute('data-team', playerData.team); // Update the card's team attribute
+        }
         populatePlayerCard(existingCard, playerData);
-        // Update the alive status on the existing card
         updateAliveStatus(existingCard, playerData.alive);
     } else {
         // Access the template directly from the document
@@ -116,25 +124,37 @@ function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
 
         // Clone the template content
         const clone = document.importNode(template.content, true);
-
-        // Assign an ID to the new card for future reference
         const playerCard = clone.querySelector('.card');
         if (!playerCard) {
             console.error('No .card found within the template');
             return;
         }
         playerCard.id = existingCardId;
+        playerCard.setAttribute('data-team', playerData.team); // Set the card's team attribute
 
-        // Populate the card with the playerData's data
         populatePlayerCard(playerCard, playerData);
-
-        // Apply the alive status on the new card
         updateAliveStatus(playerCard, playerData.alive);
 
-        // Append the new card to the target element
         document.getElementById(teamTargetId).appendChild(clone);
     }
+
+    if (teamChanged) {
+        reRenderAllPlayerCards();
+    }
 }
+
+function reRenderAllPlayerCards() {
+    // Clear all existing player cards except the template
+    document.querySelectorAll('[id^=player-card-]:not(template#player-card-template)').forEach(card => card.remove());
+
+    // Iterate over clientPlayerState to recreate all player cards
+    Object.keys(clientPlayerState).forEach(steamid => {
+        const playerData = clientPlayerState[steamid];
+        const teamTargetId = playerData.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
+        createOrUpdatePlayerCard(playerData, steamid, teamTargetId);
+    });
+}
+
 
 // Helper function to update the alive status of a player card
 function updateAliveStatus(playerCard, isAlive) {
@@ -158,7 +178,7 @@ function populatePlayerCard(playerCard, player) {
 }
 
 function removeUnmatchedPlayerCards(steamids) {
-    const allPlayerCards = document.querySelectorAll('[id^=player-card-]:not(.player-card-template)');
+    allPlayerCards = document.querySelectorAll('[id^=player-card-]:not(template#player-card-template)');
     allPlayerCards.forEach(card => {
         const cardSteamId = card.id.replace('player-card-', '');
         if (!steamids.includes(cardSteamId)) {

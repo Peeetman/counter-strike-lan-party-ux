@@ -22,56 +22,56 @@ const gameStateMonitor = new GameStateMonitor(csgoGSI, false);
 
 
 gameStateMonitor.on('bombPlanted', () => { 
-    const eventText = 'The bomb has been planted!';
+    const eventText = 'Bomb planted!';
     io.emit('eventText', eventText);
     io.emit('bombPlanted')
     console.log('Server: ' + eventText);
 });
 
 gameStateMonitor.on('bombDefused', () => { 
-    const eventText = 'The bomb has been defused!';
+    const eventText = 'Bomb defused!';
     io.emit('eventText', eventText);
     io.emit('bombDefused') 
     console.log('Server: ' + eventText);
 });
 
 gameStateMonitor.on('bombExploded', () => {
-    const eventText = 'The bomb has exploded!';
+    const eventText = 'Bomb exploded!';
     io.emit('eventText', eventText);
     io.emit('bombExploded') 
     console.log('Server: ' + eventText);
 });
 
 gameStateMonitor.on('roundBegin', () => {
-    const eventText = 'A new round has begun.';
+    const eventText = 'New round!';
     io.emit('eventText', eventText);
     io.emit('roundBegin');
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('roundFreeze', () => {
-    const eventText = 'A Freeze has begun.';
+    const eventText = 'Freezetime.';
     io.emit('eventText', eventText);
     io.emit('roundFreeze');
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('roundEnd', () => {
-    const eventText = 'The round has ended.';
+    const eventText = 'Round ended.';
     io.emit('eventText', eventText);
     io.emit('roundEnd');
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('winTeam_CT', () => {
-    const eventText = 'Counter-Terrorists have won the round!';
+    const eventText = 'Counter-Terrorists win!';
     io.emit('eventText', eventText);
     io.emit('winTeam_CT');
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('winTeam_T', () => {
-    const eventText = 'Terrorists have won the round!';
+    const eventText = 'Terrorists win!';
     io.emit('eventText', eventText);
     io.emit('winTeam_T');
     console.log('Server: ' + eventText);
@@ -79,16 +79,18 @@ gameStateMonitor.on('winTeam_T', () => {
 
 gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
     const eventText = `Player with ID [${steamid}] and Name [${name}] has died.`
-    io.emit('eventText', eventText);
-    io.emit('playerDeath', ({ steamid, name }));
     console.log('Server: ' + eventText);
+    const eventTextAlt = `${name} has died.`
+    io.emit('eventText', eventTextAlt);
+    io.emit('playerDeath', ({ steamid, name }));
 })
 
 gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
     const eventText = `MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`;
-    io.emit('eventText', eventText);
-    io.emit('playerMVP', ({ steamid, name }));
     console.log('Server: ' + eventText);
+    const eventTextAlt = `${name} is MVP.`;
+    io.emit('eventText', eventTextAlt);
+    io.emit('playerMVP', ({ steamid, name }));
 })
 
 gameStateMonitor.on('matchInfoUpdate', ({ newMatchState }) => {

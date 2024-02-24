@@ -158,7 +158,10 @@ class GameStateMonitor extends EventEmitter {
             const playerStateWithoutHealth = {};
             Object.keys(this.currentPlayerState).forEach(steamid => {
                 const { health, ...rest } = this.currentPlayerState[steamid];
-                playerStateWithoutHealth[steamid] = { ...rest };
+                playerStateWithoutHealth[steamid] = { 
+                    ...rest,
+                    alive: (health > 0 ? true : false)
+                };
             });
             this.customEmit('playerStateUpdate', {playerStateWithoutHealth});
         } catch (error) {

@@ -133,13 +133,22 @@ function populatePlayerCard(playerCard, player) {
     playerCard.querySelector('.deaths').textContent = player.match_stats.deaths;
     playerCard.querySelector('.assists').textContent = player.match_stats.assists;
     playerCard.querySelector('.mvps').textContent = player.match_stats.mvps;
-    playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? player.match_stats.kills / player.match_stats.deaths : player.match_stats.kills);
+    playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
     // For example:
     // playerCard.querySelector('.player-image').src = './path/to/avatars/' + player.avatarFileName;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // // Your code that interacts with the DOM here
-    // const template = document.getElementById('player-card-template');
-    // console.log(template); // This should show the template element in console
+    injectDummyPlayerCards();
 });
+
+
+function injectDummyPlayerCards() {
+    const template = document.getElementById('player-card-template');
+    for (let i = 0; i < 5; i++) {
+        const clone_ct = document.importNode(template.content, true);
+        document.getElementById('ct-wrapper').appendChild(clone_ct);
+        const clone_t = document.importNode(template.content, true);
+        document.getElementById('t-wrapper').appendChild(clone_t);
+    }
+}

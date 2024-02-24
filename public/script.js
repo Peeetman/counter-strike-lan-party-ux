@@ -112,7 +112,7 @@ function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
             teamChanged = true;
             existingCard.setAttribute('data-team', playerData.team); // Update the card's team attribute
         }
-        populatePlayerCard(existingCard, playerData);
+        populatePlayerCard(existingCard, steamid, playerData);
         updateAliveStatus(existingCard, playerData.alive);
     } else {
         // Access the template directly from the document
@@ -132,7 +132,7 @@ function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
         playerCard.id = existingCardId;
         playerCard.setAttribute('data-team', playerData.team); // Set the card's team attribute
 
-        populatePlayerCard(playerCard, playerData);
+        populatePlayerCard(playerCard, steamid, playerData);
         updateAliveStatus(playerCard, playerData.alive);
 
         document.getElementById(teamTargetId).appendChild(clone);
@@ -166,15 +166,23 @@ function updateAliveStatus(playerCard, isAlive) {
 }
 
 // Function to populate the player card with data
-function populatePlayerCard(playerCard, player) {
+function populatePlayerCard(playerCard, steamid, player) {
     playerCard.querySelector('.player-name').textContent = player.name;
     playerCard.querySelector('.kills').textContent = player.match_stats.kills;
     playerCard.querySelector('.deaths').textContent = player.match_stats.deaths;
     playerCard.querySelector('.assists').textContent = player.match_stats.assists;
     playerCard.querySelector('.mvps').textContent = player.match_stats.mvps;
     playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
-    // For example:
-    // playerCard.querySelector('.player-image').src = './path/to/avatars/' + player.avatarFileName;
+    // player img
+    const imageUrl = `./media/player-content/player_avatars/${steamid}.png`;
+    const placeholderUrl = './media/player-content/player_avatars/placeholder.png';
+    const imgElement = playerCard.querySelector('.player-image');
+    imgElement.src = imageUrl;
+    imgElement.onerror = function() {
+        this.onerror = null;
+        this.src = placeholderUrl;
+    };
+ 
 }
 
 function removeUnmatchedPlayerCards(steamids) {

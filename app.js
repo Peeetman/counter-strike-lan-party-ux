@@ -110,8 +110,9 @@ gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
 //Dashboard Server
 io.on('connection', (socket) => {
     console.log(`SOCKET IO: Client connected: ${socket.id}`);
-
-    // You can perform additional actions here when a client connects
+    
+    gameStateMonitor.emitModifiedPlayerStateOnChange();
+    gameStateMonitor.emitCurrentMatchState();
 
     // For example, you can emit a message to the client
     socket.emit('connected', 'SOCKET IO: You are now connected to the server.');

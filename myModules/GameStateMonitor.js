@@ -137,6 +137,7 @@ class GameStateMonitor extends EventEmitter {
 
             // After processing all players, emit the state update if any changes were detected
             if (PlayerStateChanged) {
+                console.log("sendupdate to client")
                 this.emitModifiedPlayerStateOnChange();
             }
         }
@@ -155,9 +156,14 @@ class GameStateMonitor extends EventEmitter {
 
             if (JSON.stringify(this.currentMatchState) !== JSON.stringify(newMatchState)) {
                 this.currentMatchState = newMatchState;
-                this.customEmit('matchInfoUpdate', { newMatchState });
+                this.emitCurrentMatchState(newMatchState)
             }
         }
+    }
+
+    emitCurrentMatchState(){
+        const newMatchState = this.currentMatchState
+        this.customEmit('matchInfoUpdate', { newMatchState });
     }
 
     emitModifiedPlayerStateOnChange() {
@@ -197,6 +203,10 @@ class GameStateMonitor extends EventEmitter {
         } catch (error) {
             console.error('Error in customEmit:', error);
         }
+    }
+
+    getPlayerState(){
+        return this.currentPlayerState;
     }
 }
 

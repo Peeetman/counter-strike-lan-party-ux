@@ -63,12 +63,27 @@ class GameStateMonitor extends EventEmitter {
 
         // All Player Data
         if (data.allplayers) {
+            console.log("data.allplayers exists");
+            /*
+            //Testing behavour of Object.keys to understand it better
             Object.keys(data.allplayers).forEach(steamid => {
-                
+                console.log(steamid);
+                try {
+                    this.emitModifiedPlayerStateOnChange();
+                } catch (error) {
+                    console.error('Error in emitModifiedPlayerStateOnChange:', error);
+                }
+            })
+            */
+            
+            // Indicates if any player's state has changed, initializing to false
+            let stateChanged = false;
+
+            Object.keys(data.allplayers).forEach(steamid => {
                 const newPlayerDataPayload = data.allplayers[steamid];
                 const { state, name, team, match_stats } = newPlayerDataPayload;
 
-                // Init currentPlayerState obj if not exists
+                // Initialize currentPlayerState object if it does not exist
                 if (!this.currentPlayerState[steamid]) {
                     this.currentPlayerState[steamid] = {
                         name,
@@ -76,42 +91,47 @@ class GameStateMonitor extends EventEmitter {
                         health: state.health,
                         match_stats
                     };
-                    this.customEmit('playerStateUpdate', this.currentPlayerState);
-                 } else {
-
-                    // Match Stats Change
+                    stateChanged = true; // Flag state as changed
+                } else {
+                    // Match Stats Change check
                     if (JSON.stringify(this.currentPlayerState[steamid].match_stats) !== JSON.stringify(match_stats)) {
-                        // with MVP Check
+                        // MVP Check
                         if (match_stats.mvps > this.currentPlayerState[steamid].match_stats.mvps) {
                             this.customEmit('playerMVP', { steamid, name });
                         }
                         this.currentPlayerState[steamid].match_stats = match_stats;
-                        this.emitModifiedPlayerStateOnChange();
-                        console.log("match_stats have changed");
+                        stateChanged = true; // Flag state as changed
                     }
 
-                    
                     // Death of Player
                     if (this.currentPlayerState[steamid].health > 0 && state.health === 0) {
                         this.customEmit('playerDeath', { steamid, name });
                         this.currentPlayerState[steamid].health = state.health;
+                        stateChanged = true; // Flag state as changed
                     } else if (this.currentPlayerState[steamid].health !== state.health) {
                         this.currentPlayerState[steamid].health = state.health;
+                        stateChanged = true; // Consider health change as state change
                     }
 
                     // Team Change
-                    if (this.currentPlayerState[steamid].team !== team ) {
+                    if (this.currentPlayerState[steamid].team !== team) {
                         this.currentPlayerState[steamid].team = team;
-                        this.emitModifiedPlayerStateOnChange();
+                        stateChanged = true; // Flag state as changed
                     }
 
                     // Name Change
-                    if (this.currentPlayerState[steamid].name !== name ) {
+                    if (this.currentPlayerState[steamid].name !== name) {
                         this.currentPlayerState[steamid].name = name;
-                        this.emitModifiedPlayerStateOnChange();
+                        stateChanged = true; // Flag state as changed
                     }
                 }
             });
+
+            // After processing all players, emit the state update if any changes were detected
+            if (stateChanged) {
+                this.emitModifiedPlayerStateOnChange();
+            }
+
         }
 
         // Map State Changes
@@ -134,16 +154,19 @@ class GameStateMonitor extends EventEmitter {
     }
 
     emitModifiedPlayerStateOnChange() {
-        const playerStateWithoutHealth = {};
-        // Iterate over currentPlayerState to copy each player's state except for the health
-        Object.keys(this.currentPlayerState).forEach(steamid => {
-            const { health, ...rest } = this.currentPlayerState[steamid]; // Destructure to exclude health
-            playerStateWithoutHealth[steamid] = { ...rest }; // Copy the rest of the player's state
-        });
-        this.customEmit('playerStateUpdate', playerStateWithoutHealth);
-        this.inspectCurrentStates();
-
+        try {
+            // console.log('emitModifiedPlayerStateOnChange');
+            const playerStateWithoutHealth = {};
+            Object.keys(this.currentPlayerState).forEach(steamid => {
+                const { health, ...rest } = this.currentPlayerState[steamid];
+                playerStateWithoutHealth[steamid] = { ...rest };
+            });
+            this.customEmit('playerStateUpdate', {playerStateWithoutHealth});
+        } catch (error) {
+            console.error('Error in emitModifiedPlayerStateOnChange:', error);
+        }
     }
+
 
     emitWinTeam() {
         if(this.winTeam === 'CT') customEmit('winTeam_CT')
@@ -161,3 +184,4 @@ class GameStateMonitor extends EventEmitter {
 }
 
 module.exports = GameStateMonitor;
+ 

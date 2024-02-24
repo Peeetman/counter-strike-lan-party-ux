@@ -72,7 +72,9 @@ div.player-card > div.card-body{
 .player-name{
     font-weight: bold;
 }
-
+.dwgh, .beers{
+    font-size: 2rem;
+}
 
 
 .logo-container {

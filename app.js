@@ -76,9 +76,9 @@ gameStateMonitor.on('matchInfoUpdate', ({ newMatchState }) => {
     io.emit('matchInfoUpdate', ({ steamid, name }));
 })
 
-gameStateMonitor.on('playerStateUpdate', (currentPlayerState) => {
-    console.log(`playerStateUpdate: ${currentPlayerState}`);
-    io.emit('playerStateUpdate', currentPlayerState);
+gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
+    console.log(`playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`);
+    io.emit('playerStateUpdate', playerStateWithoutHealth);
 });
 
 //Dashboard Server

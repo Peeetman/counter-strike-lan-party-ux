@@ -1,49 +1,3 @@
-// fetching templates for player cards
-function fetchTemplate(url, targetId) {
-    fetch(url)
-        .then(response => response.text())
-        .then(html => {
-            // Inject the fetched HTML content into the specified target element
-            document.getElementById(targetId).innerHTML += html;
-        })
-        .catch(error => console.error('Error fetching template:', error));
-}
-
-// Load templates into respective elements
-$(document).ready(function() {
-    for (let i = 0; i < 5; i++) {
-        fetchTemplate('./templates/single-player-card-content.html', 'ct-wrapper');
-        fetchTemplate('./templates/single-player-card-content.html', 't-wrapper');
-    }
-})
-
-//date and time
-// Function to format and update the current time
-function updateCurrentTime() {
-    const now = new Date();
-    
-    // Format hours and minutes
-    const timeOptions = { hour: '2-digit', minute: '2-digit' };
-    const timeFormatter = new Intl.DateTimeFormat('de-DE', timeOptions);
-    const timeString = timeFormatter.format(now);
-    
-    // Format day, month, and year
-    const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const dateFormatter = new Intl.DateTimeFormat('de-DE', dateOptions);
-    const dateString = dateFormatter.format(now);
-    
-    // Combine both parts
-    const dateTimeString = `${timeString}, ${dateString}`;
-    
-    // Update the span content
-    document.getElementById('currentTime').textContent = dateTimeString;
-}
-
-// Update the time immediately
-updateCurrentTime();
-
-// Optionally, set an interval to update the time every minute
-setInterval(updateCurrentTime, 60000);
 
 // public/script.js
 const socket = io();
@@ -91,3 +45,68 @@ socket.on('playerMVP', ({ steamid, name }) => {
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
 });
+
+// Function to handle the playerStateUpdate event
+socket.on('playerStateUpdate', currentPlayerState => {
+    console.log(currentPlayerState);
+    
+    Object.keys(currentPlayerState).forEach(steamid => {
+        const player = currentPlayerState[steamid]; // Destructure to exclude health
+        const targetId = player.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
+        createPlayerCard(player, targetId);
+    });
+    
+});
+
+
+//date and time
+// Function to format and update the current time
+function updateCurrentTime() {
+    const now = new Date();
+    // Format hours and minutes
+    const timeOptions = { hour: '2-digit', minute: '2-digit' };
+    const timeFormatter = new Intl.DateTimeFormat('de-DE', timeOptions);
+    const timeString = timeFormatter.format(now);
+    // Format day, month, and year
+    const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const dateFormatter = new Intl.DateTimeFormat('de-DE', dateOptions);
+    const dateString = dateFormatter.format(now);
+    // Combine both parts
+    const dateTimeString = `${timeString}, ${dateString}`;
+    // Update the span content
+    document.getElementById('currentTime').textContent = dateTimeString;
+}
+// Update the time immediately and interval it every minute
+updateCurrentTime();
+setInterval(updateCurrentTime, 60000);
+
+// Function to fetch the player card template and populate it with data
+function createPlayerCard(player, targetId) {
+    fetch('./templates/single-player-card-content.html')
+        .then(response => response.text())
+        .then(templateHtml => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(templateHtml, 'text/html');
+            const playerCard = doc.querySelector('.card');
+            playerCard.id = `player-card-${player.steamid}`;
+
+            // Populate the card with the player's data
+            populatePlayerCard(playerCard, player);
+
+            // Append the card to the target element
+            document.getElementById(targetId).appendChild(playerCard);
+        })
+        .catch(error => console.error('Error fetching template:', error));
+}
+
+// Function to populate the player card with data
+function populatePlayerCard(playerCard, player) {
+    playerCard.querySelector('.player-name').textContent = player.name;
+    playerCard.querySelector('.kills').textContent = player.match_stats.kills;
+    playerCard.querySelector('.deaths').textContent = player.match_stats.deaths;
+    playerCard.querySelector('.assists').textContent = player.match_stats.assists;
+    playerCard.querySelector('.mvps').textContent = player.match_stats.mvps;
+    playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? player.match_stats.kills / player.match_stats.deaths : player.match_stats.kills);
+    // For example:
+    // playerCard.querySelector('.player-image').src = './path/to/avatars/' + player.avatarFileName;
+}

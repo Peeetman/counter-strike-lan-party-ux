@@ -2,6 +2,11 @@
 // public/script.js
 const socket = io();
 
+socket.on('eventText', (eventText) => {
+    console.log(`eventText: ${eventText}`);
+    document.querySelector("#event-text").textContent = eventText;
+})
+
 socket.on('bombPlanted', () => {
     console.log('The bomb has been planted!');
 });

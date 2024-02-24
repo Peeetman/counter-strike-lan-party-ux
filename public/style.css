@@ -35,6 +35,13 @@
     font-size: 8rem;
     font-weight: bold;
 }
+#event-text{
+    font-size: 4rem;
+}
+
+#mapmode-wrapper{
+    width: 33%;
+}
 
 #t-wrapper{
     margin-left: 5%;

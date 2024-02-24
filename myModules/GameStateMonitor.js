@@ -132,7 +132,7 @@ class GameStateMonitor extends EventEmitter {
                 this.emitModifiedPlayerStateOnChange();
             }
         }
-        
+
         // Map State Changes
         if (data.map) {
             const currentMapData = data.map
@@ -146,7 +146,6 @@ class GameStateMonitor extends EventEmitter {
             };
 
             if (JSON.stringify(this.currentMatchState) !== JSON.stringify(newMatchState)) {
-                console.log("DIFFERENT MATCH STATES")
                 this.currentMatchState = newMatchState;
                 this.customEmit('matchInfoUpdate', { newMatchState });
             }
@@ -176,7 +175,7 @@ class GameStateMonitor extends EventEmitter {
         }
     }
 
-    customEmit(eventName, data) {
+    customEmit(eventName, data = false) {
         try{
             if (this.inspect_mode) {
                 console.log('Current Game State:', this.currentGameState);

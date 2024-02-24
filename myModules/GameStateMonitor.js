@@ -63,8 +63,8 @@ class GameStateMonitor extends EventEmitter {
 
         // All Player Data
         if (data.allplayers) {
-            console.log("data.allplayers exists");
             /*
+            console.log("data.allplayers exists");
             //Testing behavour of Object.keys to understand it better
             Object.keys(data.allplayers).forEach(steamid => {
                 console.log(steamid);
@@ -131,9 +131,8 @@ class GameStateMonitor extends EventEmitter {
             if (stateChanged) {
                 this.emitModifiedPlayerStateOnChange();
             }
-
         }
-
+        
         // Map State Changes
         if (data.map) {
             const currentMapData = data.map
@@ -141,12 +140,13 @@ class GameStateMonitor extends EventEmitter {
                 mode: currentMapData.mode,
                 name: currentMapData.name,
                 phase: currentMapData.phase,
-                round: currentMapData.phase,
+                round: currentMapData.round,
                 team_ct_score: currentMapData.team_ct.score,
                 team_t_score: currentMapData.team_t.score
             };
 
             if (JSON.stringify(this.currentMatchState) !== JSON.stringify(newMatchState)) {
+                console.log("DIFFERENT MATCH STATES")
                 this.currentMatchState = newMatchState;
                 this.customEmit('matchInfoUpdate', { newMatchState });
             }
@@ -167,19 +167,26 @@ class GameStateMonitor extends EventEmitter {
         }
     }
 
-
     emitWinTeam() {
-        if(this.winTeam === 'CT') customEmit('winTeam_CT')
-        else customEmit('winTeam_T')
+        try{
+            if(this.winTeam === 'CT') this.customEmit('winTeam_CT')
+            else this.customEmit('winTeam_T')
+        } catch (error) {
+            console.error('Error in emitWinTeam:', error);
+        }
     }
 
     customEmit(eventName, data) {
-        if (this.inspect_mode) {
-            console.log('Current Game State:', this.currentGameState);
-            console.log('Current Player State:', this.currentPlayerState);
+        try{
+            if (this.inspect_mode) {
+                console.log('Current Game State:', this.currentGameState);
+                console.log('Current Player State:', this.currentPlayerState);
+            }
+            // OG Emit Function
+            this.emit(eventName, data);
+        } catch (error) {
+            console.error('Error in customEmit:', error);
         }
-        // OG Emit Function
-        this.emit(eventName, data);
     }
 }
 

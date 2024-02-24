@@ -72,8 +72,8 @@ gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
 })
 
 gameStateMonitor.on('matchInfoUpdate', ({ newMatchState }) => {
-    console.log(`matchInfoUpdate: ${newMatchState}`);
-    io.emit('matchInfoUpdate', ({ steamid, name }));
+    console.log(`matchInfoUpdate: ${JSON.stringify(newMatchState)}`);
+    io.emit('matchInfoUpdate', ({ newMatchState }));
 })
 
 gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {

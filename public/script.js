@@ -44,7 +44,15 @@ socket.on('playerMVP', ({ steamid, name }) => {
 
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
+    document.querySelector("#match-status-wrapper .border-bottom-0 span").textContent = `Round: ${newMatchState.round}`;
+    // Update team scores
+    document.getElementById("score_t").textContent = newMatchState.team_t_score;
+    document.getElementById("score_ct").textContent = newMatchState.team_ct_score;
+    // Update map name and mode
+    document.querySelector(".mapname").textContent = newMatchState.name;
+    document.querySelector(".mode").textContent = newMatchState.mode.toUpperCase(); // Assuming you want the mode in uppercase
 });
+
 
 // Function to handle the playerStateUpdate event
 socket.on('playerStateUpdate', currentPlayerState => {

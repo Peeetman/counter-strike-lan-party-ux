@@ -84,6 +84,10 @@ class GameStateMonitor extends EventEmitter {
                 const newPlayerDataPayload = data.allplayers[steamid];
                 const { state, name, team, match_stats, weapons } = newPlayerDataPayload;
 
+                const weaponType = "Grenade";
+                const weaponState = "active";
+                const activeGrenade = this.filterObjectsByTypeAndState(weapons, weaponType, weaponState)
+
                 // Initialize currentPlayerState object if it does not exist
                 if (!this.currentPlayerState[steamid]) {
                     this.currentPlayerState[steamid] = {
@@ -91,8 +95,10 @@ class GameStateMonitor extends EventEmitter {
                         team,
                         health: state.health,
                         match_stats,
-                        weapons
+                        weapons,
+                        timestampLastActiveGrenade: 0
                     };
+
                     PlayerStateChanged = true; // Flag state as changed
                 } else {
                     // Match Stats
@@ -111,12 +117,7 @@ class GameStateMonitor extends EventEmitter {
                         this.currentPlayerState[steamid].health = state.health;
                         PlayerStateChanged = true; // Flag state as changed
 
-                        //Check for grenades holstered on death
-                        // console.log(this.currentPlayerState[steamid].weapons)
-                        const weaponType = "Grenade";
-                        const weaponState = "active";
-                        const activeGrenade = this.filterObjectsByTypeAndState(this.currentPlayerState[steamid].weapons, weaponType, weaponState)
-                        if (Object.keys(activeGrenade).length > 0) {
+                        if(Date.now() - this.timestampLastActiveGrenade < 1000 || activeGrenade) {
                             console.log(`GameStateMonitor.js: ${name} died with grenade in hand`)
                             this.customEmit('playerDeathWithGrenade', { steamid, name });
                         }
@@ -138,10 +139,12 @@ class GameStateMonitor extends EventEmitter {
                         PlayerStateChanged = true;
                     }
 
-                    // Weapon Change
+                    // Weapon Change   
                     if (JSON.stringify(this.currentPlayerState[steamid].weapons) !== JSON.stringify(weapons)) {
+                        if ( activeGrenade ) this.timestampLastActiveGrenade = Date.now();
                         this.currentPlayerState[steamid].weapons = weapons;
                         // PlayerStateChanged = true; // no emit
+
                     }
                 }
             });
@@ -199,7 +202,7 @@ class GameStateMonitor extends EventEmitter {
             // console.log('emitModifiedPlayerStateOnChange');
             const playerStateWithoutHealth = {};
             Object.keys(this.currentPlayerState).forEach(steamid => {
-                const { health, weapons, ...rest } = this.currentPlayerState[steamid];
+                const { health, weapons, weaponsTimestamp, ...rest } = this.currentPlayerState[steamid];
                 playerStateWithoutHealth[steamid] = { 
                     ...rest,
                     alive: (health > 0 ? true : false)

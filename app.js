@@ -137,22 +137,22 @@ gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
 })
 
 gameStateMonitor.on('matchInfoUpdate', ({ newMatchState }) => {
-    // const eventText = `matchInfoUpdate: ${newMatchState}`;
-    const eventText = `matchInfoUpdate: ${JSON.stringify(newMatchState)}`;
+    const eventText = `matchInfoUpdate: ${newMatchState}`;
+    // const eventText = `matchInfoUpdate: ${JSON.stringify(newMatchState)}`;
     io.emit('matchInfoUpdate', ({ newMatchState }));
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
-    // const eventText = `playerStateUpdate: ${playerStateWithoutHealth}`;
-    const eventText = `playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`;
+    const eventText = `playerStateUpdate: ${playerStateWithoutHealth}`;
+    // const eventText = `playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`;
+    
     //inject player-img
     Object.keys(playerStateWithoutHealth).forEach(steamid => {
         if (participantsData[steamid] && participantsData[steamid].playerImages && participantsData[steamid].playerImages.length > 0) {
             playerStateWithoutHealth[steamid].playerImage = participantsData[steamid].playerImages[0]
         } else playerStateWithoutHealth[steamid].playerImage = playerAvatarBasePath + '/placeholder.png';
     });
-    console.log(playerStateWithoutHealth)
 
     io.emit('playerStateUpdate', playerStateWithoutHealth);
     console.log('Server: ' + eventText);

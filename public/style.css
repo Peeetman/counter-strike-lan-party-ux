@@ -116,7 +116,7 @@ div.player-card > div.card-body{
     color: red;
     font-weight: bold;
     z-index: 3;
-    pointer-events: none; /* Ensures text doesn't interfere with card interaction */
+    pointer-events: none;
 }
 
 .player-card.not-alive .card-img-top {
@@ -124,20 +124,20 @@ div.player-card > div.card-body{
 }
 
 .player-card {
-    position: relative; /* Required for the pseudo-elements to position correctly */
-    overflow: hidden; /* Ensures the pseudo-elements don't extend outside the card */
+    position: relative;
+    overflow: hidden;
 }
 
 
 .logo-container {
-    position: fixed; /* Change to fixed */
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
     border-radius: 50%;
     padding: 2px;
-    z-index: 999; /* Ensure the logo appears above other content */
+    z-index: 999;
 }
 
 /* Optional: Adjust logo size */

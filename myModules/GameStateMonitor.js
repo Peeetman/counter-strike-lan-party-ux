@@ -81,7 +81,7 @@ class GameStateMonitor extends EventEmitter {
 
             Object.keys(data.allplayers).forEach(steamid => {
                 const newPlayerDataPayload = data.allplayers[steamid];
-                const { state, name, team, match_stats } = newPlayerDataPayload;
+                const { state, name, team, match_stats, weapons } = newPlayerDataPayload;
 
                 // Initialize currentPlayerState object if it does not exist
                 if (!this.currentPlayerState[steamid]) {
@@ -89,11 +89,12 @@ class GameStateMonitor extends EventEmitter {
                         name,
                         team,
                         health: state.health,
-                        match_stats
+                        match_stats,
+                        weapons
                     };
                     PlayerStateChanged = true; // Flag state as changed
                 } else {
-                    // Match Stats Change check
+                    // Match Stats
                     if (JSON.stringify(this.currentPlayerState[steamid].match_stats) !== JSON.stringify(match_stats)) {
                         // MVP Check
                         if (match_stats.mvps > this.currentPlayerState[steamid].match_stats.mvps) {
@@ -108,21 +109,38 @@ class GameStateMonitor extends EventEmitter {
                         this.customEmit('playerDeath', { steamid, name });
                         this.currentPlayerState[steamid].health = state.health;
                         PlayerStateChanged = true; // Flag state as changed
+
+                        //Check for grenades holstered on death
+                        console.log(this.currentPlayerState[steamid].weapons)
+                        const weaponType = "Grenade";
+                        const weaponState = "active";
+                        const activeGrenade = this.filterObjectsByTypeAndState(this.currentPlayerState[steamid].weapons, weaponType, weaponState)
+                        if (Object.keys(activeGrenade).length > 0) {
+                            console.log(`GameStateMonitor.js: ${name} died with grenade in hand`)
+                            this.customEmit('playerDeathWithGrenade', { steamid, name });
+                        }
+
                     } else if (this.currentPlayerState[steamid].health !== state.health) {
                         this.currentPlayerState[steamid].health = state.health;
-                        PlayerStateChanged = true; // Consider health change as state change
+                        PlayerStateChanged = true;
                     }
 
                     // Team Change
                     if (this.currentPlayerState[steamid].team !== team) {
                         this.currentPlayerState[steamid].team = team;
-                        PlayerStateChanged = true; // Flag state as changed
+                        PlayerStateChanged = true;
                     }
 
                     // Name Change
                     if (this.currentPlayerState[steamid].name !== name) {
                         this.currentPlayerState[steamid].name = name;
-                        PlayerStateChanged = true; // Flag state as changed
+                        PlayerStateChanged = true;
+                    }
+
+                    // Weapon Change
+                    if (JSON.stringify(this.currentPlayerState[steamid].weapons) !== JSON.stringify(weapons)) {
+                        this.currentPlayerState[steamid].weapons = weapons;
+                        PlayerStateChanged = true;
                     }
                 }
             });
@@ -161,6 +179,16 @@ class GameStateMonitor extends EventEmitter {
         }
     }
 
+    filterObjectsByTypeAndState(jsonObject, type, state) {
+      const filteredObjects = {};
+      for (const key in jsonObject) {
+        if (jsonObject[key].type === type && jsonObject[key].state === state) {
+          filteredObjects[key] = jsonObject[key];
+        }
+      }
+      return filteredObjects;
+    }
+
     emitCurrentMatchState(){
         const newMatchState = this.currentMatchState
         this.customEmit('matchInfoUpdate', { newMatchState });
@@ -171,7 +199,7 @@ class GameStateMonitor extends EventEmitter {
             // console.log('emitModifiedPlayerStateOnChange');
             const playerStateWithoutHealth = {};
             Object.keys(this.currentPlayerState).forEach(steamid => {
-                const { health, ...rest } = this.currentPlayerState[steamid];
+                const { health, weapons, ...rest } = this.currentPlayerState[steamid];
                 playerStateWithoutHealth[steamid] = { 
                     ...rest,
                     alive: (health > 0 ? true : false)

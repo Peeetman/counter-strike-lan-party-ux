@@ -43,6 +43,11 @@ socket.on('playerDeath', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] has died.`);
 });
 
+socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
+    console.log(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`);
+});
+
+
 socket.on('playerMVP', ({ steamid, name }) => {
     console.log(`MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`);
 });

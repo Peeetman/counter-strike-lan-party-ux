@@ -85,6 +85,14 @@ gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
     io.emit('playerDeath', ({ steamid, name }));
 })
 
+gameStateMonitor.on('playerDeathWithGrenade', ({ steamid, name }) => {
+    const eventText = `Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`
+    console.log('Server: ' + eventText);
+    const eventTextAlt = `${name} died with a grenade in the hand. noob!`
+    io.emit('eventText', eventTextAlt);
+    io.emit('playerDeathWithGrenade', ({ steamid, name }));
+})
+
 gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
     const eventText = `MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`;
     console.log('Server: ' + eventText);

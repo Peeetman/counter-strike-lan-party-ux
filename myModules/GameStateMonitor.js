@@ -140,7 +140,7 @@ class GameStateMonitor extends EventEmitter {
                     // Weapon Change
                     if (JSON.stringify(this.currentPlayerState[steamid].weapons) !== JSON.stringify(weapons)) {
                         this.currentPlayerState[steamid].weapons = weapons;
-                        PlayerStateChanged = true;
+                        // PlayerStateChanged = true; // no emit
                     }
                 }
             });

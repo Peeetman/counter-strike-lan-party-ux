@@ -49,9 +49,17 @@ socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`);
 });
 
+
+let mvpAudio = new Audio('./media/player-content/force/caramelldansen-hd.mp3');
 socket.on('playerMVP', ({ steamid, name }) => {
     console.log(`MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`);
     document.getElementById("mvp-name").textContent = name;
+
+    // Audio Load
+    mvpAudio.src = clientPlayerState[steamid].mvpSounds;
+    mvpAudio.volume = 0.2;
+    mvpAudio.load();
+    
     mvpWrapperIn();
 });
 
@@ -213,11 +221,21 @@ function mvpWrapperIn(){
     // To expand outwards
     document.getElementById('mvp-animation-wrapper').classList.remove('contract-inwards-animation');
     document.getElementById('mvp-animation-wrapper').classList.add('expand-outwards-animation');
+
+    mvpAudio.play();
+    setTimeout(() => {
+        mvpAudio.pause();
+        mvpAudio.currentTime = 0;
+    }, "10000");
 }
 
 function mvpWrapperOut(){    
     // To expand outwards
     document.getElementById('mvp-animation-wrapper').classList.remove('expand-outwards-animation');
     document.getElementById('mvp-animation-wrapper').classList.add('contract-inwards-animation');
+
+    //MVP Audio
+    mvpAudio.pause();
+    mvpAudio.currentTime = 0;
 }
 

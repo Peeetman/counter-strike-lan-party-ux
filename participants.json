@@ -3,7 +3,9 @@
     "folder": "force",
     "beers" : 0,
     "nadeDeaths" : 0,
-    "totalKills": 0
+    "totalKills": 0,
+    "mvpSoundFileName" : "caramelldansen-hd.mp3",
+    "mvpVideoUrl" : ""
   },
   "76561197997914233": {
     "folder": "peeet",

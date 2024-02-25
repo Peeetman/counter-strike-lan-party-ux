@@ -24,7 +24,7 @@ const gameStateMonitor = new GameStateMonitor(csgoGSI, false);
 
 // Participant Config with player-image paths and mvp presets
 let participantsData = {}
-const playerAvatarBasePath = './media/player-content/player-avatars'
+const playerAvatarBasePath = './media/player-content'
 async function loadParticipantsConfig() {
     try {
         const configPath = path.join(__dirname, 'participants.json');
@@ -32,18 +32,29 @@ async function loadParticipantsConfig() {
         participantsData = JSON.parse(data);
 
         for (const steamid of Object.keys(participantsData)) {
+            //Player Images
             const folderName = participantsData[steamid].folder;
-
             try {
-                const files = await fsPromises.readdir(path.join(__dirname, 'public', 'media', 'player-content', 'player-avatars', folderName));
+                const files = await fsPromises.readdir(path.join(__dirname, 'public', 'media', 'player-content', folderName));
+                // Map Immages
                 // List of common image file extensions
                 const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
                 // Filter files by checking if their extension matches any in the list, then map to full paths
                 const imageFilePaths = files.filter(file => 
                                             imageExtensions.some(ext => file.endsWith(ext)))
                                             .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-
                 participantsData[steamid].playerImages = imageFilePaths;
+
+                //Map Soundfile Paths
+                // Map Immages
+                // List of common image file extensions
+                const soundFileExtensions = ['.mp3', '.wav', '.ogg'];
+                // Filter files by checking if their extension matches any in the list, then map to full paths
+                const soundFilePaths = files.filter(file => 
+                                            soundFileExtensions.some(ext => file.endsWith(ext)))
+                                            .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
+                participantsData[steamid].mvpSounds = soundFilePaths;
+
             } catch (err) {
                 console.error('Error reading or processing player config file:', err);
             }
@@ -145,9 +156,15 @@ gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
     
     //inject player-img
     Object.keys(playerStateWithoutHealth).forEach(steamid => {
+        // player img injection
         if (participantsData[steamid] && participantsData[steamid].playerImages && participantsData[steamid].playerImages.length > 0) {
             playerStateWithoutHealth[steamid].playerImage = participantsData[steamid].playerImages[0]
         } else playerStateWithoutHealth[steamid].playerImage = playerAvatarBasePath + '/placeholder.png';
+
+        // player mvp sound injection
+        if (participantsData[steamid] && participantsData[steamid].mvpSounds && participantsData[steamid].mvpSounds.length > 0) {
+            playerStateWithoutHealth[steamid].mvpSounds = participantsData[steamid].mvpSounds[0]
+        } else playerStateWithoutHealth[steamid].mvpSounds = playerAvatarBasePath + '/placeholder.mp3';
     });
 
     io.emit('playerStateUpdate', playerStateWithoutHealth);

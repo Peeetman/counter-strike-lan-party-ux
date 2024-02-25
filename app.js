@@ -5,7 +5,8 @@ const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 const path = require('path');
-
+const fs = require('fs');
+const fsPromises = fs.promises;
 
 app.use(express.static('public'));
 
@@ -20,6 +21,40 @@ const csgoGSI = new CSGOGSI({
 });
 const gameStateMonitor = new GameStateMonitor(csgoGSI, false);
 
+
+// Participant Config with player-image paths and mvp presets
+let participantsData = {}
+const playerAvatarBasePath = './media/player-content/player-avatars'
+async function loadParticipantsConfig() {
+    try {
+        const configPath = path.join(__dirname, 'participants.json');
+        const data = await fsPromises.readFile(configPath, 'utf8');
+        participantsData = JSON.parse(data);
+
+        for (const steamid of Object.keys(participantsData)) {
+            const folderName = participantsData[steamid].folder;
+
+            try {
+                const files = await fsPromises.readdir(path.join(__dirname, 'public', 'media', 'player-content', 'player-avatars', folderName));
+                // List of common image file extensions
+                const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+                // Filter files by checking if their extension matches any in the list, then map to full paths
+                const imageFilePaths = files.filter(file => 
+                                            imageExtensions.some(ext => file.endsWith(ext)))
+                                            .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
+
+                participantsData[steamid].playerImages = imageFilePaths;
+            } catch (err) {
+                console.error('Error reading or processing player config file:', err);
+            }
+        } 
+    } catch (err) {
+        console.error('Error reading or processing player config file:', err);
+    }
+    console.log(participantsData)
+}
+// Load the configuration at server startup
+loadParticipantsConfig();
 
 gameStateMonitor.on('bombPlanted', () => { 
     const eventText = 'Bomb planted!';
@@ -102,18 +137,27 @@ gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
 })
 
 gameStateMonitor.on('matchInfoUpdate', ({ newMatchState }) => {
-    const eventText = `matchInfoUpdate: ${newMatchState}`;
-    // const eventText = `matchInfoUpdate: ${JSON.stringify(newMatchState)}`;
+    // const eventText = `matchInfoUpdate: ${newMatchState}`;
+    const eventText = `matchInfoUpdate: ${JSON.stringify(newMatchState)}`;
     io.emit('matchInfoUpdate', ({ newMatchState }));
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
-    const eventText = `playerStateUpdate: ${playerStateWithoutHealth}`;
-    // const eventText = `playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`;
+    // const eventText = `playerStateUpdate: ${playerStateWithoutHealth}`;
+    const eventText = `playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`;
+    //inject player-img
+    Object.keys(playerStateWithoutHealth).forEach(steamid => {
+        if (participantsData[steamid] && participantsData[steamid].playerImages && participantsData[steamid].playerImages.length > 0) {
+            playerStateWithoutHealth[steamid].playerImage = participantsData[steamid].playerImages[0]
+        } else playerStateWithoutHealth[steamid].playerImage = playerAvatarBasePath + '/placeholder.png';
+    });
+    console.log(playerStateWithoutHealth)
+
     io.emit('playerStateUpdate', playerStateWithoutHealth);
     console.log('Server: ' + eventText);
 });
+
 
 //Dashboard Server
 io.on('connection', (socket) => {

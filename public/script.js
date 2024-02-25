@@ -55,12 +55,10 @@ socket.on('playerMVP', ({ steamid, name }) => {
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
     document.querySelector("#match-status-wrapper .border-bottom-0 span").textContent = `Round: ${newMatchState.round}`;
-    // Update team scores
     document.getElementById("score_t").textContent = newMatchState.team_t_score;
     document.getElementById("score_ct").textContent = newMatchState.team_ct_score;
-    // Update map name and mode
     document.querySelector(".mapname").textContent = newMatchState.name;
-    document.querySelector(".mode").textContent = newMatchState.mode.toUpperCase(); // Assuming you want the mode in uppercase
+    document.querySelector(".mode").textContent = newMatchState.mode;
 });
 
 
@@ -69,7 +67,7 @@ let clientPlayerState = {}
 socket.on('playerStateUpdate', currentPlayerState => {
     console.log(currentPlayerState);
     clientPlayerState = currentPlayerState;
-    console.log(clientPlayerState)
+    // console.log(clientPlayerState)
 
     // Create or Update Player Cards
     Object.keys(currentPlayerState).forEach(steamid => {
@@ -179,19 +177,8 @@ function populatePlayerCard(playerCard, steamid, player) {
     playerCard.querySelector('.mvps').textContent = player.match_stats.mvps;
     playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
     // player img
-    const imageUrl = `./media/player-content/player_avatars/${steamid}.png`;
-    const placeholderUrl = './media/player-content/player_avatars/placeholder.png';
     const imgElement = playerCard.querySelector('.player-image');
-    imgElement.src = imageUrl;
-    try{        
-        imgElement.onerror = function() {
-            this.onerror = null;
-            this.src = placeholderUrl;
-        };
-    } catch (e) {
-        
-    }
- 
+    imgElement.src = player.playerImage
 }
 
 function removeUnmatchedPlayerCards(steamids) {

@@ -22,6 +22,7 @@ class GameStateMonitor extends EventEmitter {
     }
 
     handleGameStateChange(data) {
+        // console.log(data);
         // Round Phase Changes
         if (data.round && this.currentGameState.roundPhase !== data.round.phase) {
             this.currentGameState.roundPhase = data.round.phase;
@@ -111,7 +112,7 @@ class GameStateMonitor extends EventEmitter {
                         PlayerStateChanged = true; // Flag state as changed
 
                         //Check for grenades holstered on death
-                        console.log(this.currentPlayerState[steamid].weapons)
+                        // console.log(this.currentPlayerState[steamid].weapons)
                         const weaponType = "Grenade";
                         const weaponState = "active";
                         const activeGrenade = this.filterObjectsByTypeAndState(this.currentPlayerState[steamid].weapons, weaponType, weaponState)
@@ -155,7 +156,6 @@ class GameStateMonitor extends EventEmitter {
 
             // After processing all players, emit the state update if any changes were detected
             if (PlayerStateChanged) {
-                console.log("sendupdate to client")
                 this.emitModifiedPlayerStateOnChange();
             }
         }
@@ -223,8 +223,8 @@ class GameStateMonitor extends EventEmitter {
     customEmit(eventName, data = false) {
         try{
             if (this.inspect_mode) {
-                console.log('Current Game State:', this.currentGameState);
-                console.log('Current Player State:', this.currentPlayerState);
+                console.log('Current Game State:', JSON.stringify(this.currentGameState));
+                console.log('Current Player State:', JSON.stringify(this.currentPlayerState));
             }
             // OG Emit Function
             this.emit(eventName, data);

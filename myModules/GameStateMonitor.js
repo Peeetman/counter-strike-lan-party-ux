@@ -86,7 +86,7 @@ class GameStateMonitor extends EventEmitter {
 
                 const weaponType = "Grenade";
                 const weaponState = "active";
-                const activeGrenade = this.filterObjectsByTypeAndState(weapons, weaponType, weaponState)
+                const activeGrenade = Object.keys(this.filterObjectsByTypeAndState(weapons, weaponType, weaponState)).length
 
                 // Initialize currentPlayerState object if it does not exist
                 if (!this.currentPlayerState[steamid]) {
@@ -117,7 +117,7 @@ class GameStateMonitor extends EventEmitter {
                         this.currentPlayerState[steamid].health = state.health;
                         PlayerStateChanged = true; // Flag state as changed
 
-                        if(Date.now() - this.timestampLastActiveGrenade < 1000 || activeGrenade) {
+                        if(Date.now() - this.timestampLastActiveGrenade < 1000 || activeGrenade > 0) {
                             console.log(`GameStateMonitor.js: ${name} died with grenade in hand`)
                             this.customEmit('playerDeathWithGrenade', { steamid, name });
                         }
@@ -141,7 +141,7 @@ class GameStateMonitor extends EventEmitter {
 
                     // Weapon Change   
                     if (JSON.stringify(this.currentPlayerState[steamid].weapons) !== JSON.stringify(weapons)) {
-                        if ( activeGrenade ) this.timestampLastActiveGrenade = Date.now();
+                        if ( activeGrenade > 0 ) this.timestampLastActiveGrenade = Date.now();
                         this.currentPlayerState[steamid].weapons = weapons;
                         // PlayerStateChanged = true; // no emit
 

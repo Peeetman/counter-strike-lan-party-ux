@@ -51,7 +51,9 @@
     "folder": "manuel",
     "beers" : 0,
     "nadeDeaths" : 0,
-    "totalKills": 0
+    "totalKills": 0,
+    "mvpSoundFile" : "",
+    "mvpVideo" : ""
   },
   "76561198881105836": {
     "folder": "dimi",

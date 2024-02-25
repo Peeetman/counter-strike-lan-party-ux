@@ -113,17 +113,15 @@ gameStateMonitor.on('winTeam_T', () => {
 })
 
 gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
-    const eventText = `Player with ID [${steamid}] and Name [${name}] has died.`
+    const eventText = `Player with ID [${steamid}] and Name [${name}] has died.`;
     console.log('Server: ' + eventText);
-    const eventTextAlt = `${name} has died.`
-    io.emit('eventText', eventTextAlt);
     io.emit('playerDeath', ({ steamid, name }));
 })
 
 gameStateMonitor.on('playerDeathWithGrenade', ({ steamid, name }) => {
     const eventText = `Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`
     console.log('Server: ' + eventText);
-    const eventTextAlt = `${name} died with a grenade in the hand. noob!`
+    const eventTextAlt = `${name} died with a grenade in the hand. noob!`;
     io.emit('eventText', eventTextAlt);
     io.emit('playerDeathWithGrenade', ({ steamid, name }));
 })
@@ -131,8 +129,6 @@ gameStateMonitor.on('playerDeathWithGrenade', ({ steamid, name }) => {
 gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
     const eventText = `MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`;
     console.log('Server: ' + eventText);
-    const eventTextAlt = `${name} is MVP.`;
-    io.emit('eventText', eventTextAlt);
     io.emit('playerMVP', ({ steamid, name }));
 })
 

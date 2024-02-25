@@ -2,6 +2,7 @@
 // public/script.js
 const socket = io();
 
+// Visuelle Events
 socket.on('eventText', (eventText) => {
     console.log(`eventText: ${eventText}`);
     document.querySelector("#event-text").textContent = eventText;
@@ -25,6 +26,7 @@ socket.on('roundBegin', () => {
 
 socket.on('roundFreeze', () => {
     console.log('A Freeze has begun.');
+    mvpWrapperOut();
 });
 
 socket.on('roundEnd', () => {
@@ -45,14 +47,15 @@ socket.on('playerDeath', ({ steamid, name }) => {
 
 socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`);
-    alert(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`)
 });
-
 
 socket.on('playerMVP', ({ steamid, name }) => {
     console.log(`MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`);
+    document.getElementById("mvp-name").textContent = name;
+    mvpWrapperIn();
 });
 
+// Data Events
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
     document.querySelector("#match-status-wrapper .border-bottom-0 span").textContent = `Round: ${newMatchState.round}`;
@@ -61,7 +64,6 @@ socket.on('matchInfoUpdate', ({ newMatchState }) => {
     document.querySelector(".mapname").textContent = newMatchState.name;
     document.querySelector(".mode").textContent = newMatchState.mode;
 });
-
 
 let clientPlayerState = {}
 // Function to handle the playerStateUpdate event
@@ -159,7 +161,6 @@ function reRenderAllPlayerCards() {
     });
 }
 
-
 // Helper function to update the alive status of a player card
 function updateAliveStatus(playerCard, isAlive) {
     if (!isAlive) {
@@ -205,3 +206,18 @@ function injectDummyPlayerCards() {
 document.addEventListener('DOMContentLoaded', function() {
     // injectDummyPlayerCards();
 });
+
+
+// Animation Helpers
+function mvpWrapperIn(){    
+    // To expand outwards
+    document.getElementById('mvp-animation-wrapper').classList.remove('contract-inwards-animation');
+    document.getElementById('mvp-animation-wrapper').classList.add('expand-outwards-animation');
+}
+
+function mvpWrapperOut(){    
+    // To expand outwards
+    document.getElementById('mvp-animation-wrapper').classList.remove('expand-outwards-animation');
+    document.getElementById('mvp-animation-wrapper').classList.add('contract-inwards-animation');
+}
+

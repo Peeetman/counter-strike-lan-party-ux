@@ -74,7 +74,7 @@ async function loadParticipantsConfig() {
         console.error('Error reading or processing player config file:', err);
     }
     console.log('Server: ParticipantsConfig reloaded');
-    console.log(participantsConfig)
+    // console.log(participantsConfig)
     return participantsConfig;
 }
 
@@ -178,6 +178,7 @@ io.on('connection', async (socket) => {
 
     participantsConfig = await loadParticipantsConfig();
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
+    console.log('SOCKET IO: Sent Clients participantsConfig');
 
     // For example, you can emit a message to the client
     socket.emit('connected', 'SOCKET IO: You are now connected to the server.');

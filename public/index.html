@@ -47,27 +47,44 @@
 
         <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-evenly align-items-center">
 
-            <div id="match-status-wrapper" class="d-flex flex-column align-items-center w-50">
-                <div class="p-3 border border-bottom-0"><span>roundnumber</span></div>
-                <div id="score-box" class="d-flex justify-content-center w-100">
+            <div><span>&nbsp</span></div>
 
-                    <div class="team-box team-t w-25 d-flex justify-content-around border-bottom border-top"><span>T</span></div>
+            <div id="eventText-animation-wrapper" class="d-flex w-100">
 
-                    <div class="w-50 d-flex flex-row justify-content-center align-items-center border">
-                        <div id="score_t" class="w-100 justify-content-start ">??</div>
-                        <div class="w-100">:</div>
-                        <div id="score_ct" class="w-100 justify-content-end">??</div>
+                <div class="left-panel slideIn w-100 d-flex flex-column justify-content-center align-items-end">
+
+                    <div class="p-3 border-top border-start">Round</div>
+
+                    <div class="team-box w-50 d-flex flex-row justify-content-around border-top border-bottom">
+                        <span class="w-50 border-end  team-t">T</span>
+                        <div class="w-50 d-flex flex-row justify-content-center align-items-center">
+                            <div id="score_t">1</div>
+                        </div>
+                        <div id="score-seperator">:</div>
                     </div>
 
-                    <div class="team-box team-ct w-25 d-flex justify-content-around border-bottom border-top">CT</div>
+                    <div class="mapname p-3 border-bottom border-start">mapname</div>
 
                 </div>
-                <div id="mapmode-wrapper" class="p-3 d-flex justify-content-around border border-top-0">
-                    <div class="mapname">mapname</div>
-                    <!-- <div>&nbsp</div> -->
-                    <div class="mode">mode</div>
+
+                <div class="right-panel slideIn w-100 d-flex flex-column justify-content-center align-items-start">
+
+                    <div id="round-number" class="p-3 border-top border-end">XYZ</div>
+
+                    <div class="team-box w-50 d-flex flex-row justify-content-around border-top border-bottom">
+                        <div class="w-50 d-flex flex-row justify-content-center align-items-center">
+                            <div id="score_ct">1</div>
+                        </div>
+                        <span class="w-50 border-start team-ct">CT</span>
+                    </div>
+
+                    <div class="mode p-3 border-bottom border-end">mode</div>
+
                 </div>
+
             </div>
+
+            <div><span>&nbsp</span></div>
 
             <div id="player-cards-wrapper" class="w-100 d-flex flex-row justify-content-between align-items-center">
                 <div id="t-wrapper" class="d-flex w-50">

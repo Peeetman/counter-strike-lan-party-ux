@@ -1,5 +1,6 @@
 body {
     font-family: "Anta", sans-serif;
+    overflow-x: hidden;
 }
 
 .full-height-wrapper{
@@ -33,6 +34,15 @@ body {
 #score-box, .team-box{
     font-size: 8rem;
     font-weight: bold;
+}
+#score-seperator{
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    left: 50%;
+}
+.mapname, .mode{
+    min-width: 15%;
 }
 .team-ct{
     color: #2196f3;
@@ -210,4 +220,41 @@ body {
 }
 #mvp-name {
     font-weight: bold;
+}
+
+
+/*Event Text Animations*/
+@keyframes slideLeft {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+@keyframes slideRight {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(200%);
+    }
+}
+
+/* Apply the slideOut animation */
+#eventText-animation-wrapper > .left-panel.slideOut {
+    animation: slideLeft 1s forwards;
+}
+#eventText-animation-wrapper > .right-panel.slideOut {
+    animation: slideRight 1s forwards;
+}
+
+/* Apply the slideIn animation */
+#eventText-animation-wrapper > .left-panel.slideIn {
+    animation: slideLeft 1s forwards;
+    animation-direction: reverse;
+}
+#eventText-animation-wrapper > .right-panel.slideIn {
+    animation: slideRight 1s forwards;
+    animation-direction: reverse;
 }

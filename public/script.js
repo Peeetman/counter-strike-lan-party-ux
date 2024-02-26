@@ -63,8 +63,9 @@ socket.on('sendParticipantsConfig', ({ participantsConfig }) => {
 });
 
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
+    if(!newMatchState.mode) return;
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
-    document.querySelector("#match-status-wrapper .border-bottom-0 span").textContent = `Round: ${newMatchState.round}`;
+    document.querySelector("#round-number").textContent = newMatchState.round;
     document.getElementById("score_t").textContent = newMatchState.team_t_score;
     document.getElementById("score_ct").textContent = newMatchState.team_ct_score;
     document.querySelector(".mapname").textContent = newMatchState.name;
@@ -218,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Animation Helpers
 function mvpEffectStart({ steamid, name }) {
-
     if(!clientParticipantsConfig[steamid] || !clientParticipantsConfig[steamid].mvp) return false;
 
     document.getElementById("mvp-name").textContent = name;
@@ -262,4 +262,9 @@ function mvpEffectStop() {
         //Background Image unset
         document.getElementById('mvp-animation-wrapper').style.backgroundImage= 'unset';
     }, '500'); 
+}
+
+
+function eventTextEffectStart() {
+
 }

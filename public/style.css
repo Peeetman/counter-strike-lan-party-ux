@@ -41,7 +41,7 @@ body {
     color: #ff9800;
 }
 
-#event-text, #mvp-text{
+#event-text{
     font-size: 4rem;
 }
 
@@ -187,7 +187,7 @@ body {
 }
 
 #mvp-animation-wrapper{
-    z-index: 500;
+    z-index: 200;
     position: absolute;
     top: 0;
     left: 50%;
@@ -195,9 +195,19 @@ body {
     height: 100%;
     overflow: hidden;
     transform-origin: center;
-    filter: drop-shadow(2px 2px 40px white);
+    filter: drop-shadow(2px 2px 40px black);
+
+    background: none center repeat-x;
+    background-size: auto 100%;
 }
 
-#mvp-text{
+#mvp-text-box {
+    font-size: 4rem;
     width: 33vw;
+    background: rgba(0, 0, 0, 0.41);
+    box-shadow: 2px 2px 20px black;
+    background: #00000069;
+}
+#mvp-name {
+    font-weight: bold;
 }

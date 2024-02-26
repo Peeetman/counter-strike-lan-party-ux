@@ -44,16 +44,28 @@ async function loadParticipantsConfig() {
                                             .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
                 participantsConfig[steamid].playerImages = imageFilePaths;
 
-                //Map Soundfile Paths
-                // Map Immages
+                // MVP Soundfile Src
                 // List of common image file extensions
                 const soundFileExtensions = ['.mp3', '.wav', '.ogg'];
                 // Filter files by checking if their extension matches any in the list, then map to full paths
                 const soundFilePaths = files.filter(file => 
                                             soundFileExtensions.some(ext => file.endsWith(ext)))
                                             .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-                participantsConfig[steamid].mvpSounds = soundFilePaths;
+                
+                // MVP Background Gif Src
+                // List of common gif
+                const gifFileExtensions = ['.gif'];
+                // Filter files by checking if their extension matches any in the list, then map to full paths
+                const gifFilePath = files.filter(file => 
+                                            gifFileExtensions.some(ext => file.endsWith(ext)))
+                                            .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
 
+                // Crate mvp.soundFileSrc or mvp.backgroundGifSrc if present
+                if(soundFilePaths.length > 0 || gifFilePath.length > 0) {
+                    participantsConfig[steamid].mvp = {}
+                    if(soundFilePaths.length > 0) participantsConfig[steamid].mvp.soundFileSrc = soundFilePaths[0]
+                    if(gifFilePath.length > 0) participantsConfig[steamid].mvp.backgroundGifSrc = gifFilePath[0]
+                }
             } catch (err) {
                 console.error('Error reading or processing player config file:', err);
             }
@@ -62,6 +74,7 @@ async function loadParticipantsConfig() {
         console.error('Error reading or processing player config file:', err);
     }
     console.log('Server: ParticipantsConfig reloaded');
+    console.log(participantsConfig)
     return participantsConfig;
 }
 

@@ -27,7 +27,7 @@ socket.on('roundBegin', () => {
 
 socket.on('roundFreeze', () => {
     console.log('A Freeze has begun.');
-    mvpWrapperOut();
+    mvpEffectStop();
 });
 
 socket.on('roundEnd', () => {
@@ -51,17 +51,10 @@ socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
 });
 
 
-let mvpAudio = new Audio('./media/player-content/force/caramelldansen-hd.mp3');
+let mvpAudio = new Audio('./media/player-content/placeholder.mp3');
 socket.on('playerMVP', ({ steamid, name }) => {
     console.log(`MVP: ID [${steamid}] Name [${name}] Whoop Whoop.`);
-    document.getElementById("mvp-name").textContent = name;
-
-    // Audio Load
-    mvpAudio.src = clientParticipantsConfig[steamid].mvpSounds[0];
-    mvpAudio.volume = 0.2;
-    mvpAudio.load();
-    
-    mvpWrapperIn();
+    mvpEffectStart({ steamid, name });
 });
 
 // Data Events
@@ -217,30 +210,56 @@ function injectDummyPlayerCards() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    injectDummyPlayerCards();
     // injectDummyPlayerCards();
+    // mvpEffectStart()
 });
 
 
 // Animation Helpers
-function mvpWrapperIn(){    
-    // To expand outwards
+function mvpEffectStart({ steamid, name }) {
+
+    if(!clientParticipantsConfig[steamid] || !clientParticipantsConfig[steamid].mvp) return false;
+
+    document.getElementById("mvp-name").textContent = name;
+    const soundFileSrc = clientParticipantsConfig[steamid].mvp.soundFileSrc;
+    const backgroundGifSrc = clientParticipantsConfig[steamid].mvp.backgroundGifSrc;
+
+    // Background Gif Load if set
+    if (backgroundGifSrc) document.getElementById('mvp-animation-wrapper').style.backgroundImage=`url(${backgroundGifSrc}`;
+
+    // Audio Play if set
+    if (soundFileSrc) {        
+        mvpAudio.src = soundFileSrc
+        mvpAudio.volume = 0.2;
+        if (typeof mvpAudio.loop == 'boolean') mvpAudio.loop = true;
+        mvpAudio.load();
+        //MVP Audio
+        mvpAudio.play();
+    }
+
+    // expand outwards
     document.getElementById('mvp-animation-wrapper').classList.remove('contract-inwards-animation');
     document.getElementById('mvp-animation-wrapper').classList.add('expand-outwards-animation');
 
-    mvpAudio.play();
+
+    // auto-stop after 10 seconds
     setTimeout(() => {
-        mvpAudio.pause();
-        mvpAudio.currentTime = 0;
-    }, "10000");
+        mvpEffectStop()
+    }, "9500"); 
 }
 
-function mvpWrapperOut(){    
-    // To expand outwards
+function mvpEffectStop() {    
+    // expand outwards
     document.getElementById('mvp-animation-wrapper').classList.remove('expand-outwards-animation');
     document.getElementById('mvp-animation-wrapper').classList.add('contract-inwards-animation');
 
-    //MVP Audio
-    mvpAudio.pause();
-    mvpAudio.currentTime = 0;
+    // after expand / contract animation
+    setTimeout(() => {
+        //MVP Audio Stop
+        mvpAudio.pause();
+        mvpAudio.currentTime = 0;
+        //Background Image unset
+        document.getElementById('mvp-animation-wrapper').style.backgroundImage= 'unset';
+    }, '500'); 
 }
-

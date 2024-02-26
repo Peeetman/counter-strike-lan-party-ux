@@ -1,6 +1,7 @@
-
 // public/script.js
 const socket = io();
+let clientPlayerState = {}
+let clientParticipantsConfig = {}
 
 // Visuelle Events
 socket.on('eventText', (eventText) => {
@@ -56,7 +57,7 @@ socket.on('playerMVP', ({ steamid, name }) => {
     document.getElementById("mvp-name").textContent = name;
 
     // Audio Load
-    mvpAudio.src = clientPlayerState[steamid].mvpSounds;
+    mvpAudio.src = clientParticipantsConfig[steamid].mvpSounds[0];
     mvpAudio.volume = 0.2;
     mvpAudio.load();
     
@@ -64,6 +65,10 @@ socket.on('playerMVP', ({ steamid, name }) => {
 });
 
 // Data Events
+socket.on('sendParticipantsConfig', ({ participantsConfig }) => {
+    clientParticipantsConfig = participantsConfig;
+});
+
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
     document.querySelector("#match-status-wrapper .border-bottom-0 span").textContent = `Round: ${newMatchState.round}`;
@@ -73,7 +78,7 @@ socket.on('matchInfoUpdate', ({ newMatchState }) => {
     document.querySelector(".mode").textContent = newMatchState.mode;
 });
 
-let clientPlayerState = {}
+
 // Function to handle the playerStateUpdate event
 socket.on('playerStateUpdate', currentPlayerState => {
     console.log(currentPlayerState);
@@ -188,7 +193,7 @@ function populatePlayerCard(playerCard, steamid, player) {
     playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
     // player img
     const imgElement = playerCard.querySelector('.player-image');
-    imgElement.src = player.playerImage
+    imgElement.src = clientParticipantsConfig[steamid].playerImages[0]
 }
 
 function removeUnmatchedPlayerCards(steamids) {

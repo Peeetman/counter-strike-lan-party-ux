@@ -21,19 +21,18 @@ const csgoGSI = new CSGOGSI({
 });
 const gameStateMonitor = new GameStateMonitor(csgoGSI, false);
 
-
 // Participant Config with player-image paths and mvp presets
-let participantsData = {}
+let participantsConfig = {}
 const playerAvatarBasePath = './media/player-content'
 async function loadParticipantsConfig() {
     try {
         const configPath = path.join(__dirname, 'participants.json');
         const data = await fsPromises.readFile(configPath, 'utf8');
-        participantsData = JSON.parse(data);
+        participantsConfig = JSON.parse(data);
 
-        for (const steamid of Object.keys(participantsData)) {
+        for (const steamid of Object.keys(participantsConfig)) {
             //Player Images
-            const folderName = participantsData[steamid].folder;
+            const folderName = participantsConfig[steamid].folder;
             try {
                 const files = await fsPromises.readdir(path.join(__dirname, 'public', 'media', 'player-content', folderName));
                 // Map Immages
@@ -43,7 +42,7 @@ async function loadParticipantsConfig() {
                 const imageFilePaths = files.filter(file => 
                                             imageExtensions.some(ext => file.endsWith(ext)))
                                             .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-                participantsData[steamid].playerImages = imageFilePaths;
+                participantsConfig[steamid].playerImages = imageFilePaths;
 
                 //Map Soundfile Paths
                 // Map Immages
@@ -53,7 +52,7 @@ async function loadParticipantsConfig() {
                 const soundFilePaths = files.filter(file => 
                                             soundFileExtensions.some(ext => file.endsWith(ext)))
                                             .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-                participantsData[steamid].mvpSounds = soundFilePaths;
+                participantsConfig[steamid].mvpSounds = soundFilePaths;
 
             } catch (err) {
                 console.error('Error reading or processing player config file:', err);
@@ -62,10 +61,9 @@ async function loadParticipantsConfig() {
     } catch (err) {
         console.error('Error reading or processing player config file:', err);
     }
-    console.log(participantsData)
+    console.log('Server: ParticipantsConfig reloaded');
+    return participantsConfig;
 }
-// Load the configuration at server startup
-loadParticipantsConfig();
 
 gameStateMonitor.on('bombPlanted', () => { 
     const eventText = 'Bomb planted!';
@@ -153,31 +151,20 @@ gameStateMonitor.on('matchInfoUpdate', ({ newMatchState }) => {
 gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
     const eventText = `playerStateUpdate: ${playerStateWithoutHealth}`;
     // const eventText = `playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`;
-    
-    //inject player-img
-    Object.keys(playerStateWithoutHealth).forEach(steamid => {
-        // player img injection
-        if (participantsData[steamid] && participantsData[steamid].playerImages && participantsData[steamid].playerImages.length > 0) {
-            playerStateWithoutHealth[steamid].playerImage = participantsData[steamid].playerImages[0]
-        } else playerStateWithoutHealth[steamid].playerImage = playerAvatarBasePath + '/placeholder.png';
-
-        // player mvp sound injection
-        if (participantsData[steamid] && participantsData[steamid].mvpSounds && participantsData[steamid].mvpSounds.length > 0) {
-            playerStateWithoutHealth[steamid].mvpSounds = participantsData[steamid].mvpSounds[0]
-        } else playerStateWithoutHealth[steamid].mvpSounds = playerAvatarBasePath + '/placeholder.mp3';
-    });
-
     io.emit('playerStateUpdate', playerStateWithoutHealth);
     console.log('Server: ' + eventText);
 });
 
-
 //Dashboard Server
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log(`SOCKET IO: Client connected: ${socket.id}`);
     
+    // Client Connect Trigger Datasending
     gameStateMonitor.emitModifiedPlayerStateOnChange();
     gameStateMonitor.emitCurrentMatchState();
+
+    participantsConfig = await loadParticipantsConfig();
+    io.emit('sendParticipantsConfig', ({ participantsConfig }));
 
     // For example, you can emit a message to the client
     socket.emit('connected', 'SOCKET IO: You are now connected to the server.');
@@ -195,6 +182,9 @@ io.on('connection', (socket) => {
 
 //Define a route to serve static files from the node_modules directory
 // app.use('/dist', express.static(path.join(__dirname, './public')));
+
+// Load the configuration at server startup
+participantsConfig = loadParticipantsConfig();
 
 server.listen(8080, () => {
     console.log('Dashboard Server Running on port 3001');

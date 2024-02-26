@@ -3,9 +3,7 @@
     "folder": "force",
     "beers" : 0,
     "nadeDeaths" : 0,
-    "totalKills": 0,
-    "mvpSoundFileName" : "caramelldansen-hd.mp3",
-    "mvpVideoUrl" : ""
+    "totalKills": 0
   },
   "76561197997914233": {
     "folder": "peeet",
@@ -53,9 +51,7 @@
     "folder": "manuel",
     "beers" : 0,
     "nadeDeaths" : 0,
-    "totalKills": 0,
-    "mvpSoundFile" : "",
-    "mvpVideo" : ""
+    "totalKills": 0
   },
   "76561198881105836": {
     "folder": "dimi",
@@ -82,6 +78,9 @@
     "totalKills": 0
   },
   "76561199068322244": {
-    "folder": "konrad"
+    "folder": "konrad",
+    "beers" : 0,
+    "nadeDeaths" : 0,
+    "totalKills": 0
   }
 }

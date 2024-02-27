@@ -42,7 +42,10 @@ body {
     left: 50%;
 }
 .mapname, .mode{
-    min-width: 15%;
+    width: 13%;
+}
+.round-number, .round-number-pre-text {
+    width: 8%;
 }
 .team-ct{
     color: #2196f3;
@@ -224,7 +227,7 @@ body {
 
 
 /*Event Text Animations*/
-@keyframes slideLeft {
+@keyframes leftSlideOut {
     from {
         transform: translateX(0%);
     }
@@ -232,7 +235,15 @@ body {
         transform: translateX(-100%);
     }
 }
-@keyframes slideRight {
+@keyframes leftSlideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0%);
+    }
+}
+@keyframes rightSlideOut {
     from {
         transform: translateX(0%);
     }
@@ -240,21 +251,27 @@ body {
         transform: translateX(200%);
     }
 }
+@keyframes rightSlideIn {
+    from {
+        transform: translateX(200%);
+    }
+    to {
+        transform: translateX(0%);
+    }
+}
 
 /* Apply the slideOut animation */
-#eventText-animation-wrapper > .left-panel.slideOut {
-    animation: slideLeft 1s forwards;
+#eventText-animation-wrapper > #left-panel.slideOut {
+    animation: leftSlideOut 1s forwards;
 }
-#eventText-animation-wrapper > .right-panel.slideOut {
-    animation: slideRight 1s forwards;
+#eventText-animation-wrapper > #left-panel.slideIn {
+    animation: leftSlideIn 1s forwards;
 }
 
 /* Apply the slideIn animation */
-#eventText-animation-wrapper > .left-panel.slideIn {
-    animation: slideLeft 1s forwards;
-    animation-direction: reverse;
+#eventText-animation-wrapper > #right-panel.slideOut {
+    animation: rightSlideOut 1s forwards;
 }
-#eventText-animation-wrapper > .right-panel.slideIn {
-    animation: slideRight 1s forwards;
-    animation-direction: reverse;
+#eventText-animation-wrapper > #right-panel.slideIn {
+    animation: rightSlideIn 1s forwards;
 }

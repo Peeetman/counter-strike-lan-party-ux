@@ -65,7 +65,7 @@ socket.on('sendParticipantsConfig', ({ participantsConfig }) => {
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
     if(!newMatchState.mode) return;
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
-    document.querySelector("#round-number").textContent = newMatchState.round;
+    document.querySelector(".round-number").textContent = newMatchState.round;
     document.getElementById("score_t").textContent = newMatchState.team_t_score;
     document.getElementById("score_ct").textContent = newMatchState.team_ct_score;
     document.querySelector(".mapname").textContent = newMatchState.name;
@@ -265,6 +265,27 @@ function mvpEffectStop() {
 }
 
 
-function eventTextEffectStart() {
+function scoreBoardSlideIn() {
+    //left
+    document.getElementById('left-panel').classList.remove('slideOut');
+    document.getElementById('left-panel').classList.add('slideIn');
+    //right
+    document.getElementById('right-panel').classList.remove('slideOut');
+    document.getElementById('right-panel').classList.add('slideIn');
+    //others
+    document.getElementById('score-seperator').classList.remove('slideOut');
+    document.getElementById('score-seperator').classList.add('slideIn');
+    
+}
 
+function scoreBoardSlideOut() {
+    //left
+    document.getElementById('left-panel').classList.remove('slideIn');
+    document.getElementById('left-panel').classList.add('slideOut');
+    //right
+    document.getElementById('right-panel').classList.remove('slideIn');
+    document.getElementById('right-panel').classList.add('slideOut');
+    //others
+    document.getElementById('score-seperator').classList.remove('slideIn');
+    document.getElementById('score-seperator').classList.add('slideOut');
 }

@@ -30,17 +30,22 @@ body {
     background: linear-gradient(to left, #659999, #f4791f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-
+#match-status-wrapper{
+    filter: drop-shadow(2px 2px 40px black);
+}
 #score-box, .team-box{
     font-size: 8rem;
     font-weight: bold;
 }
-#score-seperator{
-    z-index: -1;
-    position: absolute;
-    width: 100%;
-    left: 50%;
+
+.event-text{
+    font-size: 4rem;
 }
+.round-time{
+    font-size: 8rem;
+}
+
+
 .mapname, .mode{
     width: 13%;
 }
@@ -53,13 +58,8 @@ body {
 .team-t{
     color: #ff9800;
 }
-
-#event-text{
-    font-size: 4rem;
-}
-
 #mapmode-wrapper{
-    width: 33%;
+    width: 15%;
 }
 
 #t-wrapper{
@@ -226,67 +226,4 @@ body {
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
-}
-
-
-/*Event Text Animations*/
-@keyframes leftSlideOut {
-    from {
-        transform: translateX(0%);
-    }
-    to {
-        transform: translateX(-100%);
-    }
-}
-@keyframes leftSlideIn {
-    from {
-        transform: translateX(-100%);
-    }
-    to {
-        transform: translateX(0%);
-    }
-}
-@keyframes rightSlideOut {
-    from {
-        transform: translateX(0%);
-    }
-    to {
-        transform: translateX(200%);
-    }
-}
-@keyframes rightSlideIn {
-    from {
-        transform: translateX(200%);
-    }
-    to {
-        transform: translateX(0%);
-    }
-}
-
-/* Apply the slideOut animation */
-#eventText-animation-wrapper > #left-panel.slideOut {
-    animation: leftSlideOut 1s forwards;
-}
-#eventText-animation-wrapper > #left-panel.slideIn {
-    animation: leftSlideIn 1s forwards;
-}
-
-/* Apply the slideIn animation */
-#eventText-animation-wrapper > #right-panel.slideOut {
-    animation: rightSlideOut 1s forwards;
-}
-#eventText-animation-wrapper > #right-panel.slideIn {
-    animation: rightSlideIn 1s forwards;
-}
-
-#event-text-wrapper{
-    position: absolute;
-    margin-top: 9%;
-    overflow: hidden;
-    transform-origin: center;
-    filter: drop-shadow(2px 2px 40px black);
-    top: 0;
-    left: 50%;
-    width: 0%;
-    white-space: nowrap;
 }

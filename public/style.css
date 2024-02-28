@@ -38,6 +38,10 @@ body {
     font-weight: bold;
 }
 
+#event-text-wrapper{
+    width: 30vw;
+    overflow: hidden;
+}
 .event-text{
     font-size: 4rem;
 }
@@ -48,10 +52,10 @@ body {
     width: 8%;
 }
 .team-ct{
-    color: #2196f3;
+    color: #002f55;
 }
 .team-t{
-    color: #ff9800;
+    color: #8f2f00;
 }
 #mapmode-wrapper, #round-info-wrapper{
     width: 15%;
@@ -114,7 +118,7 @@ body {
     left: 50%;
     transform: translate(-50%, 0%) rotate(340deg);
     font-size: 2em;
-    color: red;
+    color: var(--bs-red);
     font-weight: bold;
     z-index: 3;
     pointer-events: none;

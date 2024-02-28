@@ -72,8 +72,9 @@ socket.on('roundPhaseChange', ({ newRoundPhase }) => {
     document.querySelector(".round-phase").textContent = newRoundPhase;
 });
 
-socket.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString }) => {
+socket.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString, urgend }) => {
     document.querySelector(".round-time").textContent = newRoundPhaseCountdownString;
+    (urgend ? document.querySelector(".round-time").classList.add('text-danger') : document.querySelector(".round-time").classList.remove('text-danger'))
 });
 
 // Function to handle the playerStateUpdate event

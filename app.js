@@ -157,8 +157,8 @@ gameStateMonitor.on('roundPhaseChange', ({ newRoundPhase }) => {
     console.log('Server: ' + eventText);
 });
 
-gameStateMonitor.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString }) => {
-    io.emit('roundPhaseCountdownUpdate', {newRoundPhaseCountdownString});
+gameStateMonitor.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString, urgend }) => {
+    io.emit('roundPhaseCountdownUpdate', ({newRoundPhaseCountdownString, urgend}));
 });
 
 //Dashboard Server

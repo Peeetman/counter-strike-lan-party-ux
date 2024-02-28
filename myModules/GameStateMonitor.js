@@ -182,32 +182,39 @@ class GameStateMonitor extends EventEmitter {
             }
         }
 
+        try{
         //Phase Countown Changes
         if(data.phase_countdowns) {
             const currentRoundPhaseCountdown = data.phase_countdowns;
             let currentRoundPhaseCountdownChanged = false;
-            // Emit only on phase change OR 1 Second Time-Diff
-            if(this.currentRoundPhaseCountdown.phase !== currentRoundPhaseCountdown.phase){
+
+            // Emit and Update only On Phase-Change but ignore Phase 'defuse' to not give intel
+            if(this.currentRoundPhaseCountdown.phase !== currentRoundPhaseCountdown.phase && currentRoundPhaseCountdown.phase !== 'defuse') {
                 const newRoundPhase = currentRoundPhaseCountdown.phase;
                 this.customEmit('roundPhaseChange', { newRoundPhase });
                 currentRoundPhaseCountdownChanged = true;
             }
 
+            let newRoundPhaseCountdownString = '';
+            let urgend = false;
             if(currentRoundPhaseCountdown.phase !== 'bomb' && currentRoundPhaseCountdown.phase !== 'defuse') {                
                 // Emit CountdownUpdate on 1 second Change
                 if (Math.ceil(parseFloat(this.currentRoundPhaseCountdown.phase_ends_in)) - Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in)) >= 1) {
                     const newRoundPhaseCountdown = Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in));
-                    const newRoundPhaseCountdownString = new Date(newRoundPhaseCountdown * 1000).toISOString().substring(14, 19)
-                    this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString });
+                    newRoundPhaseCountdownString = new Date(newRoundPhaseCountdown * 1000).toISOString().substring(14, 19);
+                    (newRoundPhaseCountdown <= 10 ? urgend = true : urgend = false);
+                    this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
                     currentRoundPhaseCountdownChanged = true;
                 }
             } else {
-                const newRoundPhaseCountdownString = '😱'
-                this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString })
+                newRoundPhaseCountdownString = '😱';
+                this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
+                currentRoundPhaseCountdownChanged = true;
             }
 
             if (currentRoundPhaseCountdownChanged) this.currentRoundPhaseCountdown = currentRoundPhaseCountdown;
         }
+        } catch (error) {console.error(error)};
     }
 
     filterObjectsByTypeAndState(jsonObject, type, state) {

@@ -14,6 +14,7 @@ class GameStateMonitor extends EventEmitter {
         };
         this.currentPlayerState = {};
         this.currentMatchState = {};
+        this.currentRoundPhaseCountdown = {};
         this.setupListeners();
     }
 
@@ -169,7 +170,7 @@ class GameStateMonitor extends EventEmitter {
             const newMatchState = {
                 mode: currentMapData.mode,
                 name: currentMapData.name,
-                phase: currentMapData.phase,
+                match_phase: currentMapData.phase,
                 round: currentMapData.round,
                 team_ct_score: currentMapData.team_ct.score,
                 team_t_score: currentMapData.team_t.score
@@ -179,6 +180,33 @@ class GameStateMonitor extends EventEmitter {
                 this.currentMatchState = newMatchState;
                 this.emitCurrentMatchState(newMatchState)
             }
+        }
+
+        //Phase Countown Changes
+        if(data.phase_countdowns) {
+            const currentRoundPhaseCountdown = data.phase_countdowns;
+            let currentRoundPhaseCountdownChanged = false;
+            // Emit only on phase change OR 1 Second Time-Diff
+            if(this.currentRoundPhaseCountdown.phase !== currentRoundPhaseCountdown.phase){
+                const newRoundPhase = currentRoundPhaseCountdown.phase;
+                this.customEmit('roundPhaseChange', { newRoundPhase });
+                currentRoundPhaseCountdownChanged = true;
+            }
+
+            if(currentRoundPhaseCountdown.phase !== 'bomb' && currentRoundPhaseCountdown.phase !== 'defuse') {                
+                // Emit CountdownUpdate on 1 second Change
+                if (Math.ceil(parseFloat(this.currentRoundPhaseCountdown.phase_ends_in)) - Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in)) >= 1) {
+                    const newRoundPhaseCountdown = Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in));
+                    const newRoundPhaseCountdownString = new Date(newRoundPhaseCountdown * 1000).toISOString().substring(14, 19)
+                    this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString });
+                    currentRoundPhaseCountdownChanged = true;
+                }
+            } else {
+                const newRoundPhaseCountdownString = '😱'
+                this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString })
+            }
+
+            if (currentRoundPhaseCountdownChanged) this.currentRoundPhaseCountdown = currentRoundPhaseCountdown;
         }
     }
 

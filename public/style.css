@@ -44,11 +44,6 @@ body {
 .round-time{
     font-size: 8rem;
 }
-
-
-.mapname, .mode{
-    width: 13%;
-}
 .round-number, .round-number-pre-text {
     width: 8%;
 }
@@ -58,7 +53,7 @@ body {
 .team-t{
     color: #ff9800;
 }
-#mapmode-wrapper{
+#mapmode-wrapper, #round-info-wrapper{
     width: 15%;
 }
 

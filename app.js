@@ -37,12 +37,13 @@ async function loadParticipantsConfig() {
                 const files = await fsPromises.readdir(path.join(__dirname, 'public', 'media', 'player-content', folderName));
                 // Map Immages
                 // List of common image file extensions
-                const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+                const imageExtensions = ['.png', '.jpg', '.jpeg'];
                 // Filter files by checking if their extension matches any in the list, then map to full paths
                 const imageFilePaths = files.filter(file => 
                                             imageExtensions.some(ext => file.endsWith(ext)))
                                             .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-                participantsConfig[steamid].playerImages = imageFilePaths;
+                if(imageFilePaths.length > 0 ) participantsConfig[steamid].playerImages = imageFilePaths;
+                else participantsConfig[steamid].playerImages = [`${playerAvatarBasePath}/placeholder.png`] 
 
                 // MVP Soundfile Src
                 // List of common image file extensions
@@ -78,60 +79,44 @@ async function loadParticipantsConfig() {
     return participantsConfig;
 }
 
-gameStateMonitor.on('bombPlanted', () => { 
+gameStateMonitor.on('bombPlanted', () => {
     const eventText = 'Bomb planted!';
-    io.emit('eventText', eventText);
     io.emit('bombPlanted')
     console.log('Server: ' + eventText);
 });
 
 gameStateMonitor.on('bombDefused', () => { 
     const eventText = 'Bomb defused!';
-    io.emit('eventText', eventText);
-    io.emit('bombDefused') 
+    io.emit('bombDefused')
     console.log('Server: ' + eventText);
 });
 
 gameStateMonitor.on('bombExploded', () => {
     const eventText = 'Bomb exploded!';
-    io.emit('eventText', eventText);
-    io.emit('bombExploded') 
+    io.emit('bombExploded')
     console.log('Server: ' + eventText);
 });
 
 gameStateMonitor.on('roundBegin', () => {
     const eventText = 'New round!';
-    io.emit('eventText', eventText);
     io.emit('roundBegin');
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('roundFreeze', () => {
     const eventText = 'Freezetime.';
-    io.emit('eventText', eventText);
     io.emit('roundFreeze');
     console.log('Server: ' + eventText);
 })
 
 gameStateMonitor.on('roundEnd', () => {
     const eventText = 'Round ended.';
-    io.emit('eventText', eventText);
-    io.emit('roundEnd');
     console.log('Server: ' + eventText);
 })
 
-gameStateMonitor.on('winTeam_CT', () => {
-    const eventText = 'Counter-Terrorists win!';
-    io.emit('eventText', eventText);
-    io.emit('winTeam_CT');
-    console.log('Server: ' + eventText);
-})
-
-gameStateMonitor.on('winTeam_T', () => {
-    const eventText = 'Terrorists win!';
-    io.emit('eventText', eventText);
-    io.emit('winTeam_T');
-    console.log('Server: ' + eventText);
+// Round Win Condition and Effect Handling
+gameStateMonitor.on('roundWinCondition', ({roundWinCondition}) => {
+    console.log(`Server: Round Win Condition: ${roundWinCondition}`);
 })
 
 gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
@@ -143,8 +128,6 @@ gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
 gameStateMonitor.on('playerDeathWithGrenade', ({ steamid, name }) => {
     const eventText = `Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`
     console.log('Server: ' + eventText);
-    const eventTextAlt = `${name} died with a grenade in the hand. noob!`;
-    io.emit('eventText', eventTextAlt);
     io.emit('playerDeathWithGrenade', ({ steamid, name }));
 })
 
@@ -166,6 +149,16 @@ gameStateMonitor.on('playerStateUpdate', ({ playerStateWithoutHealth }) => {
     // const eventText = `playerStateUpdate: ${JSON.stringify(playerStateWithoutHealth)}`;
     io.emit('playerStateUpdate', playerStateWithoutHealth);
     console.log('Server: ' + eventText);
+});
+
+gameStateMonitor.on('roundPhaseChange', ({ newRoundPhase }) => {
+    const eventText = `roundPhaseChange: ${newRoundPhase}`;
+    io.emit('roundPhaseChange', {newRoundPhase});
+    console.log('Server: ' + eventText);
+});
+
+gameStateMonitor.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString }) => {
+    io.emit('roundPhaseCountdownUpdate', {newRoundPhaseCountdownString});
 });
 
 //Dashboard Server

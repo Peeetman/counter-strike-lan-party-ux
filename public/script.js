@@ -34,14 +34,6 @@ socket.on('roundEnd', () => {
     console.log('The round has ended.');
 });
 
-socket.on('winTeam_CT', () => {
-    console.log('Counter-Terrorists have won the round!');
-});
-
-socket.on('winTeam_T', () => {
-    console.log('Terrorists have won the round!');
-});
-
 socket.on('playerDeath', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] has died.`);
 });
@@ -63,15 +55,26 @@ socket.on('sendParticipantsConfig', ({ participantsConfig }) => {
 });
 
 socket.on('matchInfoUpdate', ({ newMatchState }) => {
+    console.log(newMatchState);
     if(!newMatchState.mode) return;
     console.log(`MatchInfoUpdate: ${JSON.stringify(newMatchState)}`);
     document.querySelector(".round-number").textContent = newMatchState.round;
+    document.querySelector(".match-phase").textContent = newMatchState.round_phase
     document.getElementById("score_t").textContent = newMatchState.team_t_score;
     document.getElementById("score_ct").textContent = newMatchState.team_ct_score;
     document.querySelector(".mapname").textContent = newMatchState.name;
     document.querySelector(".mode").textContent = newMatchState.mode;
+    document.querySelector(".match-phase").textContent = newMatchState.match_phase;
 });
 
+socket.on('roundPhaseChange', ({ newRoundPhase }) => {
+    console.log(`roundPhaseChange: ${newRoundPhase}`);
+    document.querySelector(".round-phase").textContent = newRoundPhase;
+});
+
+socket.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString }) => {
+    document.querySelector(".round-time").textContent = newRoundPhaseCountdownString;
+});
 
 // Function to handle the playerStateUpdate event
 socket.on('playerStateUpdate', currentPlayerState => {
@@ -187,7 +190,8 @@ function populatePlayerCard(playerCard, steamid, player) {
     playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
     // player img
     const imgElement = playerCard.querySelector('.player-image');
-    imgElement.src = clientParticipantsConfig[steamid].playerImages[0]
+    // unkown players placeholder
+    (clientParticipantsConfig[steamid] && clientParticipantsConfig[steamid].playerImages ? imgElement.src = clientParticipantsConfig[steamid].playerImages[0] : imgElement.src = './media/player-content/placeholder.png')
 }
 
 function removeUnmatchedPlayerCards(steamids) {
@@ -211,7 +215,7 @@ function injectDummyPlayerCards() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    injectDummyPlayerCards();
+    // injectDummyPlayerCards();
     // injectDummyPlayerCards();
     // mvpEffectStart()
 });

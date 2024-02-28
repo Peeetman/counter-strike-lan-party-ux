@@ -33,17 +33,50 @@ body {
 #match-status-wrapper{
     filter: drop-shadow(2px 2px 40px black);
 }
+.team-box{
+    width: 15vw;
+}
 #score-box, .team-box{
     font-size: 8rem;
     font-weight: bold;
 }
 
-#event-text-wrapper{
+#event-text-wrapper {
+    --init-width: 25vw;
+    --init-width-bitmore: 30vw;
+    --large-width: 40vw;
+    --large-width-bitmore: 45vw;
     width: 30vw;
     overflow: hidden;
+    animation: expandToInitWidth 3s forwards ease-in-out; /* Example duration of 2s */
+    white-space: nowrap;
 }
+
+/* Animation to shrink */
+@keyframes fromInitWidthShrink {
+    0% { width: var(--init-width); }
+    10% { width: var(--init-width-bitmore); }
+    100% { width: 0vw; }
+}
+@keyframes fromLargeWidthShrink {
+    0% { width: var(--large-width); }
+    10% { width: var(--large-width-bitmore); }
+    100% { width: 0vw; }
+}
+@keyframes expandToInitWidth {
+    0% { width: 0vw; }
+    90% { width: var(--init-width-bitmore); }
+    100% { width: var(--init-width); }
+}
+@keyframes expandToLargeWidth {
+    0% { width: 0vw; }
+    90% { width: var(--large-width-bitmore); }
+    100% { width: var(--large-width); }
+}
+
 .event-text{
     font-size: 4rem;
+    white-space: nowrap;
 }
 .round-time{
     font-size: 8rem;
@@ -148,20 +181,33 @@ body {
     height: auto; /* Maintain aspect ratio */
 }
 
-#animation-left, #animation-right {
-    width: 50%;
-    z-index: 600;
-}
-
-#animation-wrapper {
-    z-index: 500;
-    position: fixed;
+#mvp-animation-wrapper{
+    z-index: 200;
+    position: absolute;
     top: 0;
-    left: 50%; /* Start from the center */
-    width: 0%; /* Start from 0 width */
+    left: 50%;
+    width: 0%;
     height: 100%;
     overflow: hidden;
     transform-origin: center;
+    filter: drop-shadow(2px 2px 40px black);
+
+    background: none center repeat-x;
+    background-size: auto 100%;
+}
+
+#mvp-text-box {
+    font-size: 4rem;
+    width: 33vw;
+    background: rgba(0, 0, 0, 0.41);
+    box-shadow: 2px 2px 20px black;
+    background: #00000069;
+
+}
+#mvp-name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 /* Animation for expanding outwards from the center */
@@ -196,33 +242,4 @@ body {
 /* Apply the inwards contraction animation */
 .contract-inwards-animation {
     animation: contractInwards 1s forwards;
-}
-
-#mvp-animation-wrapper{
-    z-index: 200;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 0%;
-    height: 100%;
-    overflow: hidden;
-    transform-origin: center;
-    filter: drop-shadow(2px 2px 40px black);
-
-    background: none center repeat-x;
-    background-size: auto 100%;
-}
-
-#mvp-text-box {
-    font-size: 4rem;
-    width: 33vw;
-    background: rgba(0, 0, 0, 0.41);
-    box-shadow: 2px 2px 20px black;
-    background: #00000069;
-
-}
-#mvp-name {
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
 }

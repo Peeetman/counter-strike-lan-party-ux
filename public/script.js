@@ -270,35 +270,49 @@ function mvpEffectStop() {
 }
 
 
-function scoreBoardSlideIn() {
-    //left
-    document.getElementById('left-panel').classList.remove('slideOut');
-    document.getElementById('left-panel').classList.add('slideIn');
-    //right
-    document.getElementById('right-panel').classList.remove('slideOut');
-    document.getElementById('right-panel').classList.add('slideIn');
-    //others
-    document.getElementById('score-seperator').classList.remove('slideOut');
-    document.getElementById('score-seperator').classList.add('slideIn');
-    document.getElementById('score-seperator').classList.remove('d-none')
-    
-    // event text expand outwards
-    document.getElementById('event-text-wrapper').classList.remove('expand-outwards-animation');
-    document.getElementById('event-text-wrapper').classList.add('contract-inwards-animation');
+let eventTextActive = false;
+function showEventText(newText) {
+    const wrapper = document.getElementById('event-text-wrapper');
+    const roundTime = wrapper.querySelector('.round-time');
+    const eventText = wrapper.querySelector('.event-text');
+
+    let animationName = '';
+    console.log(eventTextActive);
+    (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
+    applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+        roundTime.classList.add('d-none');
+        eventText.classList.remove('d-none');
+        eventText.innerText = newText;
+        let animationName = 'expandToLargeWidth';
+        eventTextActive = eventTextActive;
+        applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+            eventTextActive = true;
+        });
+    });
 }
 
-function scoreBoardSlideOut() {
-    //left
-    document.getElementById('left-panel').classList.remove('slideIn');
-    document.getElementById('left-panel').classList.add('slideOut');
-    //right
-    document.getElementById('right-panel').classList.remove('slideIn');
-    document.getElementById('right-panel').classList.add('slideOut');
-    //others
-    document.getElementById('score-seperator').classList.add('d-none')
-    
-    // event text expand inwards
-    document.getElementById('event-text-wrapper').classList.remove('contract-inwards-animation');
-    document.getElementById('event-text-wrapper').classList.add('expand-outwards-animation');
+function resetEventText() {
+    const wrapper = document.getElementById('event-text-wrapper');
+    const roundTime = wrapper.querySelector('.round-time');
+    const eventText = wrapper.querySelector('.event-text');
 
+    let animationName = 'fromInitWidthShrink';
+    (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
+    applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+        // Show round-time and hide event-text
+        roundTime.classList.remove('d-none');
+        eventText.classList.add('d-none');
+        animationName = 'expandToInitWidth';
+        applyEventTextAnimation({animationName, wrapper, eventTextActive});
+        eventTextActive = false;
+    });
+}
+
+function applyEventTextAnimation({animationName, wrapper, eventTextActive}, onComplete) {
+    wrapper.style.animation = `${animationName} 1s forwards ease-in-out`;
+    function handleAnimationEnd() {
+        wrapper.removeEventListener('animationend', handleAnimationEnd);
+        if (onComplete) onComplete();
+    }
+    wrapper.addEventListener('animationend', handleAnimationEnd);
 }

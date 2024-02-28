@@ -281,8 +281,7 @@ body {
 
 #event-text-wrapper{
     position: absolute;
-    background: red;
-    margin-top: 4.5%;
+    margin-top: 9%;
     overflow: hidden;
     transform-origin: center;
     filter: drop-shadow(2px 2px 40px black);

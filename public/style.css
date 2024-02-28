@@ -191,12 +191,12 @@ body {
 
 /* Apply the outwards expansion animation */
 .expand-outwards-animation {
-    animation: expandOutwards 0.5s forwards;
+    animation: expandOutwards 1s forwards;
 }
 
 /* Apply the inwards contraction animation */
 .contract-inwards-animation {
-    animation: contractInwards 0.5s forwards;
+    animation: contractInwards 1s forwards;
 }
 
 #mvp-animation-wrapper{
@@ -220,9 +220,12 @@ body {
     background: rgba(0, 0, 0, 0.41);
     box-shadow: 2px 2px 20px black;
     background: #00000069;
+
 }
 #mvp-name {
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 
@@ -274,4 +277,17 @@ body {
 }
 #eventText-animation-wrapper > #right-panel.slideIn {
     animation: rightSlideIn 1s forwards;
+}
+
+#event-text-wrapper{
+    position: absolute;
+    background: red;
+    margin-top: 4.5%;
+    overflow: hidden;
+    transform-origin: center;
+    filter: drop-shadow(2px 2px 40px black);
+    top: 0;
+    left: 50%;
+    width: 0%;
+    white-space: nowrap;
 }

@@ -275,7 +275,11 @@ function scoreBoardSlideIn() {
     //others
     document.getElementById('score-seperator').classList.remove('slideOut');
     document.getElementById('score-seperator').classList.add('slideIn');
+    document.getElementById('score-seperator').classList.remove('d-none')
     
+    // event text expand outwards
+    document.getElementById('event-text-wrapper').classList.remove('expand-outwards-animation');
+    document.getElementById('event-text-wrapper').classList.add('contract-inwards-animation');
 }
 
 function scoreBoardSlideOut() {
@@ -286,6 +290,10 @@ function scoreBoardSlideOut() {
     document.getElementById('right-panel').classList.remove('slideIn');
     document.getElementById('right-panel').classList.add('slideOut');
     //others
-    document.getElementById('score-seperator').classList.remove('slideIn');
-    document.getElementById('score-seperator').classList.add('slideOut');
+    document.getElementById('score-seperator').classList.add('d-none')
+    
+    // event text expand inwards
+    document.getElementById('event-text-wrapper').classList.remove('contract-inwards-animation');
+    document.getElementById('event-text-wrapper').classList.add('expand-outwards-animation');
+
 }

@@ -51,10 +51,11 @@
                         <div id="score_t" class="w-50">??</div>
                     </div>
 
-                    <div id="event-text-wrapper" class="round-time-wrapper d-flex flex-row justify-content-center align-items-center border">
+                    <!-- round-time-wrapper d-flex flex-row justify-content-center align-items-center border -->
+                    <div id="event-text-wrapper" class="round-time-wrapper d-flex flex-column justify-content-around align-items-center border">
                         <div class="round-time">MM:SS</div>
                         <div class="event-text d-none">Freezetime</div>
-                        <div id="bomb" class="d-none d-flex justify-content-around align-items-center w-100 bomb-planted">
+                        <div id="bomb" class="d-none d-flex flex-grow-1 w-100 justify-content-around align-items-center bomb-planted">
                             <span class="w-25">BOMB</span>
                             <div class="swapping-squares-spinner border border-4" :style="spinnerStyle">
                               <div class="square"></div>
@@ -66,7 +67,6 @@
                             <span id="bomb-state-defused" class="w-25">DEFUSED</span>
                             <span id="bomb-state-exploded" class="w-25">EXPLODED</span>
                         </div>
-
                     </div>
 
                     <div class="team-box team-ct d-flex justify-content-around align-items-center border-bottom border-top">

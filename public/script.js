@@ -11,28 +11,47 @@ socket.on('eventText', (eventText) => {
 
 socket.on('bombPlanted', () => {
     console.log('The bomb has been planted!');
-    startEffectBombPlanted();
+    const status = 'bomb-planted';
+    showBomb({ status });
 });
 
 socket.on('bombDefused', () => {
     console.log('The bomb has been defused!');
+    const status = 'bomb-defused';
+    showBomb({ status });
 });
 
 socket.on('bombExploded', () => {
     console.log('The bomb has exploded!');
+    const status = 'bomb-exploded';
+    showBomb({ status });
 });
+
+socket.on('winTeam_CT', () => {
+    console.log('Counter-Terrorists have won the round!');
+    showEventText('COUNTER-TERRORISTS WIN!')
+});
+
+socket.on('winTeam_T', () => {
+    console.log('Terrorists have won the round!');
+    showEventText('TERRORISTS WIN!')
+});
+
 
 socket.on('roundBegin', () => {
     console.log('A new round has begun.');
+    resetEventText();
 });
 
 socket.on('roundFreeze', () => {
     console.log('A Freeze has begun.');
     mvpEffectStop();
+    resetEventText();
 });
 
 socket.on('roundEnd', () => {
     console.log('The round has ended.');
+    resetEventText();
 });
 
 socket.on('playerDeath', ({ steamid, name }) => {
@@ -352,5 +371,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // injectDummyPlayerCards();
     // injectDummyPlayerCards();
     // mvpEffectStart()
-    startEffectBomb('bomb-planted');
+    // startEffectBomb('bomb-planted');
 });

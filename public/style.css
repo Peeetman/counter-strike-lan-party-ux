@@ -233,6 +233,48 @@ body {
 }
 /* Bomb Ticking End */
 
+#winning-team-wrapper{
+    font-size: 2rem;
+    overflow: hidden;
+    transform-origin: top;
+    height: 0%;
+}
+
+/* Animation for expanding outwards from the center */
+@keyframes slideExpandDown {
+    from {
+        top: 0%;
+        font-size: 2rem;
+        height: 0%;
+    }
+    to {
+        top: 0%;
+        font-size: 2rem;
+        height: 33%;
+    }
+}
+
+/* Animation for contracting inwards towards the center */
+@keyframes slideContractUp {
+    from {
+        top: 0%;
+        height: 33%;
+    }
+    to {
+        top: 0%;
+        height: 0%;
+    }
+}
+/* Apply the outwards expansion animation */
+.slideExpandDownAnimation {
+    animation: slideExpandDown 1s forwards;
+}
+
+/* Apply the inwards contraction animation */
+.slideContractUpAnimation {
+    animation: slideContractUp 1s forwards;
+}
+
 .round-time{
     font-size: 8rem;
 }

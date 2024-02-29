@@ -119,6 +119,20 @@ gameStateMonitor.on('roundWinCondition', ({roundWinCondition}) => {
     console.log(`Server: Round Win Condition: ${roundWinCondition}`);
 })
 
+gameStateMonitor.on('winTeam_CT', () => {
+    const eventText = 'Counter-Terrorists win!';
+    io.emit('eventText', eventText);
+    io.emit('winTeam_CT');
+    console.log('Server: ' + eventText);
+})
+
+gameStateMonitor.on('winTeam_T', () => {
+    const eventText = 'Terrorists win!';
+    io.emit('eventText', eventText);
+    io.emit('winTeam_T');
+    console.log('Server: ' + eventText);
+})
+
 gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
     const eventText = `Player with ID [${steamid}] and Name [${name}] has died.`;
     console.log('Server: ' + eventText);

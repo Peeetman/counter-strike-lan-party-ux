@@ -251,7 +251,7 @@ class GameStateMonitor extends EventEmitter {
 
     emitWinTeam() {
         try{
-            if(this.winTeam === 'CT') this.customEmit('winTeam_CT')
+            if(this.currentGameState.winTeam === 'CT') this.customEmit('winTeam_CT')
             else this.customEmit('winTeam_T')
         } catch (error) {
             console.error('Error in emitWinTeam:', error);

@@ -11,6 +11,7 @@ socket.on('eventText', (eventText) => {
 
 socket.on('bombPlanted', () => {
     console.log('The bomb has been planted!');
+    startEffectBombPlanted();
 });
 
 socket.on('bombDefused', () => {
@@ -215,14 +216,7 @@ function injectDummyPlayerCards() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // injectDummyPlayerCards();
-    // injectDummyPlayerCards();
-    // mvpEffectStart()
-});
-
-
-// Animation Helpers
+// MVP Effects
 function mvpEffectStart({ steamid, name }) {
     if(!clientParticipantsConfig[steamid] || !clientParticipantsConfig[steamid].mvp) return false;
 
@@ -253,7 +247,6 @@ function mvpEffectStart({ steamid, name }) {
         mvpEffectStop()
     }, "9500"); 
 }
-
 function mvpEffectStop() {    
     // expand outwards
     document.getElementById('mvp-animation-wrapper').classList.remove('expand-outwards-animation');
@@ -269,18 +262,71 @@ function mvpEffectStop() {
     }, '500'); 
 }
 
+//Bomb Planted Effects
+function startEffectBombPlanted() {
+    showBombTicking();
+}
 
 let eventTextActive = false;
+
+
+
+function showBombTicking() {
+    const wrapper = document.getElementById('event-text-wrapper');
+    const roundTime = wrapper.querySelector('.round-time');
+    const eventText = wrapper.querySelector('.event-text');
+    const bombTicking = wrapper.querySelector('#bomb-ticking');
+    const bombDefused = wrapper.querySelector('#bomb-defused');
+
+    let animationName = '';
+    (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
+    applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+        roundTime.classList.add('d-none');
+        eventText.classList.add('d-none');
+        bombDefused.classList.add('d-none');
+        bombTicking.classList.remove('d-none');
+        let animationName = 'expandToInitWidth';
+        eventTextActive = eventTextActive;
+        applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+            eventTextActive = true;
+        });
+    });
+}
+
+
+function showBombDefused() {
+    const wrapper = document.getElementById('event-text-wrapper');
+    const roundTime = wrapper.querySelector('.round-time');
+    const eventText = wrapper.querySelector('.event-text');
+    const bombTicking = wrapper.querySelector('#bomb-ticking');
+    const bombDefused = wrapper.querySelector('#bomb-defused');
+
+    let animationName = '';
+    (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
+    applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+        roundTime.classList.add('d-none');
+        eventText.classList.add('d-none');
+        bombTicking.classList.add('d-none');
+        bombDefused.classList.remove('d-none');
+        let animationName = 'expandToInitWidth';
+        eventTextActive = eventTextActive;
+        applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
+            eventTextActive = true;
+        });
+    });
+}
+
 function showEventText(newText) {
     const wrapper = document.getElementById('event-text-wrapper');
     const roundTime = wrapper.querySelector('.round-time');
     const eventText = wrapper.querySelector('.event-text');
+    const bombTicking = wrapper.querySelector('#bomb');
 
     let animationName = '';
-    console.log(eventTextActive);
     (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
     applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
         roundTime.classList.add('d-none');
+        bombTicking.classList.add('d-none');
         eventText.classList.remove('d-none');
         eventText.innerText = newText;
         let animationName = 'expandToLargeWidth';
@@ -295,12 +341,14 @@ function resetEventText() {
     const wrapper = document.getElementById('event-text-wrapper');
     const roundTime = wrapper.querySelector('.round-time');
     const eventText = wrapper.querySelector('.event-text');
+    const bombTicking = wrapper.querySelector('#bomb');
 
     let animationName = 'fromInitWidthShrink';
     (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
     applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
         // Show round-time and hide event-text
         roundTime.classList.remove('d-none');
+        bombTicking.classList.add('d-none');
         eventText.classList.add('d-none');
         animationName = 'expandToInitWidth';
         applyEventTextAnimation({animationName, wrapper, eventTextActive});
@@ -309,10 +357,18 @@ function resetEventText() {
 }
 
 function applyEventTextAnimation({animationName, wrapper, eventTextActive}, onComplete) {
-    wrapper.style.animation = `${animationName} 1s forwards ease-in-out`;
+    wrapper.style.animation = `${animationName} 0.6s forwards ease-in-out`;
     function handleAnimationEnd() {
         wrapper.removeEventListener('animationend', handleAnimationEnd);
         if (onComplete) onComplete();
     }
     wrapper.addEventListener('animationend', handleAnimationEnd);
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // injectDummyPlayerCards();
+    // injectDummyPlayerCards();
+    // mvpEffectStart()
+    // showBombTicking()
+});

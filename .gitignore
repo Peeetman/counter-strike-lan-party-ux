@@ -3,3 +3,6 @@
 *public/media/**/*.webp
 *public/media/**/*.png
 *public/media/**/*.jpg
+*public/fonts/*
+!.gitignore
+!public/fonts/.gitkeep

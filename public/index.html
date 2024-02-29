@@ -52,11 +52,28 @@
                     </div>
 
                     <div id="event-text-wrapper" class="round-time-wrapper d-flex flex-row justify-content-center align-items-center border">
-                        <div class="round-time">??:??</div>
+                        <div class="round-time">MM:SS</div>
                         <div class="event-text d-none">Freezetime</div>
-                        <div id="bomb d-done">
-                            
+                        <div id="bomb-ticking" class="d-none d-flex justify-content-around align-items-center w-100 text-danger">
+                            <span class="w-25">BOMB</span>
+                            <div class="swapping-squares-spinner border border-4 border-danger" :style="spinnerStyle">
+                              <div class="square"></div>
+                              <div class="square"></div>
+                              <div class="square"></div>
+                              <div class="square"></div>
+                            </div>
+                            <span class="w-25">PLANTED</span>
                         </div>
+                        <div id="bomb-defused" class="d-none d-flex justify-content-around align-items-center w-100 text-success">
+                            <span class="w-25">BOMB</span>
+                            <div class="swapping-squares-spinner border border-4 border-success square-success" :style="spinnerStyle">
+                              <div class="square"></div>
+                              <div class="square"></div>
+                              <div class="square"></div>
+                              <div class="square"></div>
+                            </div>
+                            <span class="w-25">DEFUSED</span>
+                        </div>           
                     </div>
 
                     <div class="team-box team-ct d-flex justify-content-around align-items-center border-bottom border-top">

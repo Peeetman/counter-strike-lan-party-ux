@@ -39,18 +39,37 @@ body {
     padding-left: 1%;
     padding-right: 1%;
 }
-
-.bg-fade-ct-to-t-1 {
-    background: #3A1C71;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #FFAF7B, #D76D77, #3A1C71);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #FFAF7B, #D76D77, #3A1C71); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+.bg-teams{
+    background: #FC354C;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #0ABFBC, #FC354C);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #0ABFBC, #FC354C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
-
-.bg-fade-ct-to-t-2{
+.bg-teams-bak{
     background: #659999;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to left, #659999, #f4791f);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to left, #659999, #f4791f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+
+.win-t{
+    background: #ff5f11;
+    color: white;
+    animation: team-win-flicker-t 2s 2 forwards ease-in-out;
+}
+.win-ct{
+    background: #002f55;
+    color: white;
+    animation: team-win-flicker-ct 2s 2 forwards ease-in-out;
+}
+@keyframes team-win-flicker-t {
+    0%, 12%, 25%, 37%, 50%, 62%, 75%, 87%, 100% { background: transparent; color: #ff5f11; }
+    6%, 18%, 31%, 43%, 56%, 68%, 81%, 93% { background: #ff5f11; color: white; }
+}
+
+@keyframes team-win-flicker-ct {
+    0%, 12%, 25%, 37%, 50%, 62%, 75%, 87%, 100% { background: transparent; color: #002f55; }
+    6%, 18%, 31%, 43%, 56%, 68%, 81%, 93% { background: #002f55; color: white; }
+}
+
 
 #match-status-wrapper{
     filter: drop-shadow(2px 2px 40px black);
@@ -303,11 +322,12 @@ body {
 .round-number, .round-number-pre-text {
     width: 8%;
 }
-.team-ct{
+#team-ct{
     color: #002f55;
 }
-.team-t{
-    color: #8f2f00;
+#team-t{
+    --color-t-bak: #ff5f11;
+    color: #ff5f11;
 }
 #mapmode-wrapper, #round-info-wrapper{
     width: 15%;
@@ -336,6 +356,7 @@ body {
 
 #player-cards-wrapper{
     position: relative;
+    min-height: 33vh;
 }
 
 .player-card{

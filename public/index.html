@@ -17,7 +17,7 @@
 <body>
 
 
-    <div class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center text-white bg-fade-ct-to-t-2">
+    <div id="gradient" class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center text-white bg-teams">
         <div id="header" class="d-flex border-bottom flex-row align-items-center">
             <div class="d-flex w-100 justify-content-start">
                 <div>Oberzaubach LAN 2024 UX System</div>
@@ -40,20 +40,20 @@
         <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-evenly align-items-center">
             <div id="match-status-wrapper" class="d-flex flex-column align-items-center w-100">
                 <div id="round-info-wrapper" class="p-3 border border-bottom-0 d-flex flex-row justify-content-around">
-                    <div class="round-number-wrapper"><span>Round: </span><span class="round-number">??</span></div>
-                    <div><span class="round-phase">freezetime</span></div>
+                    <div class="round-number-wrapper"><span>Round: </span><span class="round-number">0</span></div>
+                    <div><span class="round-phase">roundphase</span></div>
                 </div>
 
                 <div id="score-box" class="d-flex justify-content-center w-100">
 
-                    <div class="team-box team-t d-flex justify-content-around align-items-center border-bottom border-top">
+                    <div id="team-t" class="team-box d-flex justify-content-around align-items-center border-bottom border-top">
                         <div class="w-50">T</div>
-                        <div id="score_t" class="w-50">??</div>
+                        <div id="score_t" class="w-50">0</div>
                     </div>
 
                     <!-- round-time-wrapper d-flex flex-row justify-content-center align-items-center border -->
                     <div id="event-text-wrapper" class="round-time-wrapper d-flex flex-column justify-content-around align-items-center border">
-                        <div class="round-time">MM:SS</div>
+                        <div class="round-time">Waiting ...</div>
                         <div class="event-text d-none">Freezetime</div>
 
                         <div id="bomb" class="d-none d-flex flex-grow-1 w-100 justify-content-around align-items-center">
@@ -71,15 +71,15 @@
 
                     </div>
 
-                    <div class="team-box team-ct d-flex justify-content-around align-items-center border-bottom border-top">
-                        <div id="score_ct" class="w-50">??</div>
+                    <div id="team-ct" class="team-box d-flex justify-content-around align-items-center border-bottom border-top">
+                        <div id="score_ct" class="w-50">0</div>
                         <div class="w-50">CT</div>
                     </div>
                 </div>
                 <div id="mapmode-wrapper" class="p-3 d-flex flex-row justify-content-around border border-top-0">
                     <div class="mapname">mapname</div>
                     <div class="mode">mode</div>
-                    <div class="match-phase">gameover</div>
+                    <div class="match-phase">matchphase</div>
                 </div>                
             </div>
 

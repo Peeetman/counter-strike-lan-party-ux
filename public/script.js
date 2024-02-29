@@ -47,6 +47,9 @@ socket.on('bombExploded', () => {
 let counterTerrorEffectTimer = '';
 socket.on('winTeam_CT', async () => {
     console.log('Counter-Terrorists have won the round!');
+
+    tWinEffects();
+
     counterTerrorEffectTimer = setTimeout(() => {
         showEventText('COUNTER-TERRORISTS WIN!')
     }, (!bombStatus === '' || !bombStatus === 'bomb-planted' ? 2000 : 0))
@@ -55,11 +58,13 @@ socket.on('winTeam_CT', async () => {
 let terrorEffectTimer = '';
 socket.on('winTeam_T', async () => {
     console.log('Terrorists have won the round!');
+
+    ctWinEffects();
+
     terrorEffectTimer = setTimeout(() =>{
         showEventText('TERRORISTS WIN!')
     }, (!bombStatus === '' || !bombStatus === 'bomb-planted' ? 2000 : 0))
 });
-
 
 socket.on('roundBegin', () => {
     console.log('A new round has begun.');
@@ -71,6 +76,7 @@ socket.on('roundBegin', () => {
 });
 
 socket.on('roundFreeze', () => {
+    resetAllEffects();
     console.log('A Freeze has begun.');
     mvpEffectStop();
     showEventText('FREEZETIME')
@@ -388,9 +394,31 @@ function applyEventTextAnimation({animationName, wrapper, eventTextActive}, onCo
 }
 
 
+function tWinEffects() {
+    console.log('tWinEffects started');
+    const tBox = document.getElementById('team-t');
+    tBox.classList.add('win-t');
+}
+
+function ctWinEffects() {
+    console.log('ctWinEffects started');
+    const ctBox = document.getElementById('team-ct');
+    ctBox.classList.add('win-ct');
+}
+
+function resetAllEffects(){
+    const ctBox = document.getElementById('team-ct');
+    ctBox.classList.remove('win-ct');
+    const tBox = document.getElementById('team-t');
+    tBox.classList.remove('win-t');
+    resetEventText();
+    mvpEffectStop();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // injectDummyPlayerCards();
     // mvpEffectStart()
     // bombStatus = 'bomb-planted'
     // showBomb({ bombStatus })
+    //resetAllEffects();
 });

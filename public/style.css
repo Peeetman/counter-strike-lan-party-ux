@@ -96,7 +96,7 @@ body {
 #bomb.bomb-planted > span#bomb-state-planted{
     display: initial;
 }
-#bomb.bomb-planted > span#bomb-state-exploded, #bomb > span#bomb-state-defused{
+#bomb.bomb-planted > span#bomb-state-exploded, #bomb.bomb-planted > span#bomb-state-defused, #bomb.bomb-planted > span#bomb-state-exploded{
     display: none;
 }
 
@@ -109,7 +109,7 @@ body {
 #bomb.bomb-exploded > span#bomb-state-exploded{
     display: initial;
 }
-#bomb.bomb-exploded > span#bomb-state-defused, span#bomb-state-planted {
+#bomb.bomb-exploded > span#bomb-state-defused, #bomb.bomb-exploded > span#bomb-state-planted {
     display: none;
 }
 #bomb.bomb-exploded > div.swapping-squares-spinner {

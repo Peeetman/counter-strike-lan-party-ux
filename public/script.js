@@ -6,52 +6,82 @@ let clientParticipantsConfig = {}
 // Visuelle Events
 socket.on('eventText', (eventText) => {
     console.log(`eventText: ${eventText}`);
-    document.querySelector("#event-text").textContent = eventText;
+    // document.querySelector("#event-text").textContent = eventText;
 })
 
+let bombStatus = ''
 socket.on('bombPlanted', () => {
     console.log('The bomb has been planted!');
-    const status = 'bomb-planted';
-    showBomb({ status });
+    bombStatus = 'bomb-planted';
+    showBomb({ bombStatus });
 });
 
 socket.on('bombDefused', () => {
     console.log('The bomb has been defused!');
-    const status = 'bomb-defused';
-    showBomb({ status });
+
+    (counterTerrorEffectTimer ? clearTimeout(counterTerrorEffectTimer) : '');
+    (terrorEffectTimer ? clearTimeout(terrorEffectTimer) : '');
+
+    bombStatus = 'bomb-defused';
+    showBomb({ bombStatus });
+
+    setTimeout(() => {
+        showEventText('COUNTER-TERRORISTS WIN!')
+    }, 2000);
 });
 
 socket.on('bombExploded', () => {
     console.log('The bomb has exploded!');
-    const status = 'bomb-exploded';
-    showBomb({ status });
+
+    (counterTerrorEffectTimer ? clearTimeout(counterTerrorEffectTimer) : '');
+    (terrorEffectTimer ? clearTimeout(terrorEffectTimer) : '');
+
+    bombStatus = 'bomb-exploded';
+    showBomb({ bombStatus });
+
+    setTimeout(() => {
+        showEventText('TERRORISTS WIN!')
+    }, 2000);
 });
 
-socket.on('winTeam_CT', () => {
+let counterTerrorEffectTimer = '';
+socket.on('winTeam_CT', async () => {
     console.log('Counter-Terrorists have won the round!');
-    showEventText('COUNTER-TERRORISTS WIN!')
+    counterTerrorEffectTimer = setTimeout(() => {
+        showEventText('COUNTER-TERRORISTS WIN!')
+    }, (!bombStatus === '' || !bombStatus === 'bomb-planted' ? 2000 : 0))
 });
 
-socket.on('winTeam_T', () => {
+let terrorEffectTimer = '';
+socket.on('winTeam_T', async () => {
     console.log('Terrorists have won the round!');
-    showEventText('TERRORISTS WIN!')
+    terrorEffectTimer = setTimeout(() =>{
+        showEventText('TERRORISTS WIN!')
+    }, (!bombStatus === '' || !bombStatus === 'bomb-planted' ? 2000 : 0))
 });
 
 
 socket.on('roundBegin', () => {
     console.log('A new round has begun.');
-    resetEventText();
+    showEventText('GO GO GO!')
+    setTimeout(() =>{
+        resetEventText();
+    }, 2000)
+    bombStatus = '';
 });
 
 socket.on('roundFreeze', () => {
     console.log('A Freeze has begun.');
     mvpEffectStop();
-    resetEventText();
+    showEventText('FREEZETIME')
+    setTimeout(() =>{
+        resetEventText();
+    }, 2000)
 });
 
 socket.on('roundEnd', () => {
     console.log('The round has ended.');
-    resetEventText();
+    bombStatus = '';
 });
 
 socket.on('playerDeath', ({ steamid, name }) => {
@@ -281,19 +311,10 @@ function mvpEffectStop() {
     }, '500'); 
 }
 
-//Bomb Planted Effects
-function startEffectBomb(status) {
-    // const status = 'bomb-defused';
-    // const status = 'bomb-exploded';
-    // const status = 'bomb-planted';
-    showBomb({ status });
-}
+
 
 let eventTextActive = false;
-
-
-
-function showBomb({ status }) {
+function showBomb({ bombStatus }) {
     const wrapper = document.getElementById('event-text-wrapper');
     const roundTime = wrapper.querySelector('.round-time');
     const eventText = wrapper.querySelector('.event-text');
@@ -308,7 +329,7 @@ function showBomb({ status }) {
         bomb.classList.remove('bomb-planted');
         bomb.classList.remove('bomb-exploded');
         bomb.classList.remove('bomb-defused');
-        bomb.classList.add(status);
+        bomb.classList.add(bombStatus);
         let animationName = 'expandToInitWidth';
         eventTextActive = eventTextActive;
         applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
@@ -369,7 +390,7 @@ function applyEventTextAnimation({animationName, wrapper, eventTextActive}, onCo
 
 document.addEventListener('DOMContentLoaded', function() {
     // injectDummyPlayerCards();
-    // injectDummyPlayerCards();
     // mvpEffectStart()
-    // startEffectBomb('bomb-planted');
+    // bombStatus = 'bomb-planted'
+    // showBomb({ bombStatus })
 });

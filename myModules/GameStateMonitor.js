@@ -207,9 +207,14 @@ class GameStateMonitor extends EventEmitter {
                     currentRoundPhaseCountdownChanged = true;
                 }
             } else {
-                newRoundPhaseCountdownString = '😱';
-                this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
-                currentRoundPhaseCountdownChanged = true;
+                // newRoundPhaseCountdownString = '😱';
+                // this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
+                // currentRoundPhaseCountdownChanged = true;
+                // check bomb planted again
+                if (currentRoundPhaseCountdown.phase === 'bomb' && this.currentGameState.bombState !== 'planted'){
+                    this.currentGameState.bombState = 'planted';
+                    this.customEmit('bombPlanted');
+                }
             }
 
             if (currentRoundPhaseCountdownChanged) this.currentRoundPhaseCountdown = currentRoundPhaseCountdown;

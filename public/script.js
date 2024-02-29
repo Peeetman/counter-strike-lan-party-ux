@@ -263,51 +263,33 @@ function mvpEffectStop() {
 }
 
 //Bomb Planted Effects
-function startEffectBombPlanted() {
-    showBombTicking();
+function startEffectBomb(status) {
+    // const status = 'bomb-defused';
+    // const status = 'bomb-exploded';
+    // const status = 'bomb-planted';
+    showBomb({ status });
 }
 
 let eventTextActive = false;
 
 
 
-function showBombTicking() {
+function showBomb({ status }) {
     const wrapper = document.getElementById('event-text-wrapper');
     const roundTime = wrapper.querySelector('.round-time');
     const eventText = wrapper.querySelector('.event-text');
-    const bombTicking = wrapper.querySelector('#bomb-ticking');
-    const bombDefused = wrapper.querySelector('#bomb-defused');
+    const bomb = wrapper.querySelector('#bomb');
 
     let animationName = '';
     (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
     applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
         roundTime.classList.add('d-none');
         eventText.classList.add('d-none');
-        bombDefused.classList.add('d-none');
-        bombTicking.classList.remove('d-none');
-        let animationName = 'expandToInitWidth';
-        eventTextActive = eventTextActive;
-        applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
-            eventTextActive = true;
-        });
-    });
-}
-
-
-function showBombDefused() {
-    const wrapper = document.getElementById('event-text-wrapper');
-    const roundTime = wrapper.querySelector('.round-time');
-    const eventText = wrapper.querySelector('.event-text');
-    const bombTicking = wrapper.querySelector('#bomb-ticking');
-    const bombDefused = wrapper.querySelector('#bomb-defused');
-
-    let animationName = '';
-    (eventTextActive ? animationName = 'fromLargeWidthShrink' : animationName = 'fromInitWidthShrink');
-    applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
-        roundTime.classList.add('d-none');
-        eventText.classList.add('d-none');
-        bombTicking.classList.add('d-none');
-        bombDefused.classList.remove('d-none');
+        bomb.classList.remove('d-none');
+        bomb.classList.remove('bomb-planted');
+        bomb.classList.remove('bomb-exploded');
+        bomb.classList.remove('bomb-defused');
+        bomb.classList.add(status);
         let animationName = 'expandToInitWidth';
         eventTextActive = eventTextActive;
         applyEventTextAnimation({animationName, wrapper, eventTextActive}, () => {
@@ -370,5 +352,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // injectDummyPlayerCards();
     // injectDummyPlayerCards();
     // mvpEffectStart()
-    // showBombTicking()
+    startEffectBomb('bomb-planted');
 });

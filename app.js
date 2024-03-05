@@ -1,6 +1,9 @@
+global.__basedir = __dirname;
+
 // Dashboard
 const http = require('http');
 const express = require('express');
+const router = express.Router();
 const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
@@ -8,12 +11,17 @@ const path = require('path');
 const fs = require('fs');
 const fsPromises = fs.promises;
 
-global.__basedir = __dirname;
+// Importing Routes
+const participantRoutes = require('./routes/participantRoutes');
+const apiRoutes = require('./routes/apiRoutes');
+
+// Register the routes
+app.use(express.static('public'));
+app.use('/participants', participantRoutes);
+app.use('/api', apiRoutes);
 
 //ParticipantsConfigHandler
 const participantsConfigHandler = require('./myModules/participantsConfigHandler');
-
-app.use(express.static('public'));
 
 // GSI
 const CSGOGSI = require('node-csgo-gsi');
@@ -123,6 +131,12 @@ gameStateMonitor.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString
     io.emit('roundPhaseCountdownUpdate', ({newRoundPhaseCountdownString, urgend}));
 });
 
+gameStateMonitor.on('getCurrentClientParticipantsConfig', () => {
+    io.emit('sendParticipantsConfig', ({ participantsConfig }));
+    console.log('SOCKET IO: Sent Clients participantsConfig');
+});
+
+
 //Dashboard Server
 io.on('connection', async (socket) => {
     console.log(`SOCKET IO: Client connected: ${socket.id}`);
@@ -131,9 +145,9 @@ io.on('connection', async (socket) => {
     gameStateMonitor.emitModifiedPlayerStateOnChange();
     gameStateMonitor.emitCurrentMatchState();
 
-    //Participant Config Stuff
-    participantsConfig = await participantsConfigHandler.generateClientParticipantsConfig();
-    console.log(participantsConfig);
+    // Participant Config Stuff
+    // participantsConfig = await participantsConfigHandler.generateClientParticipantsConfig();
+    // console.log(participantsConfig);
 
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
     console.log('SOCKET IO: Sent Clients participantsConfig');

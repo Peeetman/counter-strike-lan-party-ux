@@ -50,6 +50,12 @@ body {
     background: linear-gradient(to left, #659999, #f4791f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.bg-participants{
+    background: #232526;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
 .win-t{
     background: #ff5f11;
     color: white;
@@ -411,6 +417,7 @@ body {
 /* Style for the not-alive state */
 .player-card.not-alive .card-body,
 .player-card.not-alive .beer-wrapper,
+.player-card.not-alive .dwgh-wrapper,
 .player-card.not-alive .card-img-top {
     opacity: 0.2;
 }
@@ -439,6 +446,17 @@ body {
     position: relative;
     overflow: hidden;
 }
+/*all-participants-wrapper participant-card*/
+.player-card.participant-card{
+    border-radius: 0;
+    opacity: 0.3;
+}
+.player-card.participant-card:hover{
+    border-radius: 0;
+    opacity: 1;
+    cursor: pointer;
+}
+
 
 #logo-container {
     position: absolute;

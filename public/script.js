@@ -48,7 +48,7 @@ let counterTerrorEffectTimer = '';
 socket.on('winTeam_CT', async () => {
     console.log('Counter-Terrorists have won the round!');
 
-    tWinEffects();
+    ctWinEffects();
 
     counterTerrorEffectTimer = setTimeout(() => {
         showEventText('COUNTER-TERRORISTS WIN!')
@@ -59,7 +59,7 @@ let terrorEffectTimer = '';
 socket.on('winTeam_T', async () => {
     console.log('Terrorists have won the round!');
 
-    ctWinEffects();
+    tWinEffects();
 
     terrorEffectTimer = setTimeout(() =>{
         showEventText('TERRORISTS WIN!')
@@ -96,6 +96,14 @@ socket.on('playerDeath', ({ steamid, name }) => {
 
 socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`);
+    showEventText(`${name} died with nade in hand!`);
+    const playerCardId = `player-card-${steamid}`;
+    let existingCard = document.getElementById(playerCardId);
+    if (existingCard) {
+        console.log(existingCard);
+        existingCard.classList.add('died-with-nade');
+    }
+
 });
 
 

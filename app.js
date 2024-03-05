@@ -8,6 +8,11 @@ const path = require('path');
 const fs = require('fs');
 const fsPromises = fs.promises;
 
+global.__basedir = __dirname;
+
+//ParticipantsConfigHandler
+const participantsConfigHandler = require('./myModules/participantsConfigHandler');
+
 app.use(express.static('public'));
 
 // GSI
@@ -21,63 +26,6 @@ const csgoGSI = new CSGOGSI({
 });
 const gameStateMonitor = new GameStateMonitor(csgoGSI, false);
 
-// Participant Config with player-image paths and mvp presets
-let participantsConfig = {}
-const playerAvatarBasePath = './media/player-content'
-async function loadParticipantsConfig() {
-    try {
-        const configPath = path.join(__dirname, 'participants.json');
-        const data = await fsPromises.readFile(configPath, 'utf8');
-        participantsConfig = JSON.parse(data);
-
-        for (const steamid of Object.keys(participantsConfig)) {
-            //Player Images
-            const folderName = participantsConfig[steamid].folder;
-            try {
-                const files = await fsPromises.readdir(path.join(__dirname, 'public', 'media', 'player-content', folderName));
-                // Map Immages
-                // List of common image file extensions
-                const imageExtensions = ['.png', '.jpg', '.jpeg'];
-                // Filter files by checking if their extension matches any in the list, then map to full paths
-                const imageFilePaths = files.filter(file => 
-                                            imageExtensions.some(ext => file.endsWith(ext)))
-                                            .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-                if(imageFilePaths.length > 0 ) participantsConfig[steamid].playerImages = imageFilePaths;
-                else participantsConfig[steamid].playerImages = [`${playerAvatarBasePath}/placeholder.png`] 
-
-                // MVP Soundfile Src
-                // List of common image file extensions
-                const soundFileExtensions = ['.mp3', '.wav', '.ogg'];
-                // Filter files by checking if their extension matches any in the list, then map to full paths
-                const soundFilePaths = files.filter(file => 
-                                            soundFileExtensions.some(ext => file.endsWith(ext)))
-                                            .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-                
-                // MVP Background Gif Src
-                // List of common gif
-                const gifFileExtensions = ['.gif'];
-                // Filter files by checking if their extension matches any in the list, then map to full paths
-                const gifFilePath = files.filter(file => 
-                                            gifFileExtensions.some(ext => file.endsWith(ext)))
-                                            .map(file => `${playerAvatarBasePath}/${folderName}/${file}`);
-
-                // Crate mvp.soundFileSrc or mvp.backgroundGifSrc if present
-                if(soundFilePaths.length > 0 || gifFilePath.length > 0) {
-                    participantsConfig[steamid].mvp = {}
-                    if(soundFilePaths.length > 0) participantsConfig[steamid].mvp.soundFileSrc = soundFilePaths[0]
-                    if(gifFilePath.length > 0) participantsConfig[steamid].mvp.backgroundGifSrc = gifFilePath[0]
-                }
-            } catch (err) {
-                console.error('Error reading or processing player config file:', err);
-            }
-        } 
-    } catch (err) {
-        console.error('Error reading or processing player config file:', err);
-    }
-    console.log('Server: ParticipantsConfig reloaded');
-    // console.log(participantsConfig)
-    return participantsConfig;
-}
 
 gameStateMonitor.on('bombPlanted', () => {
     const eventText = 'Bomb planted!';
@@ -183,7 +131,10 @@ io.on('connection', async (socket) => {
     gameStateMonitor.emitModifiedPlayerStateOnChange();
     gameStateMonitor.emitCurrentMatchState();
 
-    participantsConfig = await loadParticipantsConfig();
+    //Participant Config Stuff
+    participantsConfig = await participantsConfigHandler.generateClientParticipantsConfig();
+    console.log(participantsConfig);
+
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
     console.log('SOCKET IO: Sent Clients participantsConfig');
 
@@ -205,7 +156,7 @@ io.on('connection', async (socket) => {
 // app.use('/dist', express.static(path.join(__dirname, './public')));
 
 // Load the configuration at server startup
-participantsConfig = loadParticipantsConfig();
+participantsConfig = participantsConfigHandler.generateClientParticipantsConfig();
 
 server.listen(8080, () => {
     console.log('Dashboard Server Running on port 3001');

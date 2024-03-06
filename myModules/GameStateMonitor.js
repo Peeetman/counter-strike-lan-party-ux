@@ -118,7 +118,7 @@ class GameStateMonitor extends EventEmitter {
                         this.currentPlayerState[steamid].health = state.health;
                         PlayerStateChanged = true; // Flag state as changed
 
-                        if(Date.now() - this.timestampLastActiveGrenade < 1000 || activeGrenade > 0) {
+                        if(Date.now() - this.currentPlayerState[steamid].timestampLastActiveGrenade < 1000 || activeGrenade > 0) {
                             console.log(`GameStateMonitor.js: ${name} died with grenade in hand`)
                             this.customEmit('playerDeathWithGrenade', { steamid, name });
                         }
@@ -142,7 +142,7 @@ class GameStateMonitor extends EventEmitter {
 
                     // Weapon Change   
                     if (JSON.stringify(this.currentPlayerState[steamid].weapons) !== JSON.stringify(weapons)) {
-                        if ( activeGrenade > 0 ) this.timestampLastActiveGrenade = Date.now();
+                        if ( activeGrenade > 0 ) this.currentPlayerState[steamid].timestampLastActiveGrenade = Date.now();
                         this.currentPlayerState[steamid].weapons = weapons;
                         // PlayerStateChanged = true; // no emit
 
@@ -182,43 +182,43 @@ class GameStateMonitor extends EventEmitter {
             }
         }
 
-        try{
-        //Phase Countown Changes
-        if(data.phase_countdowns) {
-            const currentRoundPhaseCountdown = data.phase_countdowns;
-            let currentRoundPhaseCountdownChanged = false;
+        try {
+            //Phase Countown Changes
+            if(data.phase_countdowns) {
+                const currentRoundPhaseCountdown = data.phase_countdowns;
+                let currentRoundPhaseCountdownChanged = false;
 
-            // Emit and Update only On Phase-Change but ignore Phase 'defuse' to not give intel
-            if(this.currentRoundPhaseCountdown.phase !== currentRoundPhaseCountdown.phase && currentRoundPhaseCountdown.phase !== 'defuse') {
-                const newRoundPhase = currentRoundPhaseCountdown.phase;
-                this.customEmit('roundPhaseChange', { newRoundPhase });
-                currentRoundPhaseCountdownChanged = true;
-            }
-
-            let newRoundPhaseCountdownString = '';
-            let urgend = false;
-            if(currentRoundPhaseCountdown.phase !== 'bomb' && currentRoundPhaseCountdown.phase !== 'defuse') {                
-                // Emit CountdownUpdate on 1 second Change
-                if (Math.ceil(parseFloat(this.currentRoundPhaseCountdown.phase_ends_in)) - Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in)) >= 1) {
-                    const newRoundPhaseCountdown = Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in));
-                    newRoundPhaseCountdownString = new Date(newRoundPhaseCountdown * 1000).toISOString().substring(14, 19);
-                    (newRoundPhaseCountdown <= 10 ? urgend = true : urgend = false);
-                    this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
+                // Emit and Update only On Phase-Change but ignore Phase 'defuse' to not give intel
+                if(this.currentRoundPhaseCountdown.phase !== currentRoundPhaseCountdown.phase && currentRoundPhaseCountdown.phase !== 'defuse') {
+                    const newRoundPhase = currentRoundPhaseCountdown.phase;
+                    this.customEmit('roundPhaseChange', { newRoundPhase });
                     currentRoundPhaseCountdownChanged = true;
                 }
-            } else {
-                // newRoundPhaseCountdownString = '😱';
-                // this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
-                // currentRoundPhaseCountdownChanged = true;
-                // check bomb planted again
-                if (currentRoundPhaseCountdown.phase === 'bomb' && this.currentGameState.bombState !== 'planted'){
-                    this.currentGameState.bombState = 'planted';
-                    this.customEmit('bombPlanted');
-                }
-            }
 
-            if (currentRoundPhaseCountdownChanged) this.currentRoundPhaseCountdown = currentRoundPhaseCountdown;
-        }
+                let newRoundPhaseCountdownString = '';
+                let urgend = false;
+                if(currentRoundPhaseCountdown.phase !== 'bomb' && currentRoundPhaseCountdown.phase !== 'defuse') {                
+                    // Emit CountdownUpdate on 1 second Change
+                    if (Math.ceil(parseFloat(this.currentRoundPhaseCountdown.phase_ends_in)) - Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in)) >= 1) {
+                        const newRoundPhaseCountdown = Math.ceil(parseFloat(currentRoundPhaseCountdown.phase_ends_in));
+                        newRoundPhaseCountdownString = new Date(newRoundPhaseCountdown * 1000).toISOString().substring(14, 19);
+                        (newRoundPhaseCountdown <= 10 ? urgend = true : urgend = false);
+                        this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
+                        currentRoundPhaseCountdownChanged = true;
+                    }
+                } else {
+                    // newRoundPhaseCountdownString = '😱';
+                    // this.customEmit('roundPhaseCountdownUpdate', { newRoundPhaseCountdownString, urgend });
+                    // currentRoundPhaseCountdownChanged = true;
+                    // check bomb planted again
+                    if (currentRoundPhaseCountdown.phase === 'bomb' && this.currentGameState.bombState !== 'planted'){
+                        this.currentGameState.bombState = 'planted';
+                        this.customEmit('bombPlanted');
+                    }
+                }
+
+                if (currentRoundPhaseCountdownChanged) this.currentRoundPhaseCountdown = currentRoundPhaseCountdown;
+            }
         } catch (error) {console.error(error)};
     }
 

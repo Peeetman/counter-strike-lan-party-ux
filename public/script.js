@@ -257,7 +257,7 @@ function populatePlayerCard(playerCard, steamid, player) {
     // player img
     const imgElement = playerCard.querySelector('.player-image');
     // unkown players placeholder
-    (clientParticipantsConfig[steamid] && clientParticipantsConfig[steamid].playerImages ? imgElement.src = clientParticipantsConfig[steamid].playerImages[0] : imgElement.src = './media/player-content/placeholder.png')
+    (clientParticipantsConfig[steamid] && clientParticipantsConfig[steamid].avatar ? imgElement.src = clientParticipantsConfig[steamid].avatar : imgElement.src = './media/player-content/placeholder.png')
 }
 
 function removeUnmatchedPlayerCards(steamids) {
@@ -282,18 +282,18 @@ function injectDummyPlayerCards() {
 
 // MVP Effects
 function mvpEffectStart({ steamid, name }) {
-    if(!clientParticipantsConfig[steamid] || !clientParticipantsConfig[steamid].mvp) return false;
+    if(!clientParticipantsConfig[steamid] || (!clientParticipantsConfig[steamid].gif || !clientParticipantsConfig[steamid].mp3 )) return false;
 
     document.getElementById("mvp-name").textContent = name;
-    const soundFileSrc = clientParticipantsConfig[steamid].mvp.soundFileSrc;
-    const backgroundGifSrc = clientParticipantsConfig[steamid].mvp.backgroundGifSrc;
+    const mp3 = clientParticipantsConfig[steamid].mp3;
+    const gif = clientParticipantsConfig[steamid].gif;
 
     // Background Gif Load if set
-    if (backgroundGifSrc) document.getElementById('mvp-animation-wrapper').style.backgroundImage=`url(${backgroundGifSrc}`;
+    if (gif) document.getElementById('mvp-animation-wrapper').style.backgroundImage=`url(${gif}`;
 
     // Audio Play if set
-    if (soundFileSrc) {        
-        mvpAudio.src = soundFileSrc
+    if (mp3) {        
+        mvpAudio.src = mp3
         mvpAudio.volume = 0.3;
         if (typeof mvpAudio.loop == 'boolean') mvpAudio.loop = true;
         mvpAudio.load();
@@ -325,7 +325,6 @@ function mvpEffectStop() {
         document.getElementById('mvp-animation-wrapper').style.backgroundImage= 'unset';
     }, '500'); 
 }
-
 
 
 let eventTextActive = false;
@@ -401,7 +400,6 @@ function applyEventTextAnimation({animationName, wrapper, eventTextActive}, onCo
     }
     wrapper.addEventListener('animationend', handleAnimationEnd);
 }
-
 
 function tWinEffects() {
     console.log('tWinEffects started');

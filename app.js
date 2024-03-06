@@ -144,12 +144,7 @@ io.on('connection', async (socket) => {
     gameStateMonitor.emitModifiedPlayerStateOnChange();
     gameStateMonitor.emitCurrentMatchState();
 
-    // Participant Config Stuff
-    // participantsConfig = participantsConfigHandler.getConfigCache();
-    // console.log(participantsConfig);
-    // saved = await participantsConfigHandler.saveConfig(participantsConfig);
-    // let whatever = await participantsConfigHandler.saveConfig(participantsConfig)
-    // console.log(whatever);
+    // ParticipantConfig on Connection from Cache
     const participantsConfig = await participantsConfigHandler.getConfigCache();
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
     console.log('SOCKET IO: Sent Clients participantsConfig');

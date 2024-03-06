@@ -64,20 +64,7 @@ class GameStateMonitor extends EventEmitter {
         }
 
         // All Player Data
-        if (data.allplayers) {
-            /*
-            console.log("data.allplayers exists");
-            //Testing behavour of Object.keys to understand it better
-            Object.keys(data.allplayers).forEach(steamid => {
-                console.log(steamid);
-                try {
-                    this.emitModifiedPlayerStateOnChange();
-                } catch (error) {
-                    console.error('Error in emitModifiedPlayerStateOnChange:', error);
-                }
-            })
-            */
-            
+        if (data.allplayers) {            
             // Indicates if any player's state has changed, initializing to false
             let PlayerStateChanged = false;
 
@@ -102,6 +89,13 @@ class GameStateMonitor extends EventEmitter {
 
                     PlayerStateChanged = true; // Flag state as changed
                 } else {
+
+                    if ( activeGrenade > 0 ) this.currentPlayerState[steamid].timestampLastActiveGrenade = Date.now();
+
+                    if ( activeGrenade && steamid === "76561199096894359" ) {
+                        console.log(`timestampLastActiveGrenade: ${this.currentPlayerState[steamid].timestampLastActiveGrenade}`)
+                    }
+
                     // Match Stats
                     if (JSON.stringify(this.currentPlayerState[steamid].match_stats) !== JSON.stringify(match_stats)) {
                         // MVP Check
@@ -142,10 +136,8 @@ class GameStateMonitor extends EventEmitter {
 
                     // Weapon Change   
                     if (JSON.stringify(this.currentPlayerState[steamid].weapons) !== JSON.stringify(weapons)) {
-                        if ( activeGrenade > 0 ) this.currentPlayerState[steamid].timestampLastActiveGrenade = Date.now();
                         this.currentPlayerState[steamid].weapons = weapons;
                         // PlayerStateChanged = true; // no emit
-
                     }
                 }
             });

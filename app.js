@@ -173,8 +173,8 @@ io.on('connection', async (socket) => {
 // app.use('/dist', express.static(path.join(__dirname, './public')));
 
 // Load the configuration at server startup
-initConfigCache();
-async function initConfigCache() {
+reloadConfigCache();
+async function reloadConfigCache() {
     let loaded = await participantsConfigHandler.generateClientParticipantsConfig();
     await participantsConfigHandler.saveConfig(loaded);
     console.log('Server: Finished building and Saving ConfigCache')

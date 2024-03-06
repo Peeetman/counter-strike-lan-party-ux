@@ -13,4 +13,14 @@ router.get('/getParticipantConfig', async (req, res) => {
     }
 });
 
+router.get('/reloadParticipantConfig', async (req, res) => {
+    try {
+        const participantConfig = await participantsConfigHandler.generateClientParticipantsConfig();
+        res.json(participantConfig);
+    } catch (error) {
+        console.error('Failed to get participant config:', error);
+        res.status(500).send('Server error occurred trying to retrieve participant config.');
+    }
+});
+
 module.exports = router;

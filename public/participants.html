@@ -14,6 +14,25 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Templates -->
+    <template id="participant-card-template">
+        <div class="card player-card participant-card" style="width: 12%">
+          <img src="./media/player-content/placeholder.png" class="card-img-top player-image object-fit-fill" alt="">
+          <div class="border d-flex flex-grow-1 justify-content-center align-items-center p-2">
+            <div class="player-name">Player Name</div>
+          </div>
+        </div>
+    </template>
+    <template id="image-template">
+            <img src="" alt="participant image" style="height: 100%; object-fit: cover;">
+    </template>
+    <template id="gif-template">
+            <img src="" alt="participant gif" style="height: 100%; object-fit: cover;">
+    </template>
+    <template id="audio-template">
+            <audio controls></audio>
+    </template>
 </head>
 <body>
 <body>
@@ -38,16 +57,20 @@
         </div>
 
         <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-center align-items-center">
-            
             <div id="all-participants-wrapper" class="d-flex flex-wrap justify-content-center p-5" style="width: 80%">
-                <template id="participant-card-template">
-                    <div class="card player-card participant-card" style="width: 12%">
-                      <img src="./media/player-content/placeholder.png" class="card-img-top player-image object-fit-fill" alt="">
-                      <div class="border d-flex flex-grow-1 justify-content-center align-items-center p-2">
-                        <div class="player-name">Player Name</div>
-                      </div>
-                    </div>
-                </template>
+            </div>
+            <div id="single-participant-wrapper" class="d-none d-flex flex-row justify-content-center w-100">
+                <div class="d-flex flex-column soundsColumn bg-danger h-25 m-2">
+                    <audio controls src="./media/player-content/placeholder.mp3"></audio>
+                </div>
+                <div class="border-start"><span>&nbsp</span></div>
+                <div class="d-flex flex-row gifsColumn bg-primary h-25 m-2">
+                    <img src='./media/player-content/placeholder.gif' alt="participant gif">
+                </div>
+                <div class="border-start"><span>&nbsp</span></div>
+                <div class="d-flex flex-row imagesColumn bg-light h-25 m-2">
+                    <img src='./media/player-content/placeholder.png' alt="participant image">
+                </div>
             </div>
         </div>
 
@@ -66,24 +89,88 @@
 <script src="script.js"></script>
 <script>
     let currentSelectedParticipant = false;
+    let currentClientParticipantConfig = null;
     document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/getParticipantConfig')
         .then(response => response.json())
         .then(data => {
+            currentClientParticipantConfig = data;
             console.log(data); // For debugging purposes, to see the data structure
             displayAllParticipants(data);
         })
         .catch(error => console.error('Error fetching participant config:', error));
     });
 
+    function switchToSingleParticipant(steamid) {
+        if (!steamid) return false;
+        console.log(steamid);
+        currentSelectedParticipant = steamid;
+
+        const containerAllParticipants = document.getElementById('all-participants-wrapper');
+        const singleAllParticipants = document.getElementById('single-participant-wrapper');
+        containerAllParticipants.classList.add('d-none');
+        singleAllParticipants.classList.remove('d-none');
+
+        displayParticipantMedia(steamid)
+
+    }
+
+    function displayParticipantMedia(steamid) {
+        const participant = currentClientParticipantConfig[steamid]; 
+        // Assuming 'participant' has 'mp3s', 'gifs', and 'images' arrays
+        const soundsColumn = document.querySelector('#single-participant-wrapper .soundsColumn');
+        const gifsColumn = document.querySelector('#single-participant-wrapper .gifsColumn');
+        const imagesColumn = document.querySelector('#single-participant-wrapper .imagesColumn');
+
+        // Clear previous content
+        soundsColumn.innerHTML = '';
+        gifsColumn.innerHTML = '';
+        imagesColumn.innerHTML = '';
+
+        // Templates
+        const imageTemplate = document.getElementById('image-template');
+        const gifTemplate = document.getElementById('gif-template');
+        const audioTemplate = document.getElementById('audio-template');
+
+        // Populate sounds
+        if(participant.mp3s) {         
+            participant.mp3s.forEach(sound => {
+                const clone = document.importNode(audioTemplate.content, true);
+                clone.querySelector('audio').src = sound;
+                soundsColumn.appendChild(clone);
+            });
+        }
+
+        // Populate gifs
+        if(participant.gifs) {            
+            participant.gifs.forEach(gif => {
+                const clone = document.importNode(gifTemplate.content, true);
+                clone.querySelector('img').src = gif;
+                gifsColumn.appendChild(clone);
+            });
+        }
+
+        // Populate images
+        if(participant.images) {
+            participant.images.forEach(image => {
+                const clone = document.importNode(imageTemplate.content, true);
+                clone.querySelector('img').src = image;
+                imagesColumn.appendChild(clone);
+            });
+        }
+    }
+
+
     function displayAllParticipants(participants) {
-        const container = document.getElementById('all-participants-wrapper'); // Make sure you have this container in your HTML
+        const containerAllParticipants = document.getElementById('all-participants-wrapper');
 
         // Create or Update Player Cards
         Object.keys(participants).forEach(steamid => {
             const playerData = participants[steamid];
             const targetId = 'all-participants-wrapper';
             createOrUpdateParticipantCard(playerData, steamid, targetId);
+            let elem = document.getElementById(`participant-card-${steamid}`);
+            elem.addEventListener('click', () => switchToSingleParticipant(steamid));
         });
     }
 

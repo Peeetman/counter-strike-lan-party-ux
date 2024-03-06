@@ -6,7 +6,22 @@ const configPath = path.join(global.__basedir, 'data', 'participants.json');
 const playerContentBasePath = path.join(global.__basedir, 'public', 'media', 'player-content');
 const publicContentBasepath = './media/player-content';
 
-async function getConfig() {
+let participantsConfigCache = null;
+
+async function getConfigCache() {
+    if (participantsConfigCache === null) {
+        const loaded = await loadConfig();
+        setConfigCache(loaded);
+    }
+    return participantsConfigCache;
+}
+
+function setConfigCache(config) {
+    participantsConfigCache = config;
+    return true;
+}
+
+async function loadConfig() {
     try {
         const data = await fsPromises.readFile(configPath, 'utf8');
         return JSON.parse(data);
@@ -43,7 +58,7 @@ function generateRandomMVP(gifFiles, soundFiles) {
 }
 
 async function generateClientParticipantsConfig() {
-    let participantsConfig = await getConfig();
+    let participantsConfig = await loadConfig();
 
     try {
         for (const steamid of Object.keys(participantsConfig)) {
@@ -56,9 +71,9 @@ async function generateClientParticipantsConfig() {
                 const gifFileExtensions = ['.gif'];
 
                 // Process images
-                const imageFilePaths = files.filter(imageFile => imageExtensions.some(ext => imageFile.endsWith(ext)))
+                const imageFiles = files.filter(imageFile => imageExtensions.some(ext => imageFile.endsWith(ext)))
                                             .map(imageFile => `${publicContentBasepath}/${folderName}/${imageFile}`);
-                participantsConfig[steamid].avatars = imageFilePaths.length > 0 ? imageFilePaths : [`${publicContentBasepath}/placeholder.png`];
+                participantsConfig[steamid].images = imageFiles.length > 0 ? imageFiles : [`${publicContentBasepath}/placeholder.png`];
 
                 // Process sound files
                 const soundFiles = files.filter(soundFile => soundFileExtensions.some(ext => soundFile.endsWith(ext)))
@@ -75,6 +90,8 @@ async function generateClientParticipantsConfig() {
                     participantsConfig[steamid].mvp = generateRandomMVP(gifFiles, soundFiles);
                     participantsConfig[steamid].mvp.random = true;
                 }
+                //Set Avatar to first image for now
+                if(imageFiles.length > 0) participantsConfig[steamid].avatar = imageFiles[0];
 
             } catch (err) {
                 console.error('Error reading or processing files for player:', folderName, err);
@@ -84,11 +101,14 @@ async function generateClientParticipantsConfig() {
         console.error('Error reading or processing participants config file:', err);
     }
     console.log('ParticipantsConfig reloaded');
+    setConfigCache(participantsConfig);
     return participantsConfig;
 }
 
 module.exports = {
     generateClientParticipantsConfig,
-    getConfig,
+    loadConfig,
     saveConfig,
+    getConfigCache,
+    setConfigCache,
 };

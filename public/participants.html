@@ -76,6 +76,17 @@
         .catch(error => console.error('Error fetching participant config:', error));
     });
 
+    function displayAllParticipants(participants) {
+        const container = document.getElementById('all-participants-wrapper'); // Make sure you have this container in your HTML
+
+        // Create or Update Player Cards
+        Object.keys(participants).forEach(steamid => {
+            const playerData = participants[steamid];
+            const targetId = 'all-participants-wrapper';
+            createOrUpdateParticipantCard(playerData, steamid, targetId);
+        });
+    }
+
     function createOrUpdateParticipantCard(playerData, steamid, targetId){
         const existingCardId = `participant-card-${steamid}`;
         let existingCard = document.getElementById(existingCardId);
@@ -108,24 +119,16 @@
     }
 
     // Function to populate the player card with data
-    function populateParticipantCard(playerCard, steamid, player) {
-        playerCard.querySelector('.player-name').textContent = player.name;
+    function populateParticipantCard(playerCard, steamid, playerData) {
+        // console.log(playerData);
+        playerCard.querySelector('.player-name').textContent = playerData.name;
         // player img
         const imgElement = playerCard.querySelector('.player-image');
         // unkown players placeholder
-        (clientParticipantsConfig[steamid] && clientParticipantsConfig[steamid].avatars ? imgElement.src = clientParticipantsConfig[steamid].avatars[0] : imgElement.src = './media/player-content/placeholder.png')
+        (playerData && playerData.avatar ? imgElement.src = playerData.avatar : imgElement.src = './media/player-content/placeholder.png')
     }
 
 
-    function displayAllParticipants(participants) {
-        const container = document.getElementById('all-participants-wrapper'); // Make sure you have this container in your HTML
 
-        // Create or Update Player Cards
-        Object.keys(participants).forEach(steamid => {
-            const playerData = participants[steamid];
-            const targetId = 'all-participants-wrapper';
-            createOrUpdateParticipantCard(playerData, steamid, targetId);
-        });
-    }
 </script>
 </html>

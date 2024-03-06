@@ -1,86 +1,214 @@
 {
   "76561197969446599": {
     "folder": "force",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "ForceOne",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/force/force.png",
+      "./media/player-content/force/forceone.png"
+    ],
+    "mp3s": [
+      "./media/player-content/force/hans.mp3",
+      "./media/player-content/force/numa_numa.mp3"
+    ],
+    "gifs": [
+      "./media/player-content/force/3aO.gif"
+    ],
+    "mvp": {
+      "gif": "./media/player-content/force/3aO.gif",
+      "soundFile": "./media/player-content/force/numa_numa.mp3",
+      "random": true
+    }
   },
   "76561197997914233": {
     "folder": "peeet",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "Peeetmanski",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/peeet/peeetmanksi-2.png",
+      "./media/player-content/peeet/peeetmanksi.png",
+      "./media/player-content/peeet/peter.png"
+    ],
+    "mp3s": [
+      "./media/player-content/peeet/lalala-hardstyle.mp3"
+    ],
+    "gifs": [
+      "./media/player-content/peeet/einstein.gif"
+    ],
+    "mvp": {
+      "gif": "./media/player-content/peeet/einstein.gif",
+      "soundFile": "./media/player-content/peeet/lalala-hardstyle.mp3",
+      "random": true
+    }
   },
   "76561198015480119": {
     "folder": "duncan",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "DuncanBlood",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/duncan/ducan.png",
+      "./media/player-content/duncan/juan.png"
+    ]
   },
   "76561198093096880": {
     "folder": "charles",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "Charles Bukowski",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/charles/charles-2.png",
+      "./media/player-content/charles/charles.png",
+      "./media/player-content/charles/julian.png"
+    ]
   },
   "76561199096894359": {
     "folder": "tamias",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "tamias",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/tamias/caro.png",
+      "./media/player-content/tamias/tamias.png"
+    ],
+    "mp3s": [
+      "./media/player-content/tamias/caramelldansen.mp3"
+    ],
+    "gifs": [
+      "./media/player-content/tamias/mvp-tamias.gif"
+    ],
+    "mvp": {
+      "gif": "./media/player-content/tamias/mvp-tamias.gif",
+      "soundFile": "./media/player-content/tamias/caramelldansen.mp3",
+      "random": true
+    }
   },
   "76561198796702267": {
     "folder": "zoom",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "Z00M",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/zoom/zoom (2).png",
+      "./media/player-content/zoom/zoom.png"
+    ],
+    "mp3s": [
+      "./media/player-content/zoom/kawasaki.mp3"
+    ]
   },
   "76561197999727800": {
     "folder": "arti",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "PartyArti",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/arti/arti-steam-id-alt.png",
+      "./media/player-content/arti/arti-steam-id.png",
+      "./media/player-content/arti/arti.png"
+    ]
   },
   "76561197978901927": {
     "folder": "ks",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "ks24",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/ks/ks-steam-id.png",
+      "./media/player-content/ks/ks24.png"
+    ]
   },
   "76561198110788609": {
     "folder": "manuel",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "T0ffi",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/manuel/manuel.png",
+      "./media/player-content/manuel/toffi.png"
+    ]
   },
   "76561198881105836": {
     "folder": "dimi",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "Moradoso",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/placeholder.png"
+    ],
+    "mp3s": [
+      "./media/player-content/dimi/make-it-bun-dem.mp3"
+    ],
+    "gifs": [
+      "./media/player-content/dimi/laser.gif"
+    ],
+    "mvp": {
+      "gif": "./media/player-content/dimi/laser.gif",
+      "soundFile": "./media/player-content/dimi/make-it-bun-dem.mp3",
+      "random": true
+    }
   },
   "76561197977642211": {
     "folder": "martin",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "Radon",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/martin/martin.png"
+    ]
   },
   "76561198023510712": {
     "folder": "ping",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "Ping",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/placeholder.png"
+    ]
   },
   "76561198257171847": {
     "folder": "thomas",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "you_got_0wned",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/thomas/thomas-drunk.png",
+      "./media/player-content/thomas/thomas.png"
+    ],
+    "mp3s": [
+      "./media/player-content/thomas/thomas-tank.mp3"
+    ],
+    "gifs": [
+      "./media/player-content/thomas/thomas.gif"
+    ],
+    "mvp": {
+      "gif": "./media/player-content/thomas/thomas.gif",
+      "soundFile": "./media/player-content/thomas/thomas-tank.mp3",
+      "random": true
+    }
   },
   "76561199068322244": {
     "folder": "konrad",
-    "beers" : 0,
-    "nadeDeaths" : 0,
-    "totalKills": 0
+    "name": "incendi",
+    "beers": 0,
+    "nadeDeaths": 0,
+    "totalKills": 0,
+    "avatars": [
+      "./media/player-content/konrad/incendi.png"
+    ]
   }
 }

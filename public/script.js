@@ -115,6 +115,7 @@ socket.on('playerMVP', ({ steamid, name }) => {
 
 // Data Events
 socket.on('sendParticipantsConfig', ({ participantsConfig }) => {
+    console.log(participantsConfig);
     clientParticipantsConfig = participantsConfig;
 });
 

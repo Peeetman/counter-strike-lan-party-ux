@@ -146,9 +146,12 @@ io.on('connection', async (socket) => {
     gameStateMonitor.emitCurrentMatchState();
 
     // Participant Config Stuff
-    // participantsConfig = await participantsConfigHandler.generateClientParticipantsConfig();
+    // participantsConfig = participantsConfigHandler.getConfigCache();
     // console.log(participantsConfig);
-
+    // saved = await participantsConfigHandler.saveConfig(participantsConfig);
+    // let whatever = await participantsConfigHandler.saveConfig(participantsConfig)
+    // console.log(whatever);
+    const participantsConfig = await participantsConfigHandler.getConfigCache();
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
     console.log('SOCKET IO: Sent Clients participantsConfig');
 
@@ -170,7 +173,12 @@ io.on('connection', async (socket) => {
 // app.use('/dist', express.static(path.join(__dirname, './public')));
 
 // Load the configuration at server startup
-participantsConfig = participantsConfigHandler.generateClientParticipantsConfig();
+initConfigCache();
+async function initConfigCache() {
+    let loaded = await participantsConfigHandler.generateClientParticipantsConfig();
+    await participantsConfigHandler.saveConfig(loaded);
+    console.log('Server: Finished building and Saving ConfigCache')
+}
 
 server.listen(8080, () => {
     console.log('Dashboard Server Running on port 3001');

@@ -1,17 +1,18 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-// Set storage engine
 const storage = multer.diskStorage({
     destination: function(req, file, callback) {
-        // This will save files to 'public/media/player-content/<folderName>'
-        // Ensure 'folderName' is passed correctly from the client
-        const folderName = req.body.folderName;
-        const uploadPath = path.join(global.__basedir, 'public', 'media', 'player-content', folderName);
+        let folderName = req.body.folderName;
+        if (!folderName) {
+            return callback(new Error('Folder name is undefined'), null);
+        }
+        let uploadPath = path.join(global.__basedir, 'public', 'media', 'player-content', folderName);
+        console.log(uploadPath);
         callback(null, uploadPath);
     },
     filename: function(req, file, callback) {
-        // Keep the original file name
         callback(null, file.originalname);
     }
 });

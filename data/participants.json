@@ -68,9 +68,13 @@
     "images": [
       "./media/player-content/charles/charles-2.png",
       "./media/player-content/charles/charles.png",
+      "./media/player-content/charles/download.jpg",
       "./media/player-content/charles/julian.png"
     ],
-    "avatar": "./media/player-content/charles/charles-2.png"
+    "avatar": "./media/player-content/charles/charles-2.png",
+    "mp3s": [
+      "./media/player-content/charles/rocketmanshort.mp3"
+    ]
   },
   "76561199096894359": {
     "folder": "tamias",
@@ -82,6 +86,7 @@
       "./media/player-content/tamias/caramelldansen.mp3"
     ],
     "gifs": [
+      "./media/player-content/tamias/einstein.gif",
       "./media/player-content/tamias/mvp-tamias.gif"
     ],
     "mvp": {
@@ -90,10 +95,11 @@
       "random": true
     },
     "images": [
+      "./media/player-content/tamias/76AAC84C-D249-4F17-9FA4-AC02A27D4BBE.jpeg",
       "./media/player-content/tamias/caro.png",
       "./media/player-content/tamias/tamias.png"
     ],
-    "avatar": "./media/player-content/tamias/caro.png"
+    "avatar": "./media/player-content/tamias/76AAC84C-D249-4F17-9FA4-AC02A27D4BBE.jpeg"
   },
   "76561198796702267": {
     "folder": "zoom",
@@ -108,7 +114,15 @@
       "./media/player-content/zoom/zoom (2).png",
       "./media/player-content/zoom/zoom.png"
     ],
-    "avatar": "./media/player-content/zoom/zoom (2).png"
+    "avatar": "./media/player-content/zoom/zoom (2).png",
+    "gifs": [
+      "./media/player-content/zoom/album_2024-02-09_23-52-02-cs caro.gif"
+    ],
+    "mvp": {
+      "gif": "./media/player-content/zoom/album_2024-02-09_23-52-02-cs caro.gif",
+      "soundFile": "./media/player-content/zoom/kawasaki.mp3",
+      "random": true
+    }
   },
   "76561197999727800": {
     "folder": "arti",

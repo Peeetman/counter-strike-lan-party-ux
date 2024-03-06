@@ -53,7 +53,7 @@
             <div id="single-participant-wrapper" class="d-none d-flex flex-column justify-content-center align-items-center w-75">
 
                 <div class="image-wrapper player-card w-100" style="height: 40%;">
-                    <img id="single-participant-img" src="./media/player-content/placeholder.png" class="player-image h-100" alt="">
+                    <img id="single-participant-img" src="./media/player-content/placeholder.png" class="player-image h-100" alt="" style="max-height: 30vh;">
                 </div>
                 
                 <div class="d-flex flex-row participant-data justify-content-center w-100 flex-grow-1">
@@ -71,13 +71,36 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-row participant-data w-100 justify-content-center">
-                    <div class="btn btn-light">Preview MVP</div>
+                <div class="d-flex flex-row participant-data w-100 justify-content-center p-4 border border">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                      <input type="file" name="files" id="files" multiple>
+                      <input type="hidden" name="folderName" id="folderName" value="defaultFolder">
+                      <input type="button" value="Upload File" onclick="uploadFiles()">
+                    </form>
+                </div>
+                <div id="mvp-animation-wrapper" class="d-flex justify-content-center align-items-center mvp-background-gif border-start border-end" style="position: initial !important;">
+                    <div class="h-50 align-self-end border-white border-top flex-grow-1">&nbsp</div>
+                    <div id="mvp-text-box">
+                        <div class="d-flex justify-content-between">
+                            <div class="border border-white flex-grow-1" style="border-right: 0 !important">&nbsp</div>
+                            <div class="p-4 text-white">
+                                <span id="mvp-name">Playername</span>
+                                <br>
+                                <span>is MVP!</span>
+                            </div>
+                            <div class="border border-white flex-grow-1" style="border-left: 0 !important">&nbsp</div>
+                        </div>
+                    </div>
+                    <div class="h-50 align-self-end border-white border-top flex-grow-1">&nbsp</div>
+                </div>
+                <div class="d-flex flex-row participant-data w-100 justify-content-center p-4 border">
+                    <div class="btn btn-light m-3" onclick="startParticipantConfigMVPEffect()">Preview MVP</div>
+                    <div class="btn btn-light m-3" onclick="saveMVPConfig()">Save MVP File Selection</div>
                 </div>
             </div>
 
         </div>
-
+       
         <div id="footer" class="w-100 d-flex justify-content-center align-items-center border-top p-2">
             <span>KLÖßE SO SCHLEIMIG IN HALS</span>
         </div>
@@ -115,19 +138,23 @@
         containerAllParticipants.classList.add('d-none');
         singleAllParticipants.classList.remove('d-none');
 
-        displayParticipantMedia(steamid)
+        displayParticipantMedia()
 
     }
 
-    function displayParticipantMedia(steamid) {
+    function displayParticipantMedia() {
+        console.log("displayParticipantMedia")
+        const steamid = currentSelectedParticipant;
         const participant = currentClientParticipantConfig[steamid];
 
         // Containers
+        const avatarContainer = document.getElementById('single-participant-img')
         const imagesContainer = document.getElementById('images');
         const mp3Container = document.getElementById('mp3');
         const gifContainer = document.getElementById('gifs');
 
         // Clear previous content
+        avatarContainer.src = (participant.avatar ? participant.avatar : './media/player-content/placeholder.png');
         imagesContainer.innerHTML = '<span class="border-bottom"><b>Player Images</b></span>';
         mp3Container.innerHTML = '<span class="border-bottom"><b>MP3s</b></span>';
         gifContainer.innerHTML = '<span class="border-bottom"><b>GIFs</b></span>';
@@ -173,7 +200,6 @@
     function getFilenameFromPath(path) {
         return path.split('/').pop(); // Assumes the path format uses '/'
     }
-
 
     function displayAllParticipants(participants) {
         const containerAllParticipants = document.getElementById('all-participants-wrapper');
@@ -229,7 +255,71 @@
         (playerData && playerData.avatar ? imgElement.src = playerData.avatar : imgElement.src = './media/player-content/placeholder.png')
     }
 
+    function uploadFiles() {
+        const folderName = currentClientParticipantConfig[currentSelectedParticipant].folder;
+        let formData = new FormData();
+        formData.append('folderName', folderName); // Temporary hardcode for testing
+        formData.append('files', document.querySelector("input[type='file']").files[0]); // Assuming single file upload for testing
+    
 
+        // Debugging: Log FormData contents
+        for (let [key, value] of formData.entries()) { 
+            console.log(key, value instanceof File ? value.name : value); 
+        }
 
+        // Continue with fetch as before
+        fetch('/participants/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text()) // Handle text response here
+        .then(result => {
+            console.log('Success:', result);
+            fetch('/api/getParticipantConfig')
+            .then(response => response.json())
+            .then(data => {
+                currentClientParticipantConfig = data;
+                displayParticipantMedia();
+            })
+            .catch(error => console.error('Error fetching participant config:', error));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function startParticipantConfigMVPEffect() {
+        //mvpEffectStop();
+        const steamid = currentSelectedParticipant;
+        const name = currentClientParticipantConfig[currentSelectedParticipant].name;
+        mvpEffectStart({ steamid, name });
+
+        // custom
+        document.getElementById("mvp-name").textContent = name;
+        const soundFileSrc = currentClientParticipantConfig[steamid].mvp.soundFile;
+        const backgroundGifSrc = currentClientParticipantConfig[steamid].mvp.gif;
+
+        // Background Gif Load if set
+        if (backgroundGifSrc) document.getElementById('mvp-animation-wrapper').style.backgroundImage=`url(${backgroundGifSrc}`;
+
+        // Audio Play if set
+        if (soundFileSrc) {        
+            mvpAudio.src = soundFileSrc
+            mvpAudio.volume = 0.2;
+            if (typeof mvpAudio.loop == 'boolean') mvpAudio.loop = true;
+            mvpAudio.load();
+            //MVP Audio
+            mvpAudio.play();
+        }
+
+        // expand outwards
+        document.getElementById('mvp-animation-wrapper').classList.remove('contract-inwards-animation');
+        document.getElementById('mvp-animation-wrapper').classList.add('expand-outwards-animation');
+
+        // auto-stop after 10 seconds
+        setTimeout(() => {
+            mvpEffectStop()
+        }, "9500");
+    }
 </script>
 </html>

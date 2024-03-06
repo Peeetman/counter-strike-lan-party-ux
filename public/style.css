@@ -535,3 +535,9 @@ body {
 .contract-inwards-animation {
     animation: contractInwards 1s forwards;
 }
+
+
+.list-group-item.active {
+    background-color: var(--bs-purple) !important;
+    border: none !important;
+}

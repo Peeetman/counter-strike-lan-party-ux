@@ -21,6 +21,15 @@ function setConfigCache(config) {
     return true;
 }
 
+function updateParticipantMVPCache({steamid, gifFile, soundFile}) {
+    if(!participantsConfigCache[steamid]) return false;
+    participantsConfigCache[steamid].mvp = {
+        gif: gifFile,
+        soundFile: soundFile
+    }
+    return true
+}
+
 async function loadConfig() {
     try {
         const data = await fsPromises.readFile(configPath, 'utf8');

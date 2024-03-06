@@ -14,7 +14,7 @@
     ],
     "mvp": {
       "gif": "./media/player-content/force/3aO.gif",
-      "soundFile": "./media/player-content/force/hans.mp3",
+      "soundFile": "./media/player-content/force/numa_numa.mp3",
       "random": true
     },
     "images": [
@@ -30,22 +30,28 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "mp3s": [
-      "./media/player-content/peeet/lalala-hardstyle.mp3"
+      "./media/player-content/peeet/lalala-hardstyle.mp3",
+      "./media/player-content/peeet/New Land - ALBIS.mp3",
+      "./media/player-content/peeet/thankyounotsobad-trimmed.mp3",
+      "./media/player-content/peeet/thankyounotsobad.mp3"
     ],
     "gifs": [
-      "./media/player-content/peeet/einstein.gif"
+      "./media/player-content/peeet/einstein.gif",
+      "./media/player-content/peeet/flashing.gif",
+      "./media/player-content/peeet/owl.gif"
     ],
     "mvp": {
-      "gif": "./media/player-content/peeet/einstein.gif",
-      "soundFile": "./media/player-content/peeet/lalala-hardstyle.mp3",
+      "gif": "./media/player-content/peeet/owl.gif",
+      "soundFile": "./media/player-content/peeet/New Land - ALBIS.mp3",
       "random": true
     },
     "images": [
+      "./media/player-content/peeet/bsplus-crew.jpg",
       "./media/player-content/peeet/peeetmanksi-2.png",
       "./media/player-content/peeet/peeetmanksi.png",
       "./media/player-content/peeet/peter.png"
     ],
-    "avatar": "./media/player-content/peeet/peeetmanksi-2.png"
+    "avatar": "./media/player-content/peeet/bsplus-crew.jpg"
   },
   "76561198015480119": {
     "folder": "duncan",
@@ -90,7 +96,7 @@
       "./media/player-content/tamias/mvp-tamias.gif"
     ],
     "mvp": {
-      "gif": "./media/player-content/tamias/mvp-tamias.gif",
+      "gif": "./media/player-content/tamias/einstein.gif",
       "soundFile": "./media/player-content/tamias/caramelldansen.mp3",
       "random": true
     },

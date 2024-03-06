@@ -59,15 +59,21 @@
                 <div class="d-flex flex-row participant-data justify-content-center w-100 flex-grow-1">
                     <div id="images" class="p-2 d-flex flex-column w-25">
                         <span class="border-bottom"><b>Player Images</b></span>
-                        <a href="./media/player-content/placeholder.png">filename.png</a>
+                        <ul class="list-group">
+                            <!-- Images will be dynamically inserted here -->
+                        </ul>
                     </div>
-                    <div id="mp3" class="p-2 d-flex flex-column w-25">
+                    <div id="mp3s" class="p-2 d-flex flex-column w-25">
                         <span class="border-bottom"><b>MP3s</b></span>
-                        <a href="./media/player-content/placeholder.mp3">filename.mp3</a>
+                        <ul class="list-group">
+                            <!-- MP3s will be dynamically inserted here -->
+                        </ul>
                     </div>
                     <div id="gifs" class="p-2 d-flex flex-column w-25">
                         <span class="border-bottom"><b>GIFs</b></span>
-                        <a href="./media/player-content/placeholder.gif">filename.gif</a>
+                        <ul class="list-group">
+                            <!-- GIFs will be dynamically inserted here -->
+                        </ul>
                     </div>
                 </div>
 
@@ -95,7 +101,7 @@
                 </div>
                 <div class="d-flex flex-row participant-data w-100 justify-content-center p-4 border">
                     <div class="btn btn-light m-3" onclick="startParticipantConfigMVPEffect()">Preview MVP</div>
-                    <div class="btn btn-light m-3" onclick="saveMVPConfig()">Save MVP File Selection</div>
+                    <div class="btn btn-light m-3" onclick="updateParticipantMVP()">Save MVP File Selection</div>
                 </div>
             </div>
 
@@ -139,67 +145,117 @@
         singleAllParticipants.classList.remove('d-none');
 
         displayParticipantMedia()
+    }
 
+    function populateList(elementId, items, type) {
+        const listElement = document.getElementById(elementId).querySelector('.list-group');
+        listElement.innerHTML = ''; // Clear existing items
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item');
+            li.textContent = item.split('/').pop(); // Show filename
+            li.addEventListener('click', () => selectMVPItem(steamid, item, type));
+            listElement.appendChild(li);
+        });
+    }
+
+    function selectMVPItem(steamid, item, type) {
+        if (!currentClientParticipantConfig[steamid].mvp) {
+            currentClientParticipantConfig[steamid].mvp = {};
+        }
+
+        if (type === 'avatar') {
+            currentClientParticipantConfig[steamid].avatar = item; // Update avatar directly outside MVP
+        } else {
+            currentClientParticipantConfig[steamid].mvp[type] = item; // Update soundFile or gif inside MVP
+        }
+        
+        // Optionally, refresh some UI to show the selection has been made
     }
 
     function displayParticipantMedia() {
-        console.log("displayParticipantMedia")
+        console.log("displayParticipantMedia");
         const steamid = currentSelectedParticipant;
         const participant = currentClientParticipantConfig[steamid];
 
         // Containers
-        const avatarContainer = document.getElementById('single-participant-img')
+        const avatarContainer = document.getElementById('single-participant-img');
         const imagesContainer = document.getElementById('images');
-        const mp3Container = document.getElementById('mp3');
+        const mp3Container = document.getElementById('mp3s'); // Ensure this matches your HTML
         const gifContainer = document.getElementById('gifs');
 
-        // Clear previous content
-        avatarContainer.src = (participant.avatar ? participant.avatar : './media/player-content/placeholder.png');
-        imagesContainer.innerHTML = '<span class="border-bottom"><b>Player Images</b></span>';
-        mp3Container.innerHTML = '<span class="border-bottom"><b>MP3s</b></span>';
-        gifContainer.innerHTML = '<span class="border-bottom"><b>GIFs</b></span>';
+        // Clear previous content and initialize list group
+        avatarContainer.src = participant.avatar ? participant.avatar : './media/player-content/placeholder.png';
+        imagesContainer.innerHTML = '<span class="border-bottom"><b>Player Images</b></span><ul class="list-group p-4"></ul>';
+        mp3Container.innerHTML = '<span class="border-bottom"><b>MP3s</b></span><ul class="list-group p-4"></ul>';
+        gifContainer.innerHTML = '<span class="border-bottom"><b>GIFs</b></span><ul class="list-group p-4"></ul>';
 
-        // Populate images
-        if (participant.images) {
-            participant.images.forEach(image => {
-                const link = document.createElement('a');
-                link.href = image;
-                link.textContent = getFilenameFromPath(image); // Extracts filename from path
-                link.target = '_blank'; // Opens in new tab
-                imagesContainer.appendChild(document.createElement('br')); // For spacing
-                imagesContainer.appendChild(link);
+        // Populate function adjusted for list group
+        const populateList = (containerId, items, itemType) => {
+            const list = document.getElementById(containerId).querySelector('.list-group');
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.textContent = getFilenameFromPath(item);
+                li.onclick = () => selectMediaItem(steamid, item, itemType);
+                list.appendChild(li);
             });
-        }
-
-        // Populate MP3s
-        if (participant.mp3s) {
-            participant.mp3s.forEach(mp3 => {
-                const link = document.createElement('a');
-                link.href = mp3;
-                link.textContent = getFilenameFromPath(mp3); // Extracts filename from path
-                link.target = '_blank'; // Opens in new tab
-                mp3Container.appendChild(document.createElement('br')); // For spacing
-                mp3Container.appendChild(link);
+        };
+        const populateListPlayerImages = (containerId, items, itemType) => {
+            const list = document.getElementById(containerId).querySelector('.list-group');
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.textContent = getFilenameFromPath(item);
+                li.onclick = () => selectMediaItem(steamid, item, itemType);
+                list.appendChild(li);
             });
-        }
-
-        // Populate GIFs
-        if (participant.gifs) {
-            participant.gifs.forEach(gif => {
-                const link = document.createElement('a');
-                link.href = gif;
-                link.textContent = getFilenameFromPath(gif); // Extracts filename from path
-                link.target = '_blank'; // Opens in new tab
-                gifContainer.appendChild(document.createElement('br')); // For spacing
-                gifContainer.appendChild(link);
-            });
-        }
+        };
+        // Populate lists
+        if (participant.images) populateListPlayerImages('images', participant.images, 'avatar');
+        if (participant.mp3s) populateList('mp3s', participant.mp3s, 'mp3');
+        if (participant.gifs) populateList('gifs', participant.gifs, 'gif');
     }
 
-    // Helper function to extract filename from a full path
+    // Helper to extract filename from path
     function getFilenameFromPath(path) {
-        return path.split('/').pop(); // Assumes the path format uses '/'
+        return path.split('/').pop();
     }
+
+    // Selection handler with active class toggle
+    function selectMediaItem(steamid, item, type) {
+        if (!currentClientParticipantConfig[steamid].mvp) {
+            currentClientParticipantConfig[steamid].mvp = {}; // Initialize if not exists
+        }
+
+        // Find the clicked list item and its siblings
+        const clickedItem = event.target;
+        const siblings = clickedItem.parentNode.querySelectorAll('.list-group-item');
+
+        // Remove 'active' class from siblings
+        siblings.forEach(sib => sib.classList.remove('active'));
+
+        // Add 'active' class to the clicked item
+        clickedItem.classList.add('active');
+
+        // Update the config based on the type
+        switch(type) {
+            case 'avatar':
+                currentClientParticipantConfig[steamid].avatar = item; // Update avatar
+                break;
+            case 'mp3':
+                currentClientParticipantConfig[steamid].mvp.soundFile = item; // Update MVP sound file
+                break;
+            case 'gif':
+                currentClientParticipantConfig[steamid].mvp.gif = item; // Update MVP gif
+                break;
+            // Add cases as needed
+        }
+
+        console.log(`Selected ${type}: ${item} for ${steamid}`);
+        // Optionally refresh UI or save config here
+    }
+
 
     function displayAllParticipants(participants) {
         const containerAllParticipants = document.getElementById('all-participants-wrapper');
@@ -320,6 +376,27 @@
         setTimeout(() => {
             mvpEffectStop()
         }, "9500");
+    }
+
+    function updateParticipantMVP() {
+        const dataToSend = {
+            steamid: currentSelectedParticipant,
+            gifFile: currentClientParticipantConfig[currentSelectedParticipant].mvp.gif,
+            soundFile: currentClientParticipantConfig[currentSelectedParticipant].mvp.soundFile
+        }
+
+        fetch('/api/updateParticipantMVP', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: dataToSend
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => console.error('Error updating participant config:', error));
     }
 </script>
 </html>

@@ -24,15 +24,6 @@
           </div>
         </div>
     </template>
-    <template id="image-template">
-            <img src="" alt="participant image" style="height: 100%; object-fit: cover;">
-    </template>
-    <template id="gif-template">
-            <img src="" alt="participant gif" style="height: 100%; object-fit: cover;">
-    </template>
-    <template id="audio-template">
-            <audio controls></audio>
-    </template>
 </head>
 <body>
 <body>
@@ -59,19 +50,32 @@
         <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-center align-items-center">
             <div id="all-participants-wrapper" class="d-flex flex-wrap justify-content-center p-5" style="width: 80%">
             </div>
-            <div id="single-participant-wrapper" class="d-none d-flex flex-row justify-content-center w-100">
-                <div class="d-flex flex-column soundsColumn bg-danger h-25 m-2">
-                    <audio controls src="./media/player-content/placeholder.mp3"></audio>
+            <div id="single-participant-wrapper" class="d-none d-flex flex-column justify-content-center align-items-center w-75">
+
+                <div class="image-wrapper player-card w-100" style="height: 40%;">
+                    <img id="single-participant-img" src="./media/player-content/placeholder.png" class="player-image h-100" alt="">
                 </div>
-                <div class="border-start"><span>&nbsp</span></div>
-                <div class="d-flex flex-row gifsColumn bg-primary h-25 m-2">
-                    <img src='./media/player-content/placeholder.gif' alt="participant gif">
+                
+                <div class="d-flex flex-row participant-data justify-content-center w-100 flex-grow-1">
+                    <div id="images" class="p-2 d-flex flex-column w-25">
+                        <span class="border-bottom"><b>Player Images</b></span>
+                        <a href="./media/player-content/placeholder.png">filename.png</a>
+                    </div>
+                    <div id="mp3" class="p-2 d-flex flex-column w-25">
+                        <span class="border-bottom"><b>MP3s</b></span>
+                        <a href="./media/player-content/placeholder.mp3">filename.mp3</a>
+                    </div>
+                    <div id="gifs" class="p-2 d-flex flex-column w-25">
+                        <span class="border-bottom"><b>GIFs</b></span>
+                        <a href="./media/player-content/placeholder.gif">filename.gif</a>
+                    </div>
                 </div>
-                <div class="border-start"><span>&nbsp</span></div>
-                <div class="d-flex flex-row imagesColumn bg-light h-25 m-2">
-                    <img src='./media/player-content/placeholder.png' alt="participant image">
+
+                <div class="d-flex flex-row participant-data w-100 justify-content-center">
+                    <div class="btn btn-light">Preview MVP</div>
                 </div>
             </div>
+
         </div>
 
         <div id="footer" class="w-100 d-flex justify-content-center align-items-center border-top p-2">
@@ -116,48 +120,58 @@
     }
 
     function displayParticipantMedia(steamid) {
-        const participant = currentClientParticipantConfig[steamid]; 
-        // Assuming 'participant' has 'mp3s', 'gifs', and 'images' arrays
-        const soundsColumn = document.querySelector('#single-participant-wrapper .soundsColumn');
-        const gifsColumn = document.querySelector('#single-participant-wrapper .gifsColumn');
-        const imagesColumn = document.querySelector('#single-participant-wrapper .imagesColumn');
+        const participant = currentClientParticipantConfig[steamid];
+
+        // Containers
+        const imagesContainer = document.getElementById('images');
+        const mp3Container = document.getElementById('mp3');
+        const gifContainer = document.getElementById('gifs');
 
         // Clear previous content
-        soundsColumn.innerHTML = '';
-        gifsColumn.innerHTML = '';
-        imagesColumn.innerHTML = '';
-
-        // Templates
-        const imageTemplate = document.getElementById('image-template');
-        const gifTemplate = document.getElementById('gif-template');
-        const audioTemplate = document.getElementById('audio-template');
-
-        // Populate sounds
-        if(participant.mp3s) {         
-            participant.mp3s.forEach(sound => {
-                const clone = document.importNode(audioTemplate.content, true);
-                clone.querySelector('audio').src = sound;
-                soundsColumn.appendChild(clone);
-            });
-        }
-
-        // Populate gifs
-        if(participant.gifs) {            
-            participant.gifs.forEach(gif => {
-                const clone = document.importNode(gifTemplate.content, true);
-                clone.querySelector('img').src = gif;
-                gifsColumn.appendChild(clone);
-            });
-        }
+        imagesContainer.innerHTML = '<span class="border-bottom"><b>Player Images</b></span>';
+        mp3Container.innerHTML = '<span class="border-bottom"><b>MP3s</b></span>';
+        gifContainer.innerHTML = '<span class="border-bottom"><b>GIFs</b></span>';
 
         // Populate images
-        if(participant.images) {
+        if (participant.images) {
             participant.images.forEach(image => {
-                const clone = document.importNode(imageTemplate.content, true);
-                clone.querySelector('img').src = image;
-                imagesColumn.appendChild(clone);
+                const link = document.createElement('a');
+                link.href = image;
+                link.textContent = getFilenameFromPath(image); // Extracts filename from path
+                link.target = '_blank'; // Opens in new tab
+                imagesContainer.appendChild(document.createElement('br')); // For spacing
+                imagesContainer.appendChild(link);
             });
         }
+
+        // Populate MP3s
+        if (participant.mp3s) {
+            participant.mp3s.forEach(mp3 => {
+                const link = document.createElement('a');
+                link.href = mp3;
+                link.textContent = getFilenameFromPath(mp3); // Extracts filename from path
+                link.target = '_blank'; // Opens in new tab
+                mp3Container.appendChild(document.createElement('br')); // For spacing
+                mp3Container.appendChild(link);
+            });
+        }
+
+        // Populate GIFs
+        if (participant.gifs) {
+            participant.gifs.forEach(gif => {
+                const link = document.createElement('a');
+                link.href = gif;
+                link.textContent = getFilenameFromPath(gif); // Extracts filename from path
+                link.target = '_blank'; // Opens in new tab
+                gifContainer.appendChild(document.createElement('br')); // For spacing
+                gifContainer.appendChild(link);
+            });
+        }
+    }
+
+    // Helper function to extract filename from a full path
+    function getFilenameFromPath(path) {
+        return path.split('/').pop(); // Assumes the path format uses '/'
     }
 
 

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oberzaubach LAN 2024 - CS2 Dashbaord</title>
+    <link rel="icon" type="image/x-icon" href="./media/logos/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anta&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Templates -->
+    <template id="participant-card-template">
+        <div class="card player-card participant-card" style="width: 12%">
+          <img src="./media/player-content/placeholder.png" class="card-img-top player-image object-fit-fill" alt="">
+          <div class="border d-flex flex-grow-1 justify-content-center align-items-center p-2">
+            <div class="player-name">Player Name</div>
+          </div>
+        </div>
+    </template>
+</head>
+<body>
+<body>
+    <div id="gradient" class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center text-white bg-voting">
+        <div id="header" class="d-flex border-bottom flex-row align-items-center">
+            <div class="d-flex w-100 justify-content-start">
+                <a href="/" class="text-white text-decoration-none">Oberzaubach LAN 2024 UX System</a>
+                <div><span>&nbsp</span></div>
+            </div>        
+            <div class="w-100">
+                <div class="btn-group d-flex w-100" role="group" aria-label="Basic example">
+                  <a href="/" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">Gamestate</a>
+                  <a href="/beer" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">Beer</a>
+                  <a href="/voting" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0 active">Voting</a>
+                  <a href="/rcon" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">RCON Admin-Panel</a>
+                  <a href="/mvpsettings.html" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">MVP Settings</a>
+                </div>
+            </div>
+            <div class="d-flex w-100 justify-content-end">
+                <div id="currentTime">13:37, 23.02.2024</div>
+            </div>
+        </div>
+
+        <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-center align-items-center">
+            <div id="all-participants-wrapper" class="d-flex flex-wrap justify-content-center p-5" style="width: 75%">
+                <span class="w-100 mb-4"><h1>Who are you?</h1></span>
+            </div>
+            <div id="voting-wrapper" class="d-none d-flex flex-column flex-grow-1 mt-5 mb-5 justify-content-around align-items-center w-75">
+
+                <div class="w-100 d-flex justify-content-center align-items-center">
+                    <div id="team-1" class="w-50 d-flex flex-row p-3 justify-content-end flex-grow-1">
+                        <h2 class="border-bottom">Team 1</h2>
+                    </div>
+                    <div class="border-start"><span>&nbsp</span></div>
+                    <div id="team-2" class="w-50 d-flex flex-row p-3 justify-content-start flex-grow-1">
+                        <h2 class="border-bottom">Team 2</h2>
+                    </div>
+                </div>
+
+                <div id="voting-picker" class="w-100 d-flex justify-content-around align-items-center">
+                </div>
+            </div>
+
+            <div id="voting-logs" class="d-none d-flex flex-row flex-grow-1 mt-5 mb-5 justify-content-center align-items-center w-75 bg-red">
+                <span>client connected ...</span>
+            </div>
+        </div>
+       
+        <div id="footer" class="w-100 d-flex justify-content-center align-items-center border-top p-2">
+            <span>like sports class</span>
+        </div>
+    </div>
+</body>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<!-- Socket.IO -->
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+<!-- Custom script-->
+<script src="script.js"></script>
+<script>
+    let currentSelectedParticipant = false;
+    let currentClientParticipantConfig = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/getParticipantConfig')
+        .then(response => response.json())
+        .then(data => {
+            currentClientParticipantConfig = data;
+            console.log(data); // For debugging purposes, to see the data structure
+            displayAllParticipants(data, 'all-participants-wrapper');
+        })
+        .catch(error => console.error('Error fetching participant config:', error));
+    });
+
+    // Voting SocketIO Integration ---------------------
+    let voteSocket = io('/vote');
+    voteSocket.on('connect', () => {
+        console.log('Connected to the voting namespace');
+    });
+
+    voteSocket.on('newParticipant', ({votingParticipants}) => {
+        console.log(`New Participant: ${ JSON.stringify(votingParticipants) }`);
+
+        let combinedParticipantsData = {};
+        for (const [steamid, participantData] of Object.entries(currentClientParticipantConfig)) {
+            if (votingParticipants.hasOwnProperty(steamid)) {
+                combinedParticipantsData[steamid] = {
+                    ...participantData, // Spread the data from currentClientParticipantConfig
+                    ...votingParticipants[steamid] // Spread the data from votingParticipants, overriding duplicates if any
+                };
+            }
+        }
+        console.log(combinedParticipantsData)
+        displayVotingParticipants(combinedParticipantsData, 'voting-picker')
+    });
+
+    function registerForVoting({steamid, name}){
+        voteSocket.emit('registerParticipant', {steamid, name});
+    }
+
+    function displayVotingParticipants(participants, target) {
+        console.log(participants);
+        const parent = document.getElementById(target);
+        Object.keys(participants).forEach(steamid => {
+            let participantElement = document.getElementById(`voting-participant-${steamid}`);
+
+            // If participant element already exists, update it
+            if (participantElement) {
+                participantElement.textContent = participants[steamid].name;
+            } else {
+                // If it doesn't exist, create and append it
+                const div = document.createElement('div');
+                div.id = `voting-participant-${steamid}`;
+                div.classList.add('p-2', 'border')
+                div.textContent = participants[steamid].name + (currentSelectedParticipant === steamid ? ' (you)' : '');
+                parent.appendChild(div);
+            }
+        });
+        Array.from(parent.children).forEach(child => {
+            const match = child.id.match(/^voting-participant-(.+)$/);
+            if (match && !participants[match[1]]) {
+                parent.removeChild(child);
+            }
+        });
+    }
+
+    // Voting SocketIO Integration End -------------------------------------------
+    function switchToSingleParticipant(steamid) {
+        if (!steamid) return false;
+        localStorage.setItem('currentSelectedParticipant', steamid);
+        currentSelectedParticipant = steamid;
+
+        const containerAllParticipants = document.getElementById('all-participants-wrapper');
+        const containerVoting = document.getElementById('voting-wrapper');
+        containerAllParticipants.classList.add('d-none');
+        containerVoting.classList.remove('d-none');
+
+        const name = currentClientParticipantConfig[steamid].name;
+        registerForVoting({steamid, name})
+    }
+
+    function displayAllParticipants(participants, target) {
+        const containerAllParticipants = document.getElementById(target);
+
+        // Create or Update Player Cards
+        Object.keys(participants).forEach(steamid => {
+            const playerData = participants[steamid];
+            createOrUpdateParticipantCard(playerData, steamid, target);
+            let elem = document.getElementById(`participant-card-${steamid}`);
+            elem.addEventListener('click', () => switchToSingleParticipant(steamid));
+        });
+    }
+
+    function createOrUpdateParticipantCard(playerData, steamid, targetId){
+        const existingCardId = `participant-card-${steamid}`;
+        let existingCard = document.getElementById(existingCardId);
+
+        // Check for team change
+        let teamChanged = false;
+        if (existingCard) {
+            populateParticipantCard(existingCard, steamid, playerData);
+        } else {
+            // Access the template directly from the document
+            const template = document.getElementById('participant-card-template');
+            if (!template) {
+                console.error('Player card template not found');
+                return;
+            }
+
+            // Clone the template content
+            const clone = document.importNode(template.content, true);
+            const playerCard = clone.querySelector('.card');
+            if (!playerCard) {
+                console.error('No .card found within the template');
+                return;
+            }
+            playerCard.id = existingCardId;
+            playerCard.setAttribute('data-team', playerData.team); // Set the card's team attribute
+
+            populateParticipantCard(playerCard, steamid, playerData);
+            document.getElementById(targetId).appendChild(clone);
+        }
+    }
+
+    // Function to populate the player card with data
+    function populateParticipantCard(playerCard, steamid, playerData) {
+        // console.log(playerData);
+        playerCard.querySelector('.player-name').textContent = playerData.name;
+        // player img
+        const imgElement = playerCard.querySelector('.player-image');
+        // unkown players placeholder
+        (playerData && playerData.avatar ? imgElement.src = playerData.avatar : imgElement.src = './media/player-content/placeholder.png')
+    }
+</script>
+</html>

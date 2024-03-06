@@ -112,11 +112,11 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "images": [
-      "./media/player-content/placeholder.png"
+      "./media/player-content/dimi/dimi.png"
     ],
     "mp3": "./media/player-content/dimi/make-it-bun-dem.mp3",
     "gif": "./media/player-content/dimi/laser.gif",
-    "avatar": "./media/player-content/placeholder.png"
+    "avatar": "./media/player-content/dimi/dimi.png"
   },
   "76561197977642211": {
     "folder": "martin",

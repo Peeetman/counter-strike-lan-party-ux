@@ -4,9 +4,9 @@ const router = express.Router();
 const upload = require('../myModules/uploadHandler'); // Adjust path as necessary
 const ParticipantsConfigHandler = require('../myModules/ParticipantsConfigHandler'); // Adjust path as necessary
 
-// Serve a static HTML file for the /participants route
+// Serve a static HTML file for the /mvpsettings route
 router.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/participants.html'));
+    res.sendFile(path.join(__dirname, '../public/mvpsettings.html'));
 });
 
 router.post('/upload', (req, res) => {

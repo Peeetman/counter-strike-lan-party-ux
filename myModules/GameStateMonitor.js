@@ -90,10 +90,8 @@ class GameStateMonitor extends EventEmitter {
                     PlayerStateChanged = true; // Flag state as changed
                 } else {
 
-                    if ( activeGrenade > 0 ) this.currentPlayerState[steamid].timestampLastActiveGrenade = Date.now();
-
-                    if ( activeGrenade && steamid === "76561199096894359" ) {
-                        console.log(`timestampLastActiveGrenade: ${this.currentPlayerState[steamid].timestampLastActiveGrenade}`)
+                    if ( activeGrenade > 0 ) {
+                        this.currentPlayerState[steamid].timestampLastActiveGrenade = Date.now();
                     }
 
                     // Match Stats

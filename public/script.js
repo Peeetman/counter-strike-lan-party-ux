@@ -96,7 +96,7 @@ socket.on('playerDeath', ({ steamid, name }) => {
 
 socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`);
-    showEventText(`${name} died with nade in hand!`);
+    showEventText(`${name} DWNIH!`);
     const playerCardId = `player-card-${steamid}`;
     let existingCard = document.getElementById(playerCardId);
     if (existingCard) {

@@ -21,15 +21,6 @@ function setConfigCache(config) {
     return true;
 }
 
-function updateParticipantMVPCache({steamid, gifFile, soundFile}) {
-    if(!participantsConfigCache[steamid]) return false;
-    participantsConfigCache[steamid].mvp = {
-        gif: gifFile,
-        soundFile: soundFile
-    }
-    return true
-}
-
 async function loadConfig() {
     try {
         const data = await fsPromises.readFile(configPath, 'utf8');
@@ -49,21 +40,6 @@ async function saveConfig(config) {
         console.error('Error saving participants config:', err);
         throw new Error('Failed to save participants configuration.');
     }
-}
-
-function generateRandomMVP(gifFiles, soundFiles) {
-    // Function to get a random item from an array
-    const getRandomItem = (items) => items[Math.floor(Math.random() * items.length)];
-
-    // Randomly select one GIF and one sound file
-    const randomGif = gifFiles.length > 0 ? getRandomItem(gifFiles) : null;
-    const randomSoundFile = soundFiles.length > 0 ? getRandomItem(soundFiles) : null;
-
-    // Return an object with the paths to the randomly selected files
-    return {
-        gif: randomGif,
-        soundFile: randomSoundFile
-    };
 }
 
 async function generateClientParticipantsConfig() {
@@ -87,20 +63,18 @@ async function generateClientParticipantsConfig() {
                 // Process sound files
                 const soundFiles = files.filter(soundFile => soundFileExtensions.some(ext => soundFile.endsWith(ext)))
                                             .map(soundFile => `${publicContentBasepath}/${folderName}/${soundFile}`);
-                if(soundFiles.length > 0) participantsConfig[steamid].mp3s = soundFiles;
+                if(soundFiles.length > 0) participantsConfig[steamid].mp3 = soundFiles[0];
+                else delete participantsConfig[steamid].mp3;
 
                 // Process GIFs
                 const gifFiles = files.filter(gifFile => gifFileExtensions.some(ext => gifFile.endsWith(ext)))
                                          .map(gifFile => `${publicContentBasepath}/${folderName}/${gifFile}`);
-                if(gifFiles.length > 0) participantsConfig[steamid].gifs = gifFiles;
+                if(gifFiles.length > 0) participantsConfig[steamid].gif = gifFiles[0];
+                else delete participantsConfig[steamid].gif;
 
-                //Generate Random MVP Object for now
-                if(gifFiles.length > 0 && soundFiles.length > 0) {
-                    participantsConfig[steamid].mvp = generateRandomMVP(gifFiles, soundFiles);
-                    participantsConfig[steamid].mvp.random = true;
-                }
                 //Set Avatar to first image for now
                 if(imageFiles.length > 0) participantsConfig[steamid].avatar = imageFiles[0];
+                else participantsConfig[steamid].avatar = `${publicContentBasepath}/placeholder.png`;
 
             } catch (err) {
                 console.error('Error reading or processing files for player:', folderName, err);
@@ -111,6 +85,7 @@ async function generateClientParticipantsConfig() {
     }
     console.log('ParticipantsConfig reloaded');
     setConfigCache(participantsConfig);
+    await saveConfig(participantsConfig);
     return participantsConfig;
 }
 

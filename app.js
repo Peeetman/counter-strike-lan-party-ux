@@ -34,7 +34,6 @@ const csgoGSI = new CSGOGSI({
 });
 const gameStateMonitor = new GameStateMonitor(csgoGSI, false);
 
-
 gameStateMonitor.on('bombPlanted', () => {
     const eventText = 'Bomb planted!';
     io.emit('bombPlanted')

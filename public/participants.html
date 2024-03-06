@@ -49,39 +49,32 @@
 
         <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-center align-items-center">
             <div id="all-participants-wrapper" class="d-flex flex-wrap justify-content-center p-5" style="width: 80%">
+                <span class="w-100 mb-4"><h1>Who are you?</h1></span>
             </div>
-            <div id="single-participant-wrapper" class="d-none d-flex flex-column justify-content-center align-items-center w-75">
+            <div id="single-participant-wrapper" class="d-none d-flex flex-column flex-grow-1 mt-5 mb-5 justify-content-center align-items-center w-75">
 
-                <div class="image-wrapper player-card w-100" style="height: 40%;">
+                <div class="image-wrapper player-card w-100">
                     <img id="single-participant-img" src="./media/player-content/placeholder.png" class="player-image h-100" alt="" style="max-height: 30vh;">
                 </div>
                 
                 <div class="d-flex flex-row participant-data justify-content-center w-100 flex-grow-1">
-                    <div id="images" class="p-2 d-flex flex-column w-25">
-                        <span class="border-bottom"><b>Player Images</b></span>
-                        <ul class="list-group">
-                            <!-- Images will be dynamically inserted here -->
-                        </ul>
+                    <div id="mp3s" class="p-2 d-flex flex-column w-25 border border-bottom-0">
+                        <span class=""><b>MP3</b></span>
+                        <a id="mvpMP3" target='_blank'>none</a>
                     </div>
-                    <div id="mp3s" class="p-2 d-flex flex-column w-25">
-                        <span class="border-bottom"><b>MP3s</b></span>
-                        <ul class="list-group">
-                            <!-- MP3s will be dynamically inserted here -->
-                        </ul>
-                    </div>
-                    <div id="gifs" class="p-2 d-flex flex-column w-25">
-                        <span class="border-bottom"><b>GIFs</b></span>
-                        <ul class="list-group">
-                            <!-- GIFs will be dynamically inserted here -->
-                        </ul>
+                    <div id="gifs" class="p-2 d-flex flex-column w-25 border border-bottom-0">
+                        <span class=""><b>GIF</b></span>
+                        <a id="mvpGif" target='_blank'>none</a>
                     </div>
                 </div>
 
-                <div class="d-flex flex-row participant-data w-100 justify-content-center p-4 border border">
+                <div class="d-flex flex-column participant-data w-100 justify-content-center p-4 border border">
+                    <span><h3>Upload <span class="text-danger">MP3</span> or <span class="text-danger">GIF</span> to <span class="text-danger">REPLACE</span> current MVP files:</h3></span>
                     <form id="uploadForm" enctype="multipart/form-data">
                       <input type="file" name="files" id="files" multiple>
                       <input type="hidden" name="folderName" id="folderName" value="defaultFolder">
                       <input type="button" value="Upload File" onclick="uploadFiles()">
+                      <span class="ms-3">Server Response: <span id="uploadMsg"></span>
                     </form>
                 </div>
                 <div id="mvp-animation-wrapper" class="d-flex justify-content-center align-items-center mvp-background-gif border-start border-end" style="position: initial !important;">
@@ -100,8 +93,7 @@
                     <div class="h-50 align-self-end border-white border-top flex-grow-1">&nbsp</div>
                 </div>
                 <div class="d-flex flex-row participant-data w-100 justify-content-center p-4 border">
-                    <div class="btn btn-light m-3" onclick="startParticipantConfigMVPEffect()">Preview MVP</div>
-                    <div class="btn btn-light m-3" onclick="updateParticipantMVP()">Save MVP File Selection</div>
+                    <div id="previewMVPBtn" class="btn btn-light m-3" onclick="startParticipantConfigMVPEffect()">Preview MVP</div>
                 </div>
             </div>
 
@@ -134,9 +126,48 @@
         .catch(error => console.error('Error fetching participant config:', error));
     });
 
+    function uploadFiles() {
+        const folderName = currentClientParticipantConfig[currentSelectedParticipant].folder;
+        let formData = new FormData();
+        formData.append('folderName', folderName); // Temporary hardcode for testing
+        formData.append('files', document.querySelector("input[type='file']").files[0]);
+        const filesInput = document.querySelector("input[type='file']");
+        if (filesInput.files.length === 0) {
+            document.getElementById('uploadMsg').innerText = 'No files selected. Please select files before uploading.';
+            return;
+        }
+
+        // Debugging: Log FormData contents
+        for (let [key, value] of formData.entries()) { 
+            console.log(key, value instanceof File ? value.name : value); 
+        }
+
+        // Continue with fetch as before
+        fetch('/participants/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text()) // Handle text response here
+        .then(result => {
+            console.log(result);
+            document.getElementById('uploadMsg').innerText = result;
+            fetch('/api/getParticipantConfig')
+            .then(response => response.json())
+            .then(data => {
+                currentClientParticipantConfig = data;
+                console.log(currentClientParticipantConfig);
+                displayParticipantMedia();
+            })
+            .catch(error => console.error('Error fetching participant config:', error));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
     function switchToSingleParticipant(steamid) {
         if (!steamid) return false;
-        console.log(steamid);
+        localStorage.setItem('currentSelectedParticipant', steamid);
         currentSelectedParticipant = steamid;
 
         const containerAllParticipants = document.getElementById('all-participants-wrapper');
@@ -145,6 +176,30 @@
         singleAllParticipants.classList.remove('d-none');
 
         displayParticipantMedia()
+    }
+    
+    function displayParticipantMedia() {
+        const previewMVPBtn = document.getElementById('previewMVPBtn');
+        const currentParticipantData = currentClientParticipantConfig[currentSelectedParticipant];
+        const selectedParticipantAvatar = document.getElementById('single-participant-img');
+        const mvpMP3 = document.getElementById('mvpMP3');
+        const mvpGif = document.getElementById('mvpGif');
+
+        selectedParticipantAvatar.src = currentParticipantData.avatar;
+
+        if(!currentParticipantData.mp3 || !currentParticipantData.gif) {
+            previewMVPBtn.classList.add('disabled');
+        } else previewMVPBtn.classList.remove('disabled');
+
+        if(currentParticipantData.mp3) {
+            mvpMP3.href = currentParticipantData.mp3;
+            mvpMP3.innerText = getFilenameFromPath(currentParticipantData.mp3);
+        }
+
+        if(currentParticipantData.gif) {
+            mvpGif.href = currentParticipantData.gif;
+            mvpGif.innerText = getFilenameFromPath(currentParticipantData.gif);
+        }
     }
 
     function populateList(elementId, items, type) {
@@ -159,103 +214,10 @@
         });
     }
 
-    function selectMVPItem(steamid, item, type) {
-        if (!currentClientParticipantConfig[steamid].mvp) {
-            currentClientParticipantConfig[steamid].mvp = {};
-        }
-
-        if (type === 'avatar') {
-            currentClientParticipantConfig[steamid].avatar = item; // Update avatar directly outside MVP
-        } else {
-            currentClientParticipantConfig[steamid].mvp[type] = item; // Update soundFile or gif inside MVP
-        }
-        
-        // Optionally, refresh some UI to show the selection has been made
-    }
-
-    function displayParticipantMedia() {
-        console.log("displayParticipantMedia");
-        const steamid = currentSelectedParticipant;
-        const participant = currentClientParticipantConfig[steamid];
-
-        // Containers
-        const avatarContainer = document.getElementById('single-participant-img');
-        const imagesContainer = document.getElementById('images');
-        const mp3Container = document.getElementById('mp3s'); // Ensure this matches your HTML
-        const gifContainer = document.getElementById('gifs');
-
-        // Clear previous content and initialize list group
-        avatarContainer.src = participant.avatar ? participant.avatar : './media/player-content/placeholder.png';
-        imagesContainer.innerHTML = '<span class="border-bottom"><b>Player Images</b></span><ul class="list-group p-4"></ul>';
-        mp3Container.innerHTML = '<span class="border-bottom"><b>MP3s</b></span><ul class="list-group p-4"></ul>';
-        gifContainer.innerHTML = '<span class="border-bottom"><b>GIFs</b></span><ul class="list-group p-4"></ul>';
-
-        // Populate function adjusted for list group
-        const populateList = (containerId, items, itemType) => {
-            const list = document.getElementById(containerId).querySelector('.list-group');
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item', 'list-group-item-action');
-                li.textContent = getFilenameFromPath(item);
-                li.onclick = () => selectMediaItem(steamid, item, itemType);
-                list.appendChild(li);
-            });
-        };
-        const populateListPlayerImages = (containerId, items, itemType) => {
-            const list = document.getElementById(containerId).querySelector('.list-group');
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item', 'list-group-item-action');
-                li.textContent = getFilenameFromPath(item);
-                li.onclick = () => selectMediaItem(steamid, item, itemType);
-                list.appendChild(li);
-            });
-        };
-        // Populate lists
-        if (participant.images) populateListPlayerImages('images', participant.images, 'avatar');
-        if (participant.mp3s) populateList('mp3s', participant.mp3s, 'mp3');
-        if (participant.gifs) populateList('gifs', participant.gifs, 'gif');
-    }
-
     // Helper to extract filename from path
     function getFilenameFromPath(path) {
         return path.split('/').pop();
     }
-
-    // Selection handler with active class toggle
-    function selectMediaItem(steamid, item, type) {
-        if (!currentClientParticipantConfig[steamid].mvp) {
-            currentClientParticipantConfig[steamid].mvp = {}; // Initialize if not exists
-        }
-
-        // Find the clicked list item and its siblings
-        const clickedItem = event.target;
-        const siblings = clickedItem.parentNode.querySelectorAll('.list-group-item');
-
-        // Remove 'active' class from siblings
-        siblings.forEach(sib => sib.classList.remove('active'));
-
-        // Add 'active' class to the clicked item
-        clickedItem.classList.add('active');
-
-        // Update the config based on the type
-        switch(type) {
-            case 'avatar':
-                currentClientParticipantConfig[steamid].avatar = item; // Update avatar
-                break;
-            case 'mp3':
-                currentClientParticipantConfig[steamid].mvp.soundFile = item; // Update MVP sound file
-                break;
-            case 'gif':
-                currentClientParticipantConfig[steamid].mvp.gif = item; // Update MVP gif
-                break;
-            // Add cases as needed
-        }
-
-        console.log(`Selected ${type}: ${item} for ${steamid}`);
-        // Optionally refresh UI or save config here
-    }
-
 
     function displayAllParticipants(participants) {
         const containerAllParticipants = document.getElementById('all-participants-wrapper');
@@ -311,39 +273,6 @@
         (playerData && playerData.avatar ? imgElement.src = playerData.avatar : imgElement.src = './media/player-content/placeholder.png')
     }
 
-    function uploadFiles() {
-        const folderName = currentClientParticipantConfig[currentSelectedParticipant].folder;
-        let formData = new FormData();
-        formData.append('folderName', folderName); // Temporary hardcode for testing
-        formData.append('files', document.querySelector("input[type='file']").files[0]); // Assuming single file upload for testing
-    
-
-        // Debugging: Log FormData contents
-        for (let [key, value] of formData.entries()) { 
-            console.log(key, value instanceof File ? value.name : value); 
-        }
-
-        // Continue with fetch as before
-        fetch('/participants/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text()) // Handle text response here
-        .then(result => {
-            console.log('Success:', result);
-            fetch('/api/getParticipantConfig')
-            .then(response => response.json())
-            .then(data => {
-                currentClientParticipantConfig = data;
-                displayParticipantMedia();
-            })
-            .catch(error => console.error('Error fetching participant config:', error));
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
     function startParticipantConfigMVPEffect() {
         //mvpEffectStop();
         const steamid = currentSelectedParticipant;
@@ -352,16 +281,16 @@
 
         // custom
         document.getElementById("mvp-name").textContent = name;
-        const soundFileSrc = currentClientParticipantConfig[steamid].mvp.soundFile;
-        const backgroundGifSrc = currentClientParticipantConfig[steamid].mvp.gif;
+        const mp3Src = currentClientParticipantConfig[steamid].mp3;
+        const gifSrc = currentClientParticipantConfig[steamid].gif;
 
         // Background Gif Load if set
-        if (backgroundGifSrc) document.getElementById('mvp-animation-wrapper').style.backgroundImage=`url(${backgroundGifSrc}`;
+        if (gifSrc) document.getElementById('mvp-animation-wrapper').style.backgroundImage=`url(${gifSrc}`;
 
         // Audio Play if set
-        if (soundFileSrc) {        
-            mvpAudio.src = soundFileSrc
-            mvpAudio.volume = 0.2;
+        if (mp3Src) {        
+            mvpAudio.src = mp3Src
+            mvpAudio.volume = 0.3;
             if (typeof mvpAudio.loop == 'boolean') mvpAudio.loop = true;
             mvpAudio.load();
             //MVP Audio
@@ -376,27 +305,6 @@
         setTimeout(() => {
             mvpEffectStop()
         }, "9500");
-    }
-
-    function updateParticipantMVP() {
-        const dataToSend = {
-            steamid: currentSelectedParticipant,
-            gifFile: currentClientParticipantConfig[currentSelectedParticipant].mvp.gif,
-            soundFile: currentClientParticipantConfig[currentSelectedParticipant].mvp.soundFile
-        }
-
-        fetch('/api/updateParticipantMVP', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: dataToSend
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch(error => console.error('Error updating participant config:', error));
     }
 </script>
 </html>

@@ -294,7 +294,7 @@ function mvpEffectStart({ steamid, name }) {
     // Audio Play if set
     if (soundFileSrc) {        
         mvpAudio.src = soundFileSrc
-        mvpAudio.volume = 0.2;
+        mvpAudio.volume = 0.3;
         if (typeof mvpAudio.loop == 'boolean') mvpAudio.loop = true;
         mvpAudio.load();
         //MVP Audio

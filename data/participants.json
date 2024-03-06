@@ -5,21 +5,8 @@
     "beers": 0,
     "nadeDeaths": 0,
     "totalKills": 0,
-    "mp3s": [
-      "./media/player-content/force/hans.mp3",
-      "./media/player-content/force/numa_numa.mp3"
-    ],
-    "gifs": [
-      "./media/player-content/force/3aO.gif"
-    ],
-    "mvp": {
-      "gif": "./media/player-content/force/3aO.gif",
-      "soundFile": "./media/player-content/force/numa_numa.mp3",
-      "random": true
-    },
     "images": [
-      "./media/player-content/force/force.png",
-      "./media/player-content/force/forceone.png"
+      "./media/player-content/force/force.png"
     ],
     "avatar": "./media/player-content/force/force.png"
   },
@@ -29,29 +16,12 @@
     "beers": 0,
     "nadeDeaths": 0,
     "totalKills": 0,
-    "mp3s": [
-      "./media/player-content/peeet/lalala-hardstyle.mp3",
-      "./media/player-content/peeet/New Land - ALBIS.mp3",
-      "./media/player-content/peeet/thankyounotsobad-trimmed.mp3",
-      "./media/player-content/peeet/thankyounotsobad.mp3"
-    ],
-    "gifs": [
-      "./media/player-content/peeet/einstein.gif",
-      "./media/player-content/peeet/flashing.gif",
-      "./media/player-content/peeet/owl.gif"
-    ],
-    "mvp": {
-      "gif": "./media/player-content/peeet/owl.gif",
-      "soundFile": "./media/player-content/peeet/New Land - ALBIS.mp3",
-      "random": true
-    },
     "images": [
-      "./media/player-content/peeet/bsplus-crew.jpg",
-      "./media/player-content/peeet/peeetmanksi-2.png",
-      "./media/player-content/peeet/peeetmanksi.png",
       "./media/player-content/peeet/peter.png"
     ],
-    "avatar": "./media/player-content/peeet/bsplus-crew.jpg"
+    "avatar": "./media/player-content/peeet/peter.png",
+    "gif": "./media/player-content/peeet/owl.gif",
+    "mp3": "./media/player-content/peeet/thankyounotsobad-trimmed.mp3"
   },
   "76561198015480119": {
     "folder": "duncan",
@@ -60,10 +30,9 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "images": [
-      "./media/player-content/duncan/ducan.png",
       "./media/player-content/duncan/juan.png"
     ],
-    "avatar": "./media/player-content/duncan/ducan.png"
+    "avatar": "./media/player-content/duncan/juan.png"
   },
   "76561198093096880": {
     "folder": "charles",
@@ -72,12 +41,9 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "images": [
-      "./media/player-content/charles/charles-2.png",
-      "./media/player-content/charles/charles.png",
-      "./media/player-content/charles/download.jpg",
       "./media/player-content/charles/julian.png"
     ],
-    "avatar": "./media/player-content/charles/charles-2.png",
+    "avatar": "./media/player-content/charles/julian.png",
     "mp3s": [
       "./media/player-content/charles/rocketmanshort.mp3"
     ]
@@ -88,24 +54,12 @@
     "beers": 0,
     "nadeDeaths": 0,
     "totalKills": 0,
-    "mp3s": [
-      "./media/player-content/tamias/caramelldansen.mp3"
-    ],
-    "gifs": [
-      "./media/player-content/tamias/einstein.gif",
-      "./media/player-content/tamias/mvp-tamias.gif"
-    ],
-    "mvp": {
-      "gif": "./media/player-content/tamias/einstein.gif",
-      "soundFile": "./media/player-content/tamias/caramelldansen.mp3",
-      "random": true
-    },
     "images": [
-      "./media/player-content/tamias/76AAC84C-D249-4F17-9FA4-AC02A27D4BBE.jpeg",
-      "./media/player-content/tamias/caro.png",
-      "./media/player-content/tamias/tamias.png"
+      "./media/player-content/tamias/caro.png"
     ],
-    "avatar": "./media/player-content/tamias/76AAC84C-D249-4F17-9FA4-AC02A27D4BBE.jpeg"
+    "avatar": "./media/player-content/tamias/caro.png",
+    "mp3": "./media/player-content/tamias/caramelldansen.mp3",
+    "gif": "./media/player-content/tamias/mvp-tamias.gif"
   },
   "76561198796702267": {
     "folder": "zoom",
@@ -113,22 +67,10 @@
     "beers": 0,
     "nadeDeaths": 0,
     "totalKills": 0,
-    "mp3s": [
-      "./media/player-content/zoom/kawasaki.mp3"
-    ],
     "images": [
-      "./media/player-content/zoom/zoom (2).png",
       "./media/player-content/zoom/zoom.png"
     ],
-    "avatar": "./media/player-content/zoom/zoom (2).png",
-    "gifs": [
-      "./media/player-content/zoom/album_2024-02-09_23-52-02-cs caro.gif"
-    ],
-    "mvp": {
-      "gif": "./media/player-content/zoom/album_2024-02-09_23-52-02-cs caro.gif",
-      "soundFile": "./media/player-content/zoom/kawasaki.mp3",
-      "random": true
-    }
+    "avatar": "./media/player-content/zoom/zoom.png"
   },
   "76561197999727800": {
     "folder": "arti",
@@ -137,11 +79,9 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "images": [
-      "./media/player-content/arti/arti-steam-id-alt.png",
-      "./media/player-content/arti/arti-steam-id.png",
       "./media/player-content/arti/arti.png"
     ],
-    "avatar": "./media/player-content/arti/arti-steam-id-alt.png"
+    "avatar": "./media/player-content/arti/arti.png"
   },
   "76561197978901927": {
     "folder": "ks",
@@ -150,10 +90,9 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "images": [
-      "./media/player-content/ks/ks-steam-id.png",
       "./media/player-content/ks/ks24.png"
     ],
-    "avatar": "./media/player-content/ks/ks-steam-id.png"
+    "avatar": "./media/player-content/ks/ks24.png"
   },
   "76561198110788609": {
     "folder": "manuel",
@@ -162,10 +101,9 @@
     "nadeDeaths": 0,
     "totalKills": 0,
     "images": [
-      "./media/player-content/manuel/manuel.png",
       "./media/player-content/manuel/toffi.png"
     ],
-    "avatar": "./media/player-content/manuel/manuel.png"
+    "avatar": "./media/player-content/manuel/toffi.png"
   },
   "76561198881105836": {
     "folder": "dimi",
@@ -173,20 +111,12 @@
     "beers": 0,
     "nadeDeaths": 0,
     "totalKills": 0,
-    "mp3s": [
-      "./media/player-content/dimi/make-it-bun-dem.mp3"
-    ],
-    "gifs": [
-      "./media/player-content/dimi/laser.gif"
-    ],
-    "mvp": {
-      "gif": "./media/player-content/dimi/laser.gif",
-      "soundFile": "./media/player-content/dimi/make-it-bun-dem.mp3",
-      "random": true
-    },
     "images": [
       "./media/player-content/placeholder.png"
-    ]
+    ],
+    "mp3": "./media/player-content/dimi/make-it-bun-dem.mp3",
+    "gif": "./media/player-content/dimi/laser.gif",
+    "avatar": "./media/player-content/placeholder.png"
   },
   "76561197977642211": {
     "folder": "martin",
@@ -207,7 +137,8 @@
     "totalKills": 0,
     "images": [
       "./media/player-content/placeholder.png"
-    ]
+    ],
+    "avatar": "./media/player-content/placeholder.png"
   },
   "76561198257171847": {
     "folder": "thomas",
@@ -215,22 +146,12 @@
     "beers": 0,
     "nadeDeaths": 0,
     "totalKills": 0,
-    "mp3s": [
-      "./media/player-content/thomas/thomas-tank.mp3"
-    ],
-    "gifs": [
-      "./media/player-content/thomas/thomas.gif"
-    ],
-    "mvp": {
-      "gif": "./media/player-content/thomas/thomas.gif",
-      "soundFile": "./media/player-content/thomas/thomas-tank.mp3",
-      "random": true
-    },
     "images": [
-      "./media/player-content/thomas/thomas-drunk.png",
       "./media/player-content/thomas/thomas.png"
     ],
-    "avatar": "./media/player-content/thomas/thomas-drunk.png"
+    "avatar": "./media/player-content/thomas/thomas.png",
+    "mp3": "./media/player-content/thomas/thomas-tank.mp3",
+    "gif": "./media/player-content/thomas/thomas.gif"
   },
   "76561199068322244": {
     "folder": "konrad",

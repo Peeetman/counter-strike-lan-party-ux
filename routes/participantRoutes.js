@@ -9,18 +9,25 @@ router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/participants.html'));
 });
 
-// Define the POST /upload endpoint under /participants
-router.post('/upload', upload.array('files'), async (req, res) => {
-    try {
-        // Handle file upload post-processing here
-        const participantsConfig = await ParticipantsConfigHandler.generateClientParticipantsConfig();
-        await ParticipantsConfigHandler.saveConfig(participantsConfig);
-        // Send a JSON response
-        res.json({ message: 'Files uploaded successfully' });
-    } catch (error) {
-        console.error('Error during file upload:', error);
-        res.status(500).json({ error: 'Error uploading files' });
-    }
+router.post('/upload', (req, res) => {
+    const uploadFiles = upload.array('files');
+    uploadFiles(req, res, async (error) => {
+        if (error) {
+            // This will catch errors thrown by Multer including file filter validation errors
+            console.error('Multer error during file upload:', error);
+            return res.status(500).json({ error: error.message });
+        }
+        try {
+            // Handle file upload post-processing here
+            const participantsConfig = await ParticipantsConfigHandler.generateClientParticipantsConfig();
+            await ParticipantsConfigHandler.saveConfig(participantsConfig);
+            res.json({ message: 'Files uploaded successfully' });
+        } catch (error) {
+            // This will catch errors thrown after files have been uploaded successfully
+            console.error('Error during file upload post-processing:', error);
+            res.status(500).json({ error: 'Error uploading files' });
+        }
+    });
 });
 
 module.exports = router;

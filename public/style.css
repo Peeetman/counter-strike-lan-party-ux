@@ -537,7 +537,7 @@ body {
 }
 
 
-.list-group-item.active {
-    background-color: var(--bs-purple) !important;
-    border: none !important;
+#single-participant-img{
+    transform: scale(1.5);
+    transform-origin: top;
 }

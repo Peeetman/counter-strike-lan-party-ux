@@ -11,11 +11,9 @@ const fs = require('fs');
 const fsPromises = fs.promises;
 // Socket IO
 const io = require('socket.io')(server);
-const voteNamespace = io.of('/vote');
 
 // Importing Routes
 const mvpSettingsRoutes = require('./routes/mvpSettingsRoutes');
-const votingRoutes = require('./routes/votingRoutes');
 const beerRoutes = require('./routes/beerRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 
@@ -23,7 +21,6 @@ const apiRoutes = require('./routes/apiRoutes');
 app.use(express.static('public'));
 app.use('/mvpsettings', mvpSettingsRoutes);
 app.use('/beer', beerRoutes);
-app.use('/voting', votingRoutes);
 app.use('/api', apiRoutes);
 
 //ParticipantsConfigHandler
@@ -141,46 +138,6 @@ gameStateMonitor.on('getCurrentClientParticipantsConfig', () => {
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
     console.log('SOCKET IO: Sent Clients participantsConfig');
 });
-
-// Voting SocketIO Integration ---------------------
-let votingParticipants = {};
-voteNamespace.on('connection', (socket) => {
-    console.log(`VOTING SOCKET IO: Client connected: ${socket.id}`);
-
-    socket.on('registerParticipant', ({steamid, name}) => {
-        // Ensure the participant is not already registered
-        if (!votingParticipants[steamid]) {
-            
-            // Register new participant
-            votingParticipants[steamid] = {
-                name: name,
-                team: null,
-                socketId: socket.id // Keep track of the socket ID if needed
-            };
-            
-            console.log(`VOTING SOCKET IO: Participant joined: ${steamid} - ${votingParticipants[steamid].name}`);
-
-            // Notify all clients about the new participant
-            voteNamespace.emit('newParticipant', { votingParticipants });
-        } else {
-            console.log(`VOTING SOCKET IO: Participant already registered: ${steamid}`);
-        }
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`VOTING SOCKET IO: Client disconnected: ${socket.id}`);
-        // Find and remove the disconnected participant
-        for (const steamid in votingParticipants) {
-            if (votingParticipants[steamid].socketId === socket.id) {
-                console.log(`VOTING SOCKET IO: Participant left: ${steamid} - ${votingParticipants[steamid].name}`);
-                delete votingParticipants[steamid];
-                voteNamespace.emit('participantLeft', {steamid});
-                break;
-            }
-        }
-    });
-});
-// Voting SocketIO Integration End -------------------------------------------
 
 //Dashboard Server
 io.on('connection', async (socket) => {

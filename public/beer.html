@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oberzaubach LAN 2024 - CS2 Dashbaord</title>
+    <link rel="icon" type="image/x-icon" href="./media/logos/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anta&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Templates -->
+    <template id="beer-card-template">
+        <div class="card player-card beer-card mt-2 mb-2" style="width: 12%">
+          <img src="./media/player-content/placeholder.png" class="card-img-top player-image object-fit-fill" alt="">
+          <div class="border d-flex flex-grow-1 justify-content-center align-items-center p-2">
+            <div class="player-name">Player Name</div>
+          </div>
+        <div class="beer-wrapper d-flex justify-content-between flex-column align-self-center border border-rounded-0 border-top-0 w-100">
+            <div class="d-flex flex-column w-100 p-2">
+                <span>Beer Counter</span>
+                <span class="beers">0</span>
+            </div>
+            <div class="d-flex flex-row w-100 border-top justify-content-center align-items-center">
+                <div class="btn btn-sm btn-outline-danger border-0 rounded-0 w-50 pt-3 pb-3 text-white"><b>-</b></div>
+                <div class="btn btn-sm btn-outline-success border-0 rounded-0 w-50 pt-3 pb-3 text-white"><b>+</b></div>
+            </div>
+        </div>
+        </div>
+    </template>
+</head>
+<body>
+<body>
+    <div id="gradient" class="full-height-wrapper bg-dark d-flex flex-column justify-content-between text-center text-white bg-beer">
+        <div id="header" class="d-flex border-bottom flex-row align-items-center">
+            <div class="d-flex w-100 justify-content-start">
+                <a href="/" class="text-white text-decoration-none">Oberzaubach LAN 2024 UX System</a>
+                <div><span>&nbsp</span></div>
+            </div>        
+            <div class="w-100">
+                <div class="btn-group d-flex w-100" role="group" aria-label="Basic example">
+                  <a href="/" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">Gamestate</a>
+                  <a href="/beer" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0 active">Beer</a>
+                  <!-- <a href="/voting" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">Voting</a> -->
+                  <a href="/rcon" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">RCON Admin-Panel</a>
+                  <a href="/mvpsettings.html" class="btn btn-sm btn-outline-light flex-grow-1 rounded-0 border-0">MVP Settings</a>
+                </div>
+            </div>
+            <div class="d-flex w-100 justify-content-end">
+                <div id="currentTime">13:37, 23.02.2024</div>
+            </div>
+        </div>
+
+        <div id="core-wrapper" class="w-100 d-flex flex-column justify-content-center align-items-center">
+            <div id="all-participants-wrapper" class="d-flex flex-wrap justify-content-center p-5 w-75">
+            </div>
+        </div>
+       
+        <div id="footer" class="w-100 d-flex justify-content-center align-items-center border-top p-2">
+            <span>KLÖßE SO SCHLEIMIG IN HALS</span>
+        </div>
+    </div>
+</body>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<!-- Socket.IO -->
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+<!-- Custom script-->
+<script src="script.js"></script>
+<script>
+    let currentSelectedParticipant = false;
+    let currentClientParticipantConfig = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        getClientParticipantConfigAndDisplay();
+    });
+
+    socket.on('beerCountUpdated', (data) => {
+        console.log('beerCountUpdated');
+        const { steamid, beers } = data;
+        const playerCard = document.getElementById(`beer-card-${steamid}`);
+        if (playerCard) {
+            const beerCountElement = playerCard.querySelector('.beers');
+            beerCountElement.textContent = beers;
+        }
+    });
+
+    function getClientParticipantConfigAndDisplay(){
+        fetch('/api/getParticipantConfig')
+        .then(response => response.json())
+        .then(data => {
+            currentClientParticipantConfig = data;
+            console.log('getClientParticipantConfigAndDisplay');
+            console.log(data);
+            displayAllParticipants(data);
+        })
+        .catch(error => console.error('Error fetching participant config:', error));
+    }
+
+    function displayAllParticipants(participants) {
+        const containerAllParticipants = document.getElementById('all-participants-wrapper');
+
+        // Create or Update Player Cards
+        Object.keys(participants).forEach(steamid => {
+            const playerData = participants[steamid];
+            const targetId = 'all-participants-wrapper';
+            createOrUpdateBeerCard(playerData, steamid, targetId);
+            let elem = document.getElementById(`beer-card-${steamid}`);
+        });
+    }
+
+    function createOrUpdateBeerCard(playerData, steamid, targetId){
+        const existingCardId = `beer-card-${steamid}`;
+        let existingCard = document.getElementById(existingCardId);
+
+        // Check for team change
+        let teamChanged = false;
+        if (existingCard) {
+            populateBeerCard(existingCard, steamid, playerData);
+        } else {
+            // Access the template directly from the document
+            const template = document.getElementById('beer-card-template');
+            if (!template) {
+                console.error('Player card template not found');
+                return;
+            }
+
+            // Clone the template content
+            const clone = document.importNode(template.content, true);
+            const playerCard = clone.querySelector('.card');
+            if (!playerCard) {
+                console.error('No .card found within the template');
+                return;
+            }
+            playerCard.id = existingCardId;
+            playerCard.setAttribute('data-team', playerData.team); // Set the card's team attribute
+
+            populateBeerCard(playerCard, steamid, playerData);
+            document.getElementById(targetId).appendChild(clone);
+        }
+    }
+
+    function populateBeerCard(playerCard, steamid, playerData) {
+        // Update player name and image
+        playerCard.querySelector('.player-name').textContent = playerData.name;
+        const imgElement = playerCard.querySelector('.player-image');
+        imgElement.src = playerData.avatar ? playerData.avatar : './media/player-content/placeholder.png';
+        
+        // Set beer count if already exists
+        const beerCountElement = playerCard.querySelector('.beers');
+        beerCountElement.textContent = playerData.beers || 0; // Assuming you have a 'beers' property
+
+        // Plus and Minus Buttons
+        const plusButton = playerCard.querySelector('.btn-outline-success');
+        const minusButton = playerCard.querySelector('.btn-outline-danger');
+
+        // Remove existing event listeners to avoid duplicates
+        plusButton.removeEventListener('click', handleBeerCountChange);
+        minusButton.removeEventListener('click', handleBeerCountChange);
+
+        // Add new event listeners
+        plusButton.addEventListener('click', () => handleBeerCountChange(steamid, 'increment'));
+        minusButton.addEventListener('click', () => handleBeerCountChange(steamid, 'decrement'));
+    }
+
+    // This is a separate function to handle the click events of the buttons
+    function handleBeerCountChange(steamid, action) {
+        console.log('BeercountChange for ', steamid);
+        socket.emit('updateBeerCount', { steamid, action });
+    }
+</script>
+</html>

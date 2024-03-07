@@ -6,10 +6,10 @@ const configPath = path.join(global.__basedir, 'data', 'participants.json');
 const playerContentBasePath = path.join(global.__basedir, 'public', 'media', 'player-content');
 const publicContentBasepath = './media/player-content';
 
-let participantsConfigCache = null;
+global.participantsConfigCache = {};
 
 async function getConfigCache() {
-    if (participantsConfigCache === null) {
+    if (Object.keys(participantsConfigCache).length <= 0) {
         const loaded = await loadConfig();
         setConfigCache(loaded);
     }
@@ -19,6 +19,22 @@ async function getConfigCache() {
 function setConfigCache(config) {
     participantsConfigCache = config;
     return true;
+}
+
+function getBeerCount(steamid) {
+    return participantsConfigCache[steamid].beers;
+}
+
+async function updateBeerCount(steamid, action){
+    if(action === 'increment'){
+        participantsConfigCache[steamid].beers += 1;
+        setConfigCache(participantsConfigCache)
+    } else if (action === 'decrement'){
+        if (participantsConfigCache[steamid].beers != 0){
+            participantsConfigCache[steamid].beers -= 1;
+            setConfigCache(participantsConfigCache)
+        }
+    }
 }
 
 async function loadConfig() {
@@ -95,4 +111,6 @@ module.exports = {
     saveConfig,
     getConfigCache,
     setConfigCache,
+    getBeerCount,
+    updateBeerCount
 };

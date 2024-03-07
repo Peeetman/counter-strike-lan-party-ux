@@ -16,11 +16,13 @@ const voteNamespace = io.of('/vote');
 // Importing Routes
 const mvpSettingsRoutes = require('./routes/mvpSettingsRoutes');
 const votingRoutes = require('./routes/votingRoutes');
+const beerRoutes = require('./routes/beerRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 
 // Register the routes
 app.use(express.static('public'));
 app.use('/mvpsettings', mvpSettingsRoutes);
+app.use('/beer', beerRoutes);
 app.use('/voting', votingRoutes);
 app.use('/api', apiRoutes);
 
@@ -135,6 +137,7 @@ gameStateMonitor.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString
 });
 
 gameStateMonitor.on('getCurrentClientParticipantsConfig', () => {
+    const participantsConfig = participantsConfigHandler.getConfigCache();
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
     console.log('SOCKET IO: Sent Clients participantsConfig');
 });
@@ -179,7 +182,6 @@ voteNamespace.on('connection', (socket) => {
 });
 // Voting SocketIO Integration End -------------------------------------------
 
-
 //Dashboard Server
 io.on('connection', async (socket) => {
     console.log(`SOCKET IO: Client connected: ${socket.id}`);
@@ -199,6 +201,17 @@ io.on('connection', async (socket) => {
     // Listen for events from the client
     socket.on('clientEvent', (data) => {
         console.log('SOCKET IO: Received data from client:', data);
+    });
+
+    socket.on('updateBeerCount', async (data) => {
+        const { steamid, action } = data;
+        // Assuming you have a function to update the beer count
+        await participantsConfigHandler.updateBeerCount(steamid, action); // Implement this function based on your data management
+
+        // After updating, emit the new count to all clients
+        const newBeerCount = participantsConfigHandler.getBeerCount(steamid); // Get the updated beer count
+        io.emit('beerCountUpdated', { steamid, beers: newBeerCount });
+        io.emit('sendParticipantsConfig', ({ participantsConfig }));
     });
 
     // Handle disconnection

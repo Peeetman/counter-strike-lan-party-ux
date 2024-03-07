@@ -62,6 +62,12 @@ body {
     background: linear-gradient(to left, #292E49, #536976, #BBD2C5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.bg-beer{
+    background: #5f2c82;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #49a09d, #5f2c82);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #49a09d, #5f2c82); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
 .win-t{
     background: #ff5f11;
     color: white;
@@ -453,14 +459,20 @@ body {
     overflow: hidden;
 }
 /*all-participants-wrapper participant-card*/
-.player-card.participant-card{
+.player-card.participant-card, .player-card.beer-card{
     border-radius: 0;
+}
+.player-card.participant-card{
     opacity: 0.3;
 }
 .player-card.participant-card:hover{
     border-radius: 0;
     opacity: 1;
     cursor: pointer;
+}
+
+.beer-card > img {
+
 }
 
 

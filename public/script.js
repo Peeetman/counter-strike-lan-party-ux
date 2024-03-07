@@ -94,16 +94,11 @@ socket.on('playerDeath', ({ steamid, name }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] has died.`);
 });
 
-socket.on('playerDeathWithGrenade', ({ steamid, name }) => {
+socket.on('playerDeathWithGrenade', ({ steamid, name, nadeDeaths }) => {
     console.log(`Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`);
-    showEventText(`${name} DWNIH!`);
-    const playerCardId = `player-card-${steamid}`;
-    let existingCard = document.getElementById(playerCardId);
-    if (existingCard) {
-        console.log(existingCard);
-        existingCard.classList.add('died-with-nade');
-    }
-
+    const target = `player-card-${steamid}`;
+    const withEventText = true;
+    updateNadeDeaths({steamid, name, nadeDeaths, target, withEventText});
 });
 
 
@@ -115,7 +110,6 @@ socket.on('playerMVP', ({ steamid, name }) => {
 
 // Data Events
 socket.on('sendParticipantsConfig', ({ participantsConfig }) => {
-    console.log(participantsConfig);
     clientParticipantsConfig = participantsConfig;
 });
 
@@ -144,13 +138,16 @@ socket.on('roundPhaseCountdownUpdate', ({ newRoundPhaseCountdownString, urgend }
 
 // Function to handle the playerStateUpdate event
 socket.on('playerStateUpdate', currentPlayerState => {
-    console.log(currentPlayerState);
+    console.log('playerStateUpdate')
     clientPlayerState = currentPlayerState;
-    // console.log(clientPlayerState)
 
     // Create or Update Player Cards
     Object.keys(currentPlayerState).forEach(steamid => {
-        const playerData = currentPlayerState[steamid];
+
+        const playerData = {
+            ...clientParticipantsConfig[steamid],
+            ...currentPlayerState[steamid],
+        };
         const teamTargetId = playerData.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
         createOrUpdatePlayerCard(playerData, steamid, teamTargetId);
     });
@@ -183,7 +180,6 @@ updateCurrentTime();
 setInterval(updateCurrentTime, 60000);
 
 function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
-    console.log(playerData)
     const existingCardId = `player-card-${steamid}`;
     let existingCard = document.getElementById(existingCardId);
 
@@ -232,7 +228,10 @@ function reRenderAllPlayerCards() {
 
     // Iterate over clientPlayerState to recreate all player cards
     Object.keys(clientPlayerState).forEach(steamid => {
-        const playerData = clientPlayerState[steamid];
+        const playerData = {
+            ...clientParticipantsConfig[steamid], // Spread the contents of clientParticipantsConfig for this steamid
+            ...currentPlayerState[steamid], // Spread and potentially overwrite with the contents of currentPlayerState for the same steamid
+        };
         const teamTargetId = playerData.team === 'CT' ? 'ct-wrapper' : 't-wrapper';
         createOrUpdatePlayerCard(playerData, steamid, teamTargetId);
     });
@@ -248,16 +247,16 @@ function updateAliveStatus(playerCard, isAlive) {
 }
 
 // Function to populate the player card with data
-function populatePlayerCard(playerCard, steamid, player) {
-    playerCard.querySelector('.player-name').textContent = player.name;
-    playerCard.querySelector('.kills').textContent = player.match_stats.kills;
-    playerCard.querySelector('.deaths').textContent = player.match_stats.deaths;
-    playerCard.querySelector('.assists').textContent = player.match_stats.assists;
-    playerCard.querySelector('.mvps').textContent = player.match_stats.mvps;
-    playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
-    playerCard.querySelector('.beers').textContent = player.beers;
-    playerCard.querySelector('.dwgh').textContent = player.nadeDeaths;
-    // player img
+function populatePlayerCard(playerCard, steamid, playerData) {
+    playerCard.querySelector('.player-name').textContent = playerData.name;
+    playerCard.querySelector('.kills').textContent = playerData.match_stats.kills;
+    playerCard.querySelector('.deaths').textContent = playerData.match_stats.deaths;
+    playerCard.querySelector('.assists').textContent = playerData.match_stats.assists;
+    playerCard.querySelector('.mvps').textContent = playerData.match_stats.mvps;
+    playerCard.querySelector('.kd').textContent = (playerData.match_stats.deaths !== 0 ? Math.round(playerData.match_stats.kills / playerData.match_stats.deaths * 100) / 100 : playerData.match_stats.kills);
+    playerCard.querySelector('.beers').textContent = (playerData.beers >= 0 ? playerData.beers : '?');
+    playerCard.querySelector('.dwgh').textContent = (playerData.nadeDeaths >= 0 ? playerData.nadeDeaths : '?');
+    // playerData img
     const imgElement = playerCard.querySelector('.player-image');
     // unkown players placeholder
     (clientParticipantsConfig[steamid] && clientParticipantsConfig[steamid].avatar ? imgElement.src = clientParticipantsConfig[steamid].avatar : imgElement.src = './media/player-content/placeholder.png')
@@ -487,33 +486,45 @@ function updateBeerCount({steamid, beers, target, withEventText}) {
     }
 }
 
-function nadeDeathEffect({steamid, nadeDeaths, target, withEventText}) {
+let nadeDeathAudio = new Audio('./media/mario-fail.mp3');
+function updateNadeDeaths({steamid, name, nadeDeaths, target, withEventText}) {
     const playerCard = document.getElementById(target);
     if (playerCard) {
         const nadeDeathWrapper = playerCard.querySelector('.dwgh-wrapper');
         const nadeDeathCounter = playerCard.querySelector('.dwgh');
 
-        nadeDeathWrapper.classList.add('beer-updated');
+        nadeDeathWrapper.classList.add('nade-death-updated');
         nadeDeathCounter.textContent = nadeDeaths;
+        playerCard.classList.add('died-with-nade');
 
-        if(beerAudio.paused) {
-            beerAudio.volume = 0.3;
-            if (typeof beerAudio.loop == 'boolean') beerAudio.loop = true;
-            beerAudio.autoplay = true;
-            beerAudio.load();
-            beerAudio.play();
+        // if (withEventText) showEventText(`${name} DWNIH!`);
+        if(withEventText) showEventText(`${name} NADEDEATH. NOOB!`);
 
-            setTimeout(() => {
-                console.log("beersound stopped");
-                nadeDeathWrapper.classList.remove('beer-updated');
-                beerAudio.pause();
-                beerAudio.currentTimase = 0;
-                if (withEventText) resetEventText();
-            }, "5000"); 
-        }
+        nadeDeathAudio.volume = 0.5;
+        if (typeof beerAudio.loop == 'boolean') nadeDeathAudio.loop = false;
+        nadeDeathAudio.autoplay = false;
+        nadeDeathAudio.load();
+        nadeDeathAudio.play();
+
+        setTimeout(() => {
+            console.log("nadeDeath Sound stopped");
+            nadeDeathWrapper.classList.remove('nade-death-updated');
+            nadeDeathAudio.pause();
+            nadeDeathAudio.currentTimase = 0;
+            if (withEventText) resetEventText();
+            playerCard.classList.remove('died-with-nade')
+        }, "3000"); 
         
-        if(withEventText) showEventText(`${clientParticipantsConfig[steamid].name} new beer!`);
     }
+}
+
+function testNadeDeath() {
+    steamid = "76561197969446599";
+    name = "you_g0t_owned";
+    nadeDeaths = 3;
+    target = 'player-card-76561197969446599';
+    withEventText = true;
+    updateNadeDeaths({steamid, name, nadeDeaths, target, withEventText});
 }
 
 

@@ -99,6 +99,11 @@ body {
     6%, 18%, 31%, 43%, 56%, 68%, 81%, 93% { background: white; color: black; }
 }
 
+.nade-death-updated{
+    background: transparent;
+    color: white;
+    animation: beer-flicker 2s 2 forwards ease-in-out;
+}
 
 #match-status-wrapper{
     filter: drop-shadow(2px 2px 40px black);
@@ -395,31 +400,18 @@ body {
     margin-left: 1%;
     margin-right: 1%;
 }
-/*died with nade highlight*/
-/*.player-card {
-    position: relative;
-    width: 20%;
-    background: none;
-    border: none;
-    margin-left: 1%;
-    margin-right: 1%;
-    z-index: 1;
-}
-.died-with-nade.player-card::after {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: -5px;
+
+/*.player-card.not-alive.died-with-nade .card-img-top, .player-card.not-alive.died-with-nade .dwgh-wrapper, 
+.player-card.died-with-nade .card-img-top, .player-card.died-with-nade .dwgh-wrapper, */
+.player-card.not-alive.died-with-nade img,
+.player-card.died-with-nade img {
+    opacity: 1 !important;
+    filter: none !important;
     background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
     background-size: 400%, 400%;
-    filter: blur(8px);
-    opacity: 0.6;
     animation: shiftGradient 1s infinite alternate;
 }
+
 @keyframes shiftGradient {
     0% {
         background-position: 0% 0%;
@@ -427,7 +419,7 @@ body {
     100% {
         background-position: 100% 100%;
     }
-}*/
+}
 
 
 .player-name{

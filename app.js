@@ -100,8 +100,12 @@ gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
 gameStateMonitor.on('playerDeathWithGrenade', async ({ steamid, name }) => {
     const eventText = `Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`
     console.log('Server: ' + eventText);
+    
     await participantsConfigHandler.updateNadeDeaths(steamid, 'increment');
-    io.emit('playerDeathWithGrenade', ({ steamid, name }));
+    const nadeDeaths = participantsConfigHandler.getNadeDeaths(steamid);
+    io.emit('playerDeathWithGrenade', ({ steamid, name, nadeDeaths}));
+
+    const participantsConfig = participantsConfigHandler.getConfigCache();
     io.emit('sendParticipantsConfig', ({ participantsConfig }));
 })
 

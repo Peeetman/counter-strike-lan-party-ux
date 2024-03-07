@@ -22,7 +22,8 @@ function setConfigCache(config) {
 }
 
 function getBeerCount(steamid) {
-    return participantsConfigCache[steamid].beers;
+    if(participantsConfigCache[steamid]) return participantsConfigCache[steamid].beers;
+    else return false;
 }
 
 async function updateBeerCount(steamid, action){
@@ -35,6 +36,11 @@ async function updateBeerCount(steamid, action){
             setConfigCache(participantsConfigCache)
         }
     }
+}
+
+function getNadeDeaths(steamid) {
+    if(participantsConfigCache[steamid]) return participantsConfigCache[steamid].nadeDeaths;
+    else return false;
 }
 
 async function updateNadeDeaths(steamid, action){
@@ -125,5 +131,6 @@ module.exports = {
     setConfigCache,
     getBeerCount,
     updateBeerCount,
-    updateNadeDeaths
+    updateNadeDeaths,
+    getNadeDeaths
 };

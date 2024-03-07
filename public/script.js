@@ -456,7 +456,9 @@ function resetAllEffects(){
     mvpEffectStop();
 }
 
-function updateBeerCount({steamid, beers, target}) {
+// let beerAudio = new Audio('./media/ballern-dropin.mp3');
+let beerAudio = new Audio('./media/einprosit.mp3');
+function updateBeerCount({steamid, beers, target, withEventText}) {
     const playerCard = document.getElementById(target);
     if (playerCard) {
         const beerCountElement = playerCard.querySelector('.beers');
@@ -464,13 +466,27 @@ function updateBeerCount({steamid, beers, target}) {
 
         beerCountWrapper.classList.add('beer-updated');
         beerCountElement.textContent = beers;
-        showEventText(`${clientParticipantsConfig[steamid].name} new beer!`);
-        setTimeout(function() {
-            resetEventText();
-            beerCountWrapper.classList.remove('beer-updated');
-        }, 4000);
+
+        if(beerAudio.paused) {
+            beerAudio.volume = 0.3;
+            if (typeof beerAudio.loop == 'boolean') beerAudio.loop = true;
+            beerAudio.autoplay = true;
+            beerAudio.load();
+            beerAudio.play();
+
+            setTimeout(() => {
+                console.log("beersound stopped");
+                beerCountWrapper.classList.remove('beer-updated');
+                beerAudio.pause();
+                beerAudio.currentTime = 0;
+                if (withEventText) resetEventText();
+            }, "5000"); 
+        }
+        
+        if(withEventText) showEventText(`${clientParticipantsConfig[steamid].name} new beer!`);
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // Stuff here

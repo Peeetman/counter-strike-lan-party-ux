@@ -37,6 +37,18 @@ async function updateBeerCount(steamid, action){
     }
 }
 
+async function updateNadeDeaths(steamid, action){
+    if(action === 'increment'){
+        participantsConfigCache[steamid].nadeDeaths += 1;
+        setConfigCache(participantsConfigCache)
+    } else if (action === 'decrement'){
+        if (participantsConfigCache[steamid].nadeDeaths != 0){
+            participantsConfigCache[steamid].nadeDeaths -= 1;
+            setConfigCache(participantsConfigCache)
+        }
+    }
+}
+
 async function loadConfig() {
     try {
         const data = await fsPromises.readFile(configPath, 'utf8');
@@ -112,5 +124,6 @@ module.exports = {
     getConfigCache,
     setConfigCache,
     getBeerCount,
-    updateBeerCount
+    updateBeerCount,
+    updateNadeDeaths
 };

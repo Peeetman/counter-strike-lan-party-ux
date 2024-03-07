@@ -487,6 +487,35 @@ function updateBeerCount({steamid, beers, target, withEventText}) {
     }
 }
 
+function nadeDeathEffect({steamid, nadeDeaths, target, withEventText}) {
+    const playerCard = document.getElementById(target);
+    if (playerCard) {
+        const nadeDeathWrapper = playerCard.querySelector('.dwgh-wrapper');
+        const nadeDeathCounter = playerCard.querySelector('.dwgh');
+
+        nadeDeathWrapper.classList.add('beer-updated');
+        nadeDeathCounter.textContent = nadeDeaths;
+
+        if(beerAudio.paused) {
+            beerAudio.volume = 0.3;
+            if (typeof beerAudio.loop == 'boolean') beerAudio.loop = true;
+            beerAudio.autoplay = true;
+            beerAudio.load();
+            beerAudio.play();
+
+            setTimeout(() => {
+                console.log("beersound stopped");
+                nadeDeathWrapper.classList.remove('beer-updated');
+                beerAudio.pause();
+                beerAudio.currentTimase = 0;
+                if (withEventText) resetEventText();
+            }, "5000"); 
+        }
+        
+        if(withEventText) showEventText(`${clientParticipantsConfig[steamid].name} new beer!`);
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // Stuff here

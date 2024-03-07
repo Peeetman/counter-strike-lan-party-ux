@@ -97,10 +97,12 @@ gameStateMonitor.on('playerDeath', ({ steamid, name }) => {
     io.emit('playerDeath', ({ steamid, name }));
 })
 
-gameStateMonitor.on('playerDeathWithGrenade', ({ steamid, name }) => {
+gameStateMonitor.on('playerDeathWithGrenade', async ({ steamid, name }) => {
     const eventText = `Player with ID [${steamid}] and Name [${name}] died with a grenade in the hand.`
     console.log('Server: ' + eventText);
+    await participantsConfigHandler.updateNadeDeaths(steamid, 'increment');
     io.emit('playerDeathWithGrenade', ({ steamid, name }));
+    io.emit('sendParticipantsConfig', ({ participantsConfig }));
 })
 
 gameStateMonitor.on('playerMVP', ({ steamid, name }) => {
@@ -162,11 +164,8 @@ io.on('connection', async (socket) => {
 
     socket.on('updateBeerCount', async (data) => {
         const { steamid, action } = data;
-        // Assuming you have a function to update the beer count
-        await participantsConfigHandler.updateBeerCount(steamid, action); // Implement this function based on your data management
-
-        // After updating, emit the new count to all clients
-        const newBeerCount = participantsConfigHandler.getBeerCount(steamid); // Get the updated beer count
+        await participantsConfigHandler.updateBeerCount(steamid, action);
+        const newBeerCount = participantsConfigHandler.getBeerCount(steamid); 
         io.emit('beerCountUpdated', { steamid, beers: newBeerCount });
         io.emit('sendParticipantsConfig', ({ participantsConfig }));
     });

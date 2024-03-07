@@ -183,6 +183,7 @@ updateCurrentTime();
 setInterval(updateCurrentTime, 60000);
 
 function createOrUpdatePlayerCard(playerData, steamid, teamTargetId) {
+    console.log(playerData)
     const existingCardId = `player-card-${steamid}`;
     let existingCard = document.getElementById(existingCardId);
 
@@ -254,6 +255,8 @@ function populatePlayerCard(playerCard, steamid, player) {
     playerCard.querySelector('.assists').textContent = player.match_stats.assists;
     playerCard.querySelector('.mvps').textContent = player.match_stats.mvps;
     playerCard.querySelector('.kd').textContent = (player.match_stats.deaths !== 0 ? Math.round(player.match_stats.kills / player.match_stats.deaths * 100) / 100 : player.match_stats.kills);
+    playerCard.querySelector('.beers').textContent = player.beers;
+    playerCard.querySelector('.dwgh').textContent = player.nadeDeaths;
     // player img
     const imgElement = playerCard.querySelector('.player-image');
     // unkown players placeholder
@@ -271,14 +274,45 @@ function removeUnmatchedPlayerCards(steamids) {
 }
 
 function injectDummyPlayerCards() {
-    const template = document.getElementById('player-card-template');
-    for (let i = 0; i < 5; i++) {
-        const clone_ct = document.importNode(template.content, true);
-        document.getElementById('ct-wrapper').appendChild(clone_ct);
-        const clone_t = document.importNode(template.content, true);
-        document.getElementById('t-wrapper').appendChild(clone_t);
-    }
+    const steamids = Object.keys(clientParticipantsConfig);
+    // Shuffle array and pick first 10 (or fewer, if not enough participants)
+    const selectedKeys = steamids.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+    // Split the selected participants into two teams
+    const teamCT = selectedKeys.slice(0, Math.ceil(selectedKeys.length / 2));
+    const teamT = selectedKeys.slice(Math.ceil(selectedKeys.length / 2));
+
+    teamCT.forEach(steamid => {
+        // Simulate player data structure for dummy data
+        const playerData = {
+            ...clientParticipantsConfig[steamid],
+            match_stats: {
+                kills: 2,
+                mvps: 0,
+                deaths: 1,
+            },
+            alive: true,
+            team: 'CT'
+        };
+        createOrUpdatePlayerCard(playerData, steamid, 'ct-wrapper');
+    });
+
+    teamT.forEach(steamid => {
+        // Simulate player data structure for dummy data
+        const playerData = {
+            ...clientParticipantsConfig[steamid],
+            match_stats: {
+                kills: 2,
+                mvps: 0,
+                deaths: 1,
+            },
+            alive: true,
+            team: 'T'
+        };
+        createOrUpdatePlayerCard(playerData, steamid, 't-wrapper');
+    });
 }
+
 
 // MVP Effects
 function mvpEffectStart({ steamid, name }) {
@@ -422,10 +456,22 @@ function resetAllEffects(){
     mvpEffectStop();
 }
 
+function updateBeerCount({steamid, beers, target}) {
+    const playerCard = document.getElementById(target);
+    if (playerCard) {
+        const beerCountElement = playerCard.querySelector('.beers');
+        const beerCountWrapper = playerCard.querySelector('.beer-wrapper');
+
+        beerCountWrapper.classList.add('beer-updated');
+        beerCountElement.textContent = beers;
+        showEventText(`${clientParticipantsConfig[steamid].name} new beer!`);
+        setTimeout(function() {
+            resetEventText();
+            beerCountWrapper.classList.remove('beer-updated');
+        }, 4000);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // injectDummyPlayerCards();
-    // mvpEffectStart()
-    // bombStatus = 'bomb-planted'
-    // showBomb({ bombStatus })
-    //resetAllEffects();
+    // Stuff here
 });

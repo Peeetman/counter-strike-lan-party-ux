@@ -88,6 +88,17 @@ body {
     6%, 18%, 31%, 43%, 56%, 68%, 81%, 93% { background: #002f55; color: white; }
 }
 
+.beer-updated {
+    background: transparent;
+    color: white;
+    animation: beer-flicker 2s 2 forwards ease-in-out;
+}
+
+@keyframes beer-flicker {
+    0%, 12%, 25%, 37%, 50%, 62%, 75%, 87%, 100% { background: transparent; color: black; }
+    6%, 18%, 31%, 43%, 56%, 68%, 81%, 93% { background: white; color: white; }
+}
+
 
 #match-status-wrapper{
     filter: drop-shadow(2px 2px 40px black);

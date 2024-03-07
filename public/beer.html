@@ -82,14 +82,13 @@
     });
 
     socket.on('beerCountUpdated', (data) => {
-        console.log('beerCountUpdated');
         const { steamid, beers } = data;
-        const playerCard = document.getElementById(`beer-card-${steamid}`);
-        if (playerCard) {
-            const beerCountElement = playerCard.querySelector('.beers');
-            beerCountElement.textContent = beers;
-        }
-    });
+        const target = `beer-card-${steamid}`
+        
+        console.log(`beerCountUpdated ${steamid} has ${beers} beers`);
+        
+        updateBeerCount({steamid, beers, target})
+    }); 
 
     function getClientParticipantConfigAndDisplay(){
         fetch('/api/getParticipantConfig')

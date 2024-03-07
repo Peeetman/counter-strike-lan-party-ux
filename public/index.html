@@ -153,4 +153,15 @@
 <!-- Custom script-->
 <script src="script.js"></script>
 
+<script>
+socket.on('beerCountUpdated', (data) => {
+    const { steamid, beers } = data;
+    const target = `player-card-${steamid}`
+    
+    console.log(`beerCountUpdated ${steamid} has ${beers} beers`);
+    
+    updateBeerCount({steamid, beers, target})
+}); 
+</script>
+
 </html>
